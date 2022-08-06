@@ -68,19 +68,17 @@ type FormRowProps = {
 
 const FormRow = (props: FormRowProps) => {
   return (    
-    <NextLink href='/forms/1'>
-      <Tr>
-        <Td>
-          <Text fontSize='md' color='white'>Form Name</Text>
+    <Tr>
+      <Td>
+        <Text fontSize='md' color='white'>Form Name</Text>
+      </Td>
+      <Td w={16}>
+        <Text fontSize='md' color='white'>210 Answered</Text>
+      </Td>
+      <Td w={16}>
+        <Button size='sm' variant='outline' color='white' >Get Link</Button>
         </Td>
-        <Td w={16}>
-          <Text fontSize='md' color='white'>210 Answered</Text>
-        </Td>
-        <Td w={16}>
-          <Button size='sm' variant='outline' color='white' >Get Link</Button>
-          </Td>
-      </Tr> 
-    </NextLink>
+    </Tr> 
   )
 }
 
