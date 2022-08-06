@@ -1,0 +1,11 @@
+{
+    "title": "What's your age range?",
+    "options": [
+        "Under 21",
+        "Between 21 and 30",
+        "Between 31 and 40",
+        "Between 41 and 50",
+        "Over 50",
+        "Prefer not to respond"
+    ]
+}

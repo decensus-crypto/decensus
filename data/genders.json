@@ -1,0 +1,12 @@
+{
+    "title": "What's your gender?",
+    "options": [
+        "Male",
+        "Female",
+        "Transgender",
+        "Non-binary / non-conforming",
+        "Intersex",
+        "Other",
+        "Prefer not to say"
+    ]
+}
