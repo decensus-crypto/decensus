@@ -1,68 +1,16 @@
-import React from 'react';
+import React, { useEffect, useState } from "react";
 import type { ReactElement } from 'react'
 import NextLink from 'next/link'
 import { useDisclosure, TableContainer, Table, Thead, Tbody, Tr, Th, Td, useControllableState, Modal, ModalOverlay, ModalContent, ModalHeader, Box, Button, ButtonGroup, IconButton, Flex, FormControl, FormLabel, Grid, GridItem, Heading, ModalCloseButton, Image, Input, InputGroup, InputLeftElement, Select, Spacer,ModalFooter, ModalBody, Text } from '@chakra-ui/react'
 import Layout from '../../layouts/default'
 
-const FORM_TEMPLATE = {
-  "questions":[
-     {
-        "question_body":"What’s your age range?",
-        "question_type":"single_choice",
-        "choices":[
-           {"text":"Under 21"},
-           {"text":"Between 21 and 30"},
-           {"text":"Between 31 and 40"},
-           {"text":"Between 41 and 50"},
-           {"text":"Over 50"}
-        ]
-     },
-     {
-        "question_body":"What’s your gender?",
-        "question_type":"single_choice",
-        "choices":[
-           {"text":"Male"},
-           {"text":"Female"},
-           {"text":"Transgender"},
-           {"text":"Non-binary / non-conforming"},
-           {"text":"Prefer not to say"}
-        ]
-     },
-     {
-        "question_body":"What’s your gender?",
-        "question_type":"single_choice",
-        "choices":[
-           {"text":"Hispanic"},
-           {"text":"White alone, non-Hispanic"},
-           {"text":"Black or African American alone, non-Hispanic"},
-           {"text":"American Indian and Alaska Native alone, non-Hispanic"},
-           {"text":"Asian alone, non-Hispanic"},
-           {"text":"Native Hawaiian and Other Pacific Islander alone, non-Hispanic"},
-           {"text":"Some Other Race alone, non-Hispanic"},
-           {"text":"Multiracial, non-Hispanic"},
-           {"text":"Prefer not to say"}
-        ]
-     },
-     {
-        "question_body":"In what country are you based?",
-        "question_type":"text",
-        "choices":[]
-     },
-     {
-        "question_body":"What’s your occupation's industry?",
-        "question_type":"single_choice",
-        "choices":[
-           {"text":"Arts and entertainment"},
-           {"text":"Business administration"},
-           {"text":"Industrial and manufacturing"},
-           {"text":"Law enforcement and armed forces"},
-           {"text":"Science and technology"},
-           {"text":"Others"}
-        ]
-     }
-  ]
-}
- 
+// @ts-expect-error
+import { Integration } from "lit-ceramic-sdk";
+import { LitCeramicIntegrationParams } from "../../constants";
+
+import Questions from "../../data/questions_sample.json";
+
+
 type FormRowProps = {
 }
 
@@ -85,19 +33,63 @@ const FormRow = (props: FormRowProps) => {
 }
 
 const AppRoot = (page: ReactElement) => {
-  const { isOpen, onOpen, onClose } = useDisclosure()
-  const initialRef = React.useRef(null)
-  const finalRef = React.useRef(null)
-  const forms = [{},{},{}];
+  const [forms, setForms] = useState([{},{},{}]);
 
-  return (  
+  // Lit
+  const [litCeramicIntegration, setLitCeramicIntegration] = useState<any>(null);
+
+  // Form Dialog
+  const initialRef = React.useRef(null)
+  const [title, setTitle] = useState('');
+  const [contractAddress, setContractAddress] = useState('');
+  const {isOpen, onOpen, onClose} = useDisclosure()
+
+  useEffect(() => {
+    const litCeramicIntegration = new Integration(
+      ...LitCeramicIntegrationParams
+    );
+    litCeramicIntegration.startLitClient(window);
+    setLitCeramicIntegration(litCeramicIntegration);
+  }, []);
+  
+  const clickNew = () => {
+    setTitle('')
+    setContractAddress('')
+    onOpen();
+  };
+
+  const clickSubmit = () => {
+    const stringToEncrypt = {'title': title, questions: Questions['questions']};
+    const accessControlConditions = [{
+      'contractAddress': contractAddress,
+      "standardContractType": "",
+      "chain": "ethereum",
+      "method": "eth_getBalance",
+      "parameters": [":userAddress", "latest"],
+      "returnValueTest": {
+        "comparator": ">=",
+        "value": "1000000000000"
+      }
+    }];
+    console.log(stringToEncrypt)
+    console.log(accessControlConditions)
+    onClose();
+    litCeramicIntegration.encryptAndWrite(stringToEncrypt, accessControlConditions).then((value: string) => {
+      setForms([{
+        title: title,
+        url: `${location.origin}/forms?id=${value}`
+      }])
+    });
+  };
+
+  return (
     <>
     <Layout>
       <Box w={'full'} mb={32}>
         <Flex>
           <Heading as='h2' size='md' fontWeight='light' color='white'>My Forms</Heading>
           <Spacer />
-          <Button size='sm' variant='outline' color='white'  onClick={onOpen} >Create New Form</Button>
+          <Button size='sm' variant='outline' color='white'  onClick={clickNew}>Create New Form</Button>
         </Flex>
         <Grid mt={8} templateColumns='repeat(12, 1fr)' gap={4}>
           <GridItem colSpan={{base: 12, md: 4}}>
@@ -135,18 +127,26 @@ const AppRoot = (page: ReactElement) => {
         <ModalBody pb={6}>
           <FormControl>
             <FormLabel>Form Name</FormLabel>
-            <Input ref={initialRef} placeholder='My best form ever' />
+            <Input
+              required
+              ref={initialRef}
+              placeholder='My best form ever' 
+              value={title}
+              onChange={(evt) => setTitle(evt.target.value)}/>
           </FormControl>
           <FormControl mt={4}>
             <FormLabel>NFT Contract Address</FormLabel>
-            <Input placeholder='0xabcd...' />
+            <Input
+              required
+              placeholder='0xabcd...'
+              value={contractAddress}
+              onChange={(evt) => setContractAddress(evt.target.value)}/>
           </FormControl>
         </ModalBody>
-
         <ModalFooter>
           <Flex>
             <Button size='md' variant='text' color='black' onClick={onClose}>Cancel</Button>
-            <Button ml={4} size='md' variant='outline' color='#FC8CC9' onClick={onClose}>Save</Button>
+            <Button ml={4} size='md' variant='outline' color='#FC8CC9' onClick={clickSubmit}>Save</Button>
           </Flex>
         </ModalFooter>
       </ModalContent>
