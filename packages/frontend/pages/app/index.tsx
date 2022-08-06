@@ -76,21 +76,19 @@ const FormRow = (props: FormRowProps) => {
         <Text fontSize='md' color='white'>210 Answered</Text>
       </Td>
       <Td w={16}>
-        <Button size='sm' variant='outline' color='white' >Get Link</Button>
-        </Td>
+        <NextLink href='/form'>
+          <Button size='sm' variant='outline' color='white' >Get Link</Button>
+        </NextLink>
+      </Td>
     </Tr> 
   )
 }
 
 const AppRoot = (page: ReactElement) => {
-
   const { isOpen, onOpen, onClose } = useDisclosure()
-
   const initialRef = React.useRef(null)
   const finalRef = React.useRef(null)
-
   const forms = [{},{},{}];
-
 
   return (  
     <>
@@ -148,7 +146,7 @@ const AppRoot = (page: ReactElement) => {
         <ModalFooter>
           <Flex>
             <Button size='md' variant='text' color='black' onClick={onClose}>Cancel</Button>
-            <Button ml={4} size='md'  variant='outline' color='#FC8CC9'  onClick={onClose}>Save</Button>
+            <Button ml={4} size='md' variant='outline' color='#FC8CC9' onClick={onClose}>Save</Button>
           </Flex>
         </ModalFooter>
       </ModalContent>

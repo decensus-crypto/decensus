@@ -7,7 +7,7 @@ const Root = (page: ReactElement) => {
   return (    
     <Layout>
       <Box w={'full'} mb={32}>
-      <Text color='white'>New Form</Text>
+        <Text color='white'>New Form</Text>
       </Box>
     </Layout>
   )
