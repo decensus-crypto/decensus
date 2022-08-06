@@ -254,7 +254,7 @@
         "2a6571da26602a67be14ea8c5ab82349": {
             "title": "What community values are the most important to you in this community?",
             "required": true,
-            "question_type": "SINGLE_CHOICE",
+            "question_type": "MULTIPLE_CHOICE",
             "options": [
                 "Learning about web3 and crypto",
                 "Helping those that need it the most",
