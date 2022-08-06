@@ -7,7 +7,7 @@ const Root = (page: ReactElement) => {
   return (    
     <Layout>
       <Box w={'full'} mb={32}>
-        <Text color='white'>Landing Page</Text>
+        <Text color='white'>Result Page</Text>
       </Box>
     </Layout>
   )
