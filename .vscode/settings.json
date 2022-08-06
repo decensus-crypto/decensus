@@ -3,5 +3,6 @@
   "solidity.packageDefaultDependenciesDirectory": "packages/contracts/node_modules",
   "editor.codeActionsOnSave": {
     "source.organizeImports": true
-  }
+  },
+  "editor.formatOnSave": true
 }
