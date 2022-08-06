@@ -11,29 +11,31 @@ import { LitCeramicIntegrationParams } from "../../constants";
 import Questions from "../../data/questions_sample.json";
 
 
-type FormRowProps = {
+type Form = {
+  title: string,
+  url: string,
 }
 
-const FormRow = (props: FormRowProps) => {
+const FormRow = (props: Form) => {
   return (    
     <Tr>
       <Td>
-        <Text fontSize='md' color='white'>Form Name</Text>
+        <Text fontSize='md' color='white'>{props.title}</Text>
       </Td>
       <Td w={16}>
         <Text fontSize='md' color='white'>210 Answered</Text>
       </Td>
       <Td w={16}>
-        <NextLink href='/form'>
+        <a href={props.url} target='_blank'>
           <Button size='sm' variant='outline' color='white' >Get Link</Button>
-        </NextLink>
+        </a>
       </Td>
     </Tr> 
   )
 }
 
 const AppRoot = (page: ReactElement) => {
-  const [forms, setForms] = useState([{},{},{}]);
+  const [forms, setForms] = useState<Form[]>([]);
 
   // Lit
   const [litCeramicIntegration, setLitCeramicIntegration] = useState<any>(null);
@@ -73,13 +75,10 @@ const AppRoot = (page: ReactElement) => {
     }];
     console.log(stringToEncrypt)
     console.log(accessControlConditions)
-    onClose();
     litCeramicIntegration.encryptAndWrite(stringToEncrypt, accessControlConditions).then((value: string) => {
-      setForms([{
-        title: title,
-        url: `${location.origin}/forms?id=${value}`
-      }])
+      setForms([...forms, {title: title, url: `${location.origin}/form?id=${value}`}])
     });
+    onClose();
   };
 
   return (
@@ -89,7 +88,7 @@ const AppRoot = (page: ReactElement) => {
         <Flex>
           <Heading as='h2' size='md' fontWeight='light' color='white'>My Forms</Heading>
           <Spacer />
-          <Button size='sm' variant='outline' color='white'  onClick={clickNew}>Create New Form</Button>
+          <Button size='sm' variant='outline' color='white' onClick={clickNew}>Create New Form</Button>
         </Flex>
         <Grid mt={8} templateColumns='repeat(12, 1fr)' gap={4}>
           <GridItem colSpan={{base: 12, md: 4}}>
@@ -111,7 +110,7 @@ const AppRoot = (page: ReactElement) => {
             </Thead>
             <Tbody>
               {forms.map((form, index) =>
-                <FormRow key={`form_row_${index}`}/>
+                <FormRow key={`form_row_${index}`} title={form.title} url={form.url} />
               )}
             </Tbody>
           </Table>
