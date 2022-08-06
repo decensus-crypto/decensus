@@ -9,7 +9,7 @@ type Props = {
 const Layout = ({ children }: Props) => {
   return (
     <Box h='calc(100vh)' background={'black'}>
-      <Container maxWidth={'8xl'}>
+      <Container maxWidth={'6xl'}>
         <Flex>
           <Box minW={240} maxW={320} py={4}>
             <Logo height={12}/>
@@ -20,7 +20,7 @@ const Layout = ({ children }: Props) => {
           </Box>
         </Flex>
       </Container>
-      <Container maxWidth={'8xl'}>{ children }</Container>
+      <Container maxWidth={'6xl'}>{ children }</Container>
     </Box>
   )
 }
