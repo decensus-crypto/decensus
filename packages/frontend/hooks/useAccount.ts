@@ -23,7 +23,7 @@ export const useAccount = () => {
         return;
       }
 
-      const address = await getSigner()?.getAddress();
+      const address = accounts[0];
       if (!address) throw new Error();
 
       setAccount(address);
