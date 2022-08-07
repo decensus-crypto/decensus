@@ -6,6 +6,9 @@ const FormDeployButoton = dynamic(
     ssr: false,
   }
 );
+const FormList = dynamic(() => import("../../components/FormList"), {
+  ssr: false,
+});
 
 import {
   Box,
@@ -29,50 +32,16 @@ import {
   Table,
   TableContainer,
   Tbody,
-  Td,
-  Text,
   Th,
   Thead,
   Tr,
   useDisclosure,
 } from "@chakra-ui/react";
-import type { ReactElement } from "react";
-import React, { useState } from "react";
+import React, { ReactElement, useState } from "react";
 import { TEST_NFT_CONTRACT_ADDRESS } from "../../constants/constants";
 import Layout from "../../layouts/default";
 
-type Form = {
-  title: string;
-  url: string;
-};
-
-const FormRow = (props: Form) => {
-  return (
-    <Tr>
-      <Td>
-        <Text fontSize="md" color="white">
-          {props.title}
-        </Text>
-      </Td>
-      <Td w={16}>
-        <Text fontSize="md" color="white">
-          210 Answered
-        </Text>
-      </Td>
-      <Td w={16}>
-        <a href={props.url} target="_blank" rel="noreferrer">
-          <Button size="sm" variant="outline" color="white">
-            Get Link
-          </Button>
-        </a>
-      </Td>
-    </Tr>
-  );
-};
-
 const AppRoot = (page: ReactElement) => {
-  const [forms, setForms] = useState<Form[]>([]);
-
   // Form Dialog
   const initialRef = React.useRef(null);
   const [title, setTitle] = useState("");
@@ -117,17 +86,10 @@ const AppRoot = (page: ReactElement) => {
                 <Tr>
                   <Th></Th>
                   <Th></Th>
-                  <Th></Th>
                 </Tr>
               </Thead>
               <Tbody>
-                {forms.map((form, index) => (
-                  <FormRow
-                    key={`form_row_${index}`}
-                    title={form.title}
-                    url={form.url}
-                  />
-                ))}
+                <FormList />
               </Tbody>
             </Table>
           </TableContainer>
@@ -165,10 +127,7 @@ const AppRoot = (page: ReactElement) => {
               <Button size="md" variant="text" color="black" onClick={onClose}>
                 Cancel
               </Button>
-              <FormDeployButoton
-                nftAddress={contractAddress}
-                formName={title}
-              />
+              <FormDeployButoton nftAddress={contractAddress} title={title} />
             </Flex>
           </ModalFooter>
         </ModalContent>

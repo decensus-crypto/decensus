@@ -11,8 +11,8 @@ export const LIT_CERAMIC_INTEGRATION_PARAMS = [
   CHAIN_NAME,
 ];
 
-export const FORM_TEMPLATE = (params: { formName: string }) => ({
-  formName: params.formName,
+export const FORM_TEMPLATE = (params: { title: string }) => ({
+  title: params.title,
   questions: [
     {
       question_body: "What's your age range?",
