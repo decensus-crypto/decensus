@@ -43,7 +43,7 @@ const litAccessControlConditions = ({ surveyId }: { surveyId: string }) => [
     returnValueTest: {
       key: "",
       comparator: "=",
-      value: true,
+      value: "true",
     },
   },
 ];
