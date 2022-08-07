@@ -76,14 +76,12 @@ const AppRoot = (page: ReactElement) => {
   // Form Dialog
   const initialRef = React.useRef(null);
   const [title, setTitle] = useState("");
-  const [contractAddress, setContractAddress] = useState(
-    TEST_NFT_CONTRACT_ADDRESS
-  );
+  const [contractAddress, setContractAddress] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const clickNew = () => {
     setTitle("");
-    setContractAddress("");
+    setContractAddress(TEST_NFT_CONTRACT_ADDRESS);
     onOpen();
   };
 
