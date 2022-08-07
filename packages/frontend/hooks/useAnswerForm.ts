@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import {
   CHAIN_NAME,
   FormTemplate,
-  SUBMISSION_MARK_CONTRACT_ADDRESS,
+  SUBMISSION_MARK_CONTRACT_ADDRESS
 } from "../constants/constants";
 import { createToast } from "../utils/createToast";
 import { getSubmissionMarkContract } from "../utils/getSubmissionMarkContract";
@@ -17,53 +17,55 @@ const litAccessControlConditions = ({
   nftAddress: string;
   surveyId: string;
 }) => [
-  {
-    contractAddress: nftAddress,
-    standardContractType: "ERC721",
-    chain: CHAIN_NAME,
-    method: "balanceOf",
-    parameters: [":userAddress"],
-    returnValueTest: {
-      comparator: ">",
-      value: "0",
+    {
+      conditionType: "evmContract",
+      contractAddress: SUBMISSION_MARK_CONTRACT_ADDRESS,
+      functionName: "hasMark",
+      functionParams: [":userAddress", surveyId],
+      functionAbi: {
+        inputs: [
+          {
+            internalType: "address",
+            name: "account",
+            type: "address",
+          },
+          {
+            internalType: "string",
+            name: "surveyId",
+            type: "string",
+          },
+        ],
+        name: "hasMark",
+        outputs: [
+          {
+            internalType: "bool",
+            name: "",
+            type: "bool",
+          },
+        ],
+        stateMutability: "view",
+        type: "function",
+      },
+      chain: CHAIN_NAME,
+      returnValueTest: {
+        comparator: "=",
+        value: "true",
+      },
     },
-  },
-  { operator: "and" },
-  {
-    contractAddress: SUBMISSION_MARK_CONTRACT_ADDRESS,
-    functionName: "hasMark",
-    functionParams: [":userAddress", surveyId],
-    functionAbi: {
-      inputs: [
-        {
-          internalType: "address",
-          name: "account",
-          type: "address",
-        },
-        {
-          internalType: "string",
-          name: "surveyId",
-          type: "string",
-        },
-      ],
-      name: "hasMark",
-      outputs: [
-        {
-          internalType: "bool",
-          name: "",
-          type: "bool",
-        },
-      ],
-      stateMutability: "view",
-      type: "function",
-    },
-    chain: CHAIN_NAME,
-    returnValueTest: {
-      comparator: "=",
-      value: "true",
-    },
-  },
-];
+    { operator: "and" },
+    {
+      conditionType: "evmBasic",
+      contractAddress: nftAddress,
+      standardContractType: "ERC721",
+      chain: CHAIN_NAME,
+      method: "balanceOf",
+      parameters: [":userAddress"],
+      returnValueTest: {
+        comparator: ">",
+        value: "0",
+      },
+    }
+  ];
 
 const formDataAtom = atom<FormTemplate | null>(null);
 const nftAddressAtom = atom<string | null>(null);
@@ -153,7 +155,8 @@ export const useAnswerForm = () => {
         try {
           answerId = await litCeramicIntegration.encryptAndWrite(
             submissionStrToEncrypt,
-            litAccessControlConditions({ nftAddress, surveyId })
+            litAccessControlConditions({ nftAddress, surveyId }),
+            "evmContractConditions" // undocumented in lit docs
           );
         } catch (error) {
           console.error(error);
