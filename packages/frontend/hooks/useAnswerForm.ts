@@ -50,7 +50,7 @@ const litAccessControlConditions = ({ surveyId }: { surveyId: string }) => [
 
 const formDataAtom = atom<FormTemplate | null>(null);
 const nftAddressAtom = atom<string | null>(null);
-const isLoadingAtom = atom<boolean>(false);
+const isLoadingAtom = atom<boolean>(true);
 const isSubmittingAtom = atom<boolean>(false);
 
 export const useAnswerForm = () => {

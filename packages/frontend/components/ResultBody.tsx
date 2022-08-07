@@ -18,7 +18,7 @@ import { ZDK, ZDKChain, ZDKNetwork } from "@zoralabs/zdk";
 import Highcharts from "highcharts";
 import Highcharts3d from "highcharts/highcharts-3d";
 import HighchartsExporting from "highcharts/modules/exporting";
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 import {
   AGE_QUESTION_ID,
@@ -38,7 +38,7 @@ const NftSummary = () => {
     defaultValue: 0,
   });
 
-  const getNft = async () => {
+  const getNft = useCallback(async () => {
     const networkInfo = {
       network: ZDKNetwork.Ethereum,
       chain: ZDKChain.Mainnet,
@@ -55,11 +55,11 @@ const NftSummary = () => {
     setNftAddress(resp.address as string);
     setNftName(resp.name as string);
     setTotalSupply(resp.totalSupply as number);
-  };
+  }, [setNftAddress, setNftName, setTotalSupply]);
 
   useEffect(() => {
     getNft();
-  });
+  }, [getNft]);
 
   return (
     <Box p={4} boxShadow={"lg"} rounded={"lg"} background={"gray.800"}>

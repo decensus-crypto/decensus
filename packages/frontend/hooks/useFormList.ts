@@ -12,7 +12,7 @@ export type Form = {
 };
 
 const formListAtom = atom<Form[]>([]);
-const isLoadingAtom = atom<boolean>(false);
+const isLoadingAtom = atom<boolean>(true);
 
 export const useFormList = () => {
   const { litCeramicIntegration } = useLitCeramic();

@@ -5,7 +5,7 @@ import { createToast } from "../utils/createToast";
 import { useLitCeramic } from "./useLitCeramic";
 
 const answersListAtom = atom<{ answers: Answer[] }[] | null>(null);
-const isLoadingAtom = atom<boolean>(false);
+const isLoadingAtom = atom<boolean>(true);
 
 const areAnswersValid = (data: any) => {
   if (typeof data !== "object" || !data) return false;
