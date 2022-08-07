@@ -6,6 +6,9 @@ export const LIT_CERAMIC_INTEGRATION_PARAMS = [
 export const SUBMISSION_MARK_CONTRACT_ADDRESS =
   "0xC3111e716c0247519a112CdEbE0ff938Bda819A9";
 
+export const TEST_NFT_CONTRACT_ADDRESS =
+  "0xF37B2387a370Abf0d968F36134C77eb3D880D4E4";
+
 export const CHAIN_NAME = "goerli";
 
 export const FORM_TEMPLATE = (params: { formName: string }) => ({

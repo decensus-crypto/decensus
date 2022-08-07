@@ -10,6 +10,7 @@
     "deploy:local": "npx hardhat run --network localhost scripts/deploy.ts",
     "deploy:goerli": "npx hardhat run --network goerli scripts/deploy.ts",
     "verify:goerli": "npx hardhat verify --network goerli",
+    "deployNft:goerli": "npx hardhat run --network goerli scripts/deployNft.ts",
     "deploy:mumbai": "npx hardhat run --network mumbai scripts/deploy.ts",
     "verify:mumbai": "npx hardhat verify --network mumbai",
     "console:local": "npx hardhat console --network localhost"

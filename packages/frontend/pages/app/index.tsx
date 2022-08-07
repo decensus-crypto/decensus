@@ -38,6 +38,7 @@ import {
 } from "@chakra-ui/react";
 import type { ReactElement } from "react";
 import React, { useState } from "react";
+import { TEST_NFT_CONTRACT_ADDRESS } from "../../constants/constants";
 import Layout from "../../layouts/default";
 
 type Form = {
@@ -75,7 +76,9 @@ const AppRoot = (page: ReactElement) => {
   // Form Dialog
   const initialRef = React.useRef(null);
   const [title, setTitle] = useState("");
-  const [contractAddress, setContractAddress] = useState("");
+  const [contractAddress, setContractAddress] = useState(
+    TEST_NFT_CONTRACT_ADDRESS
+  );
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const clickNew = () => {

@@ -97,4 +97,16 @@ describe("survey submission mark", function () {
       contract.connect(randomPerson).addMark(surveyId)
     ).to.be.revertedWith("survey submitter must hold NFT");
   });
+
+  it("Should fail in adding survey if owner does not hold NFT (after burning NFT)", async () => {
+    await nftContract.mint(owner.address).then((tx) => tx.wait());
+    await nftContract.mint(owner.address).then((tx) => tx.wait());
+    await nftContract
+      .burnAllHoldingTokens(owner.address)
+      .then((tx) => tx.wait());
+
+    await expect(
+      contract.addSurvey(surveyId, nftContract.address)
+    ).to.be.revertedWith("survey owner must hold NFT");
+  });
 });
