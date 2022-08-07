@@ -10,18 +10,99 @@ import {
   Input,
   Radio,
   RadioGroup,
+  Spinner,
   Stack,
   useControllableState,
 } from "@chakra-ui/react";
-import NextLink from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { Answer, FormTemplate } from "../constants/constants";
 import { useAnswerForm } from "../hooks/useAnswerForm";
 import { useLitCeramic } from "../hooks/useLitCeramic";
+
+type AnswerInForm = Omit<Answer, "question_id">;
+
+const FormInput = ({
+  question,
+  answer,
+  setAnswer,
+}: {
+  question: FormTemplate["questions"][number];
+  answer?: AnswerInForm;
+  setAnswer: (a: AnswerInForm) => void;
+}) => {
+  const answerParams = {
+    question_type: question.question_type,
+  };
+
+  const currentSingleAnswer =
+    typeof answer?.answer === "object" ? "" : answer?.answer || "";
+  const currentMultiAnswer =
+    typeof answer?.answer === "object" ? answer?.answer : [] || [];
+
+  switch (question.question_type) {
+    case "text":
+      return (
+        <Input
+          mt={8}
+          placeholder="Answer Here"
+          value={currentSingleAnswer}
+          onChange={(e) =>
+            setAnswer({ ...answerParams, answer: e.target.value })
+          }
+        />
+      );
+    case "single_choice":
+      return (
+        <RadioGroup
+          value={currentSingleAnswer}
+          onChange={(v) => setAnswer({ ...answerParams, answer: v })}
+        >
+          <Stack>
+            {question.options.map((option, i) => (
+              <Radio size="lg" key={i} value={option.text}>
+                <Box color="white">{Object.values(option)[0] || ""}</Box>
+              </Radio>
+            ))}
+          </Stack>
+        </RadioGroup>
+      );
+    case "multi_choice":
+      return (
+        <Stack>
+          {question.options.map((option, i) => (
+            <Checkbox
+              isChecked={currentMultiAnswer.includes(option.text)}
+              onChange={(e) => {
+                const checked = e.target.checked;
+                if (checked) {
+                  setAnswer({
+                    ...answerParams,
+                    answer: [...currentMultiAnswer, option.text],
+                  });
+                } else {
+                  setAnswer({
+                    ...answerParams,
+                    answer: currentMultiAnswer.filter((a) => a !== option.text),
+                  });
+                }
+              }}
+              size="lg"
+              key={i}
+            >
+              <Box color="white">{Object.values(option)[0] || ""}</Box>
+            </Checkbox>
+          ))}
+        </Stack>
+      );
+    default:
+      return <></>;
+  }
+};
 
 const AnswerForm = () => {
   const {
     formData,
-    nftAddress,
+    surveyId,
     isLoadingFormData: isLoading,
     isSubmitting,
     fetchFormData,
@@ -31,6 +112,9 @@ const AnswerForm = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useControllableState({
     defaultValue: 0,
   });
+  const [answers, setAnswers] = useState<
+    Record<string, { question_type: string; answer: string | string[] }>
+  >({});
 
   useEffect(() => {
     initLitCeramic();
@@ -45,7 +129,25 @@ const AnswerForm = () => {
       null
     : null;
 
-  if (!formData || !question) return <></>;
+  const canSubmit = Object.keys(answers).length === formData?.questions.length;
+
+  const onSubmit = async () => {
+    if (!canSubmit) return;
+
+    const answerArr = Object.entries(answers).map(([question_id, params]) => ({
+      question_id,
+      ...params,
+    }));
+
+    const { success } = await submitAnswer({
+      submissionStrToEncrypt: JSON.stringify({ answers: answerArr }),
+    });
+
+    if (success)
+      window.location.href = `${location.origin}/result?id=${surveyId}`;
+  };
+
+  if (!formData || !question || isLoading) return <Spinner />;
 
   return (
     <>
@@ -65,31 +167,11 @@ const AnswerForm = () => {
                   {`${currentQuestionIndex + 1}. ${question.question_body}`}
                 </Heading>
               </FormLabel>
-              {question.question_type === "text" && (
-                <Input mt={8} placeholder="Answer Here" />
-              )}
-              {question.question_type === "single_choice" && (
-                <RadioGroup>
-                  <Stack>
-                    {question.options.map((choice, i) => (
-                      <Radio size="lg" key={i}>
-                        <Box color="white">
-                          {Object.values(choice)[0] || ""}
-                        </Box>
-                      </Radio>
-                    ))}
-                  </Stack>
-                </RadioGroup>
-              )}
-              {question.question_type === "multi_choice" && (
-                <Stack>
-                  {question.options.map((choice, i) => (
-                    <Checkbox size="lg" key={i}>
-                      <Box color="white">{Object.values(choice)[0] || ""}</Box>
-                    </Checkbox>
-                  ))}
-                </Stack>
-              )}
+              <FormInput
+                question={question}
+                answer={answers[question.id]}
+                setAnswer={(a) => setAnswers({ ...answers, [question.id]: a })}
+              />
               <Center mt={8}>
                 {currentQuestionIndex < formData.questions.length - 1 && (
                   <Flex>
@@ -119,11 +201,16 @@ const AnswerForm = () => {
                   </Flex>
                 )}
                 {currentQuestionIndex >= formData.questions.length - 1 && (
-                  <NextLink href="/result">
-                    <Button size="lg" variant="outline" color="white">
-                      Submit
-                    </Button>
-                  </NextLink>
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    color="white"
+                    onClick={onSubmit}
+                    disabled={!canSubmit || isSubmitting}
+                    isLoading={isSubmitting}
+                  >
+                    Submit
+                  </Button>
                 )}
               </Center>
             </Box>

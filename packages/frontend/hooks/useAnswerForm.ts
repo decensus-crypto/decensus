@@ -96,7 +96,7 @@ export const useAnswerForm = () => {
       try {
         // should perform type validation!!!!
         const formData = JSON.parse(formDataStr);
-        console.log(formData);
+
         setFormData(formData);
       } catch {
         throw new Error("invalid form data");
@@ -121,7 +121,11 @@ export const useAnswerForm = () => {
   ]);
 
   const submitAnswer = useCallback(
-    async ({ submissionStrToEncrypt }: { submissionStrToEncrypt: string }) => {
+    async ({
+      submissionStrToEncrypt,
+    }: {
+      submissionStrToEncrypt: string;
+    }): Promise<{ success: boolean }> => {
       try {
         const submissionMarkContract = getSubmissionMarkContract();
 
@@ -138,7 +142,7 @@ export const useAnswerForm = () => {
         setIsSubmitting(true);
 
         createToast({
-          title: "Answer submit initiated",
+          title: "Answer submission initiated",
           description: "Please wait...",
           status: "success",
         });
@@ -188,14 +192,20 @@ export const useAnswerForm = () => {
           title: "Answer successfully submitted!",
           status: "success",
         });
+
+        setIsSubmitting(false);
+
+        return { success: true };
       } catch (error: any) {
         createToast({
           title: "Failed to submit answer",
           description: error.message,
           status: "error",
         });
-      } finally {
+
         setIsSubmitting(false);
+
+        return { success: false };
       }
     },
     [account, litCeramicIntegration, nftAddress, setIsSubmitting, surveyId]
@@ -204,6 +214,7 @@ export const useAnswerForm = () => {
   return {
     formData,
     nftAddress,
+    surveyId,
     isLoadingFormData: isLoading,
     isSubmitting,
     fetchFormData,

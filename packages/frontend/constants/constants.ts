@@ -311,3 +311,8 @@ export const FORM_TEMPLATE = (params: { title: string }) => ({
 
 export type AnswerTemplate = ReturnType<typeof ANSWER_TEMPLATE>;
 export type FormTemplate = ReturnType<typeof FORM_TEMPLATE>;
+export type Answer = {
+  question_id: string;
+  question_type: string;
+  answer: string | string[];
+};
