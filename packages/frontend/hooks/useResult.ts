@@ -21,7 +21,7 @@ const isAnswers = (data: any) => {
   return true;
 };
 
-export const useFormList = () => {
+export const useResult = () => {
   const { litCeramicIntegration } = useLitCeramic();
   const [answersList, setAnswersList] = useAtom(answersListAtom);
   const [isLoading, setIsLoading] = useAtom(isLoadingAtom);
