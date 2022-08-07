@@ -11,6 +11,8 @@ export const useAccount = () => {
 
   const checkWallet = async () => {
     try {
+      if (account) return;
+
       setIsLoading(true);
       const { ethereum } = window;
       if (!ethereum || !ethereum.request) return;
