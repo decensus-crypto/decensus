@@ -60,18 +60,21 @@ describe("survey submission mark", function () {
       true
     );
     expect(await contract.hasMark(owner.address, surveyId)).to.equal(false);
+    expect(await contract.mySurveys()).to.eql([surveyId]);
   });
 
   it("Should fail in adding survey if contract address does not support ERC721", async () => {
     await expect(
       contract.addSurvey(surveyId, dummyContract.address)
     ).to.be.revertedWith("NFT contract does not support ERC721");
+    expect(await contract.mySurveys()).to.eql([]);
   });
 
   it("Should fail in adding survey if owner does not hold NFT", async () => {
     await expect(
       contract.addSurvey(surveyId, nftContract.address)
     ).to.be.revertedWith("survey owner must hold NFT");
+    expect(await contract.mySurveys()).to.eql([]);
   });
 
   it("Should fail in adding mark if survey does not exist", async () => {
@@ -108,5 +111,6 @@ describe("survey submission mark", function () {
     await expect(
       contract.addSurvey(surveyId, nftContract.address)
     ).to.be.revertedWith("survey owner must hold NFT");
+    expect(await contract.mySurveys()).to.eql([]);
   });
 });

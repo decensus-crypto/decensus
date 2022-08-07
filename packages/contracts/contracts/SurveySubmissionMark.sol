@@ -1,7 +1,6 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.9;
 
-import "hardhat/console.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
@@ -11,6 +10,7 @@ contract DecensusSurveySubmissionMark {
 
     bytes4 public constant IID_IERC721 = type(IERC721).interfaceId;
     mapping(string => address) public surveys;
+    mapping(address => string[]) public surveyOwners;
     mapping(address => mapping(string => bool)) public submissionMarks;
 
     constructor() {}
@@ -27,6 +27,7 @@ contract DecensusSurveySubmissionMark {
         );
 
         surveys[surveyId] = nftAddress;
+        surveyOwners[msg.sender].push(surveyId);
     }
 
     function addMark(string calldata surveyId) public {
@@ -49,6 +50,10 @@ contract DecensusSurveySubmissionMark {
         returns (bool)
     {
         return submissionMarks[account][surveyId];
+    }
+
+    function mySurveys() public view returns (string[] memory) {
+        return surveyOwners[msg.sender];
     }
 
     function _checkBalanceOfNft(address nftAddress, address account)
