@@ -5,7 +5,11 @@ import { useDeploy } from "../hooks/useDeploy";
 import { useFormList } from "../hooks/useFormList";
 import { useLitCeramic } from "../hooks/useLitCeramic";
 
-const FormDeployButton = (props: { nftAddress: string; title: string }) => {
+const FormDeployButton = (props: {
+  nftAddress: string;
+  title: string;
+  onDeployComplete: () => void;
+}) => {
   const { deploy, isDeploying } = useDeploy();
   const { initLitCeramic } = useLitCeramic();
   const { fetchFormList } = useFormList();
@@ -21,6 +25,7 @@ const FormDeployButton = (props: { nftAddress: string; title: string }) => {
         FORM_TEMPLATE({ title: props.title })
       ),
     });
+    props.onDeployComplete();
     await fetchFormList();
   };
 

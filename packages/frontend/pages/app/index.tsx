@@ -127,7 +127,11 @@ const AppRoot = (page: ReactElement) => {
               <Button size="md" variant="text" color="black" onClick={onClose}>
                 Cancel
               </Button>
-              <FormDeployButoton nftAddress={contractAddress} title={title} />
+              <FormDeployButoton
+                nftAddress={contractAddress}
+                title={title}
+                onDeployComplete={onClose}
+              />
             </Flex>
           </ModalFooter>
         </ModalContent>

@@ -2,6 +2,7 @@ import { atom, useAtom } from "jotai";
 import { useCallback } from "react";
 import {
   CHAIN_NAME,
+  FormTemplate,
   SUBMISSION_MARK_CONTRACT_ADDRESS,
 } from "../constants/constants";
 import { createToast } from "../utils/createToast";
@@ -64,12 +65,12 @@ const litAccessControlConditions = ({
   },
 ];
 
-const formDataAtom = atom<any | null>(null);
+const formDataAtom = atom<FormTemplate | null>(null);
 const nftAddressAtom = atom<string | null>(null);
 const isLoadingAtom = atom<boolean>(false);
 const isSubmittingAtom = atom<boolean>(false);
 
-export const useAnswerSubmission = () => {
+export const useAnswerForm = () => {
   const { litCeramicIntegration } = useLitCeramic();
   const { account } = useAccount();
   const surveyId = new URLSearchParams(location.search).get("id") || null;
@@ -93,7 +94,9 @@ export const useAnswerSubmission = () => {
       ]);
 
       try {
+        // should perform type validation!!!!
         const formData = JSON.parse(formDataStr);
+        console.log(formData);
         setFormData(formData);
       } catch {
         throw new Error("invalid form data");
