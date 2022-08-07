@@ -1,4 +1,4 @@
-import { Box, Container, Flex, Spinner, Text, Heading, Divider, Spacer, Center, Image, Badge, StatGroup, Stat, StatLabel, StatNumber } from "@chakra-ui/react";
+import { useControllableState, Box, Container, Flex, Spinner, Text, Heading, Divider, Spacer, Center, Image, Badge, StatGroup, Stat, StatLabel, StatNumber } from "@chakra-ui/react";
 import { useEffect, useMemo } from "react";
 import { ZDK, ZDKNetwork, ZDKChain } from "@zoralabs/zdk";
 import Highcharts from "highcharts";
@@ -15,11 +15,15 @@ import { useLitCeramic } from "../hooks/useLitCeramic";
 import { useResult } from "../hooks/useResult";
 
 
-const NftSummary = (props: {}) => {
+const NftSummary = () => {
+  const [nftAddress, setNftAddress] = useControllableState({ defaultValue: '' })
+  const [nftName, setNftName] = useControllableState({ defaultValue: '' })
+  const [totalSupply, setTotalSupply] = useControllableState({ defaultValue: 0 })
 
-  useEffect(() => {
+  const getNft = async () => {
     const networkInfo = {
       network: ZDKNetwork.Ethereum,
+//      chain: ZDKChain.Mainnet,
       chain: ZDKChain.Goerli,
     }
     const args = {
@@ -27,11 +31,15 @@ const NftSummary = (props: {}) => {
       networks:[networkInfo]
     } 
     const zdk = new ZDK(args)
-    zdk.collection({address: '0xc729Ce9bF1030fbb639849a96fA8BBD013680B64'}).then(resp => {
-      console.log(resp)
-    }).catch(err => {
-      console.error(err)
-    })
+    const resp = await zdk.collection({address: '0xca21d4228cdcc68d4e23807e5e370c07577dd152'})
+    console.log(resp)
+    setNftAddress(resp.address as string)
+    setNftName(resp.name as string)
+    setTotalSupply(resp.totalSupply as number)
+  }
+
+  useEffect(() => {
+    getNft();
   })
 
   return (    
@@ -42,26 +50,26 @@ const NftSummary = (props: {}) => {
         </Box>
         <Spacer />
         <Box>
-          <Badge top={3} right={3} colorScheme='green'>{'0xaaaaaaaaaaaAAAAA'.substring(0, 12) + '...'}</Badge>
+          <Badge top={3} right={3} colorScheme='green'>{nftAddress.substring(0, 12) + '...'}</Badge>
         </Box>
       </Flex>
       <Box px={4} py={4}>
-        <Heading as='h3' size='md' fontWeight='bold' color='white'>NFT NAME</Heading>
+        <Heading as='h3' size='md' fontWeight='bold' color='white'>{nftName}</Heading>
       </Box>
       <Divider />
       <Box px={4} py={4}>
       <StatGroup>
         <Stat>
           <StatLabel color='white'>Items</StatLabel>
-          <StatNumber color='white'>345,670</StatNumber>
+          <StatNumber color='white'>{totalSupply}</StatNumber>
         </Stat>
         <Stat>
           <StatLabel color='white'>Owners</StatLabel>
-          <StatNumber color='white'>345,670</StatNumber>
+          <StatNumber color='white'>{totalSupply}</StatNumber>
         </Stat>
         <Stat>
           <StatLabel color='white'>Sent</StatLabel>
-          <StatNumber color='white'>345,670</StatNumber>
+          <StatNumber color='white'>{totalSupply}</StatNumber>
         </Stat>
       </StatGroup>
       </Box>
@@ -241,7 +249,7 @@ const ResultBody = () => {
 
     return Object.entries(aggObj)
       .filter((r) => r[1] > 0)
-      .sort((r1, r2) => r2[1] - r1[1]);
+      .sort((r1, r2) => r1[1] - r2[1]);
   }, [answersList]);
 
   useEffect(() => {
