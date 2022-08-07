@@ -1,8 +1,14 @@
 import { atom, useAtom } from "jotai";
 import { useCallback } from "react";
-import { Answer } from "../constants/constants";
+import { Answer, ANSWER_TEMPLATE } from "../constants/constants";
 import { createToast } from "../utils/createToast";
 import { useLitCeramic } from "./useLitCeramic";
+
+const SAMPLE_DATA = [
+  ANSWER_TEMPLATE({}),
+  ANSWER_TEMPLATE({}),
+  ANSWER_TEMPLATE({}),
+];
 
 const answersListAtom = atom<{ answers: Answer[] }[] | null>(null);
 const isLoadingAtom = atom<boolean>(false);
@@ -54,7 +60,8 @@ export const useResult = () => {
 
       const validAnswersList = rawAnswersList.filter((a) => areAnswersValid(a));
 
-      setAnswersList(validAnswersList);
+      //      setAnswersList(validAnswersList);
+      setAnswersList(SAMPLE_DATA);
     } catch (error: any) {
       console.error(error);
       createToast({

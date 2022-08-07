@@ -1,14 +1,20 @@
 import { Box, Container, Spinner } from "@chakra-ui/react";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 
 import Highcharts from "highcharts";
 import Highcharts3d from "highcharts/highcharts-3d";
 import HighchartsExporting from "highcharts/modules/exporting";
 
+import {
+  AGE_QUESTION_ID,
+  AGE_QUESTION_OPTIONS,
+  COUNTRY_QUESTION_ID,
+  COUNTRY_QUESTION_OPTIONS,
+} from "../constants/constants";
 import { useLitCeramic } from "../hooks/useLitCeramic";
 import { useResult } from "../hooks/useResult";
 
-const buildAgeChart = () => {
+const buildAgeChart = (data: [string, number][]) => {
   Highcharts.chart(
     "ageChartContainer" as any,
     {
@@ -21,13 +27,7 @@ const buildAgeChart = () => {
         backgroundColor: "#000000",
       },
       title: {
-        text: "Lil Nouns NFT community values survey",
-        style: {
-          color: "#ffffff",
-        },
-      },
-      subtitle: {
-        text: 'Source: <a href="https://decensus.io/0x9823972887123988">decensus.io survey</a>',
+        text: "Age",
         style: {
           color: "#ffffff",
         },
@@ -74,21 +74,14 @@ const buildAgeChart = () => {
       series: [
         {
           name: "Votes",
-          data: [
-            ["Under 21", 50],
-            ["Between 21 and 30", 230],
-            ["Between 31 and 40", 222],
-            ["Between 41 and 50", 40],
-            ["Over 50", 10],
-            ["Prefer not to respond", 10],
-          ],
+          data,
         },
       ],
     } as any
   );
 };
 
-const buildCountryChart = () => {
+const buildCountryChart = (data: [string, number][]) => {
   Highcharts.chart("countryChartContainer", {
     chart: {
       type: "pie",
@@ -100,7 +93,7 @@ const buildCountryChart = () => {
       backgroundColor: "#000000",
     },
     title: {
-      text: "Demographics",
+      text: "Country",
       style: {
         color: "#ffffff",
       },
@@ -131,14 +124,7 @@ const buildCountryChart = () => {
       {
         type: "pie",
         name: "Country of residence",
-        data: [
-          { name: "US", y: 123, sliced: true, selected: true },
-          ["Canada", 12],
-          ["Mexico", 2],
-          ["Dominican Republic", 6],
-          ["Spain", 3],
-          ["Prefer not to say", 2],
-        ],
+        data,
       },
     ],
   });
@@ -156,13 +142,60 @@ const ResultBody = () => {
     fetchResults();
   }, [fetchResults]);
 
+  const aggAges = useMemo(() => {
+    if (!answersList) return [];
+    const ageAnswers = answersList
+      .flatMap((d) => d.answers)
+      .filter((a) => a.question_id === AGE_QUESTION_ID);
+
+    const aggObj = AGE_QUESTION_OPTIONS.reduce((p, c) => {
+      p[c.text] = 0;
+      return p;
+    }, {} as Record<string, number>);
+
+    for (const a of ageAnswers) {
+      const text = a.answer.toString();
+      if (aggObj[text] == null) continue;
+
+      aggObj[text] += 1;
+    }
+
+    return AGE_QUESTION_OPTIONS.map((o) => [o.text, aggObj[o.text]]) as [
+      string,
+      number
+    ][];
+  }, [answersList]);
+
+  const aggCountries = useMemo(() => {
+    if (!answersList) return [];
+    const countryAnswers = answersList
+      .flatMap((d) => d.answers)
+      .filter((a) => a.question_id === COUNTRY_QUESTION_ID);
+
+    const aggObj = COUNTRY_QUESTION_OPTIONS.reduce((p, c) => {
+      p[c.text] = 0;
+      return p;
+    }, {} as Record<string, number>);
+
+    for (const a of countryAnswers) {
+      const text = a.answer.toString();
+      if (aggObj[text] == null) continue;
+
+      aggObj[text] += 1;
+    }
+
+    return Object.entries(aggObj)
+      .filter((r) => r[1] > 0)
+      .sort((r1, r2) => r1[1] - r2[1]);
+  }, [answersList]);
+
   useEffect(() => {
-    if (!answersList || answersList.length === 0) return;
+    if (aggAges.length === 0 || aggCountries.length === 0) return;
     Highcharts3d(Highcharts);
     HighchartsExporting(Highcharts);
-    buildAgeChart();
-    buildCountryChart();
-  }, [answersList]);
+    buildAgeChart(aggAges);
+    buildCountryChart(aggCountries);
+  }, [aggAges, aggCountries]);
 
   if (isLoadingAnswersList) return <Spinner />;
 

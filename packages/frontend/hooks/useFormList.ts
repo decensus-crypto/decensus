@@ -7,7 +7,8 @@ import { useLitCeramic } from "./useLitCeramic";
 
 export type Form = {
   title: string;
-  url: string;
+  formUrl: string;
+  resultUrl: string;
 };
 
 const formListAtom = atom<Form[]>([]);
@@ -32,9 +33,10 @@ export const useFormList = () => {
         surveyIds.map(async (surveyId) => {
           const formStr = await litCeramicIntegration.readAndDecrypt(surveyId);
           const title = JSON.parse(formStr).title;
-          const url = `${location.origin}/answer?id=${surveyId}`;
+          const formUrl = `${location.origin}/answer?id=${surveyId}`;
+          const resultUrl = `${location.origin}/result?id=${surveyId}`;
 
-          return { url, title };
+          return { formUrl, resultUrl, title };
         })
       );
 

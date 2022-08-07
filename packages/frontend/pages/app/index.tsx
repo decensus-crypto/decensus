@@ -86,6 +86,7 @@ const AppRoot = (page: ReactElement) => {
                 <Tr>
                   <Th></Th>
                   <Th></Th>
+                  <Th></Th>
                 </Tr>
               </Thead>
               <Tbody>

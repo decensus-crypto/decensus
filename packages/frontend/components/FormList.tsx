@@ -12,9 +12,16 @@ const FormRow = (props: Form) => {
         </Text>
       </Td>
       <Td w={16}>
-        <a href={props.url} target="_blank" rel="noreferrer">
+        <a href={props.formUrl} target="_blank" rel="noreferrer">
           <Button size="sm" variant="outline" color="white">
-            Get Link
+            Form
+          </Button>
+        </a>
+      </Td>
+      <Td w={16}>
+        <a href={props.resultUrl} target="_blank" rel="noreferrer">
+          <Button size="sm" variant="outline" color="white">
+            Result
           </Button>
         </a>
       </Td>
@@ -43,7 +50,8 @@ const FormList = () => {
           <FormRow
             key={`form_row_${index}`}
             title={form.title}
-            url={form.url}
+            formUrl={form.formUrl}
+            resultUrl={form.resultUrl}
           />
         ))
       )}
