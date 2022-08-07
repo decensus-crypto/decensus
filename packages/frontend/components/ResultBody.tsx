@@ -186,7 +186,7 @@ const ResultBody = () => {
 
     return Object.entries(aggObj)
       .filter((r) => r[1] > 0)
-      .sort((r1, r2) => r1[1] - r2[1]);
+      .sort((r1, r2) => r2[1] - r1[1]);
   }, [answersList]);
 
   useEffect(() => {

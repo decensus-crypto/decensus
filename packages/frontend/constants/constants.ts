@@ -11,12 +11,16 @@ export const LIT_CERAMIC_INTEGRATION_PARAMS = [
   CHAIN_NAME,
 ];
 
-export const ANSWER_TEMPLATE = (params: {}) => ({
+export const ANSWER_TEMPLATE = (isDefault?: boolean) => ({
   answers: [
     {
-      question_id: "2f633cdd1181d42a9c7ae9a889362ff7",
+      question_id: AGE_QUESTION_ID,
       question_type: "single_choice",
-      answer: "Over 50",
+      answer: isDefault
+        ? "Between 31 and 40"
+        : AGE_QUESTION_OPTIONS[
+            Math.floor(Math.random() * AGE_QUESTION_OPTIONS.length)
+          ].text,
     },
     {
       question_id: "c31248e78aced0c36320b2f13a8a7891",
@@ -29,9 +33,13 @@ export const ANSWER_TEMPLATE = (params: {}) => ({
       answer: "Hispanic",
     },
     {
-      question_id: "5ca2aa845c8cd5ace6b016841f100d82",
+      question_id: COUNTRY_QUESTION_ID,
       question_type: "single_choice",
-      answer: "Cyprus",
+      answer: isDefault
+        ? "United States"
+        : COUNTRY_QUESTION_OPTIONS[
+            Math.floor(Math.random() * COUNTRY_QUESTION_OPTIONS.length)
+          ].text,
     },
     {
       question_id: "c570503c6bd0a44eb7ab38365ca83ced",
