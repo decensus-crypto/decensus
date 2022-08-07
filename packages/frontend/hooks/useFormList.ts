@@ -11,6 +11,20 @@ export type Form = {
   resultUrl: string;
 };
 
+const getFormData = async (params: {
+  litCeramicIntegration: any;
+  surveyId: string;
+}) => {
+  const formStr = await params.litCeramicIntegration.readAndDecrypt(
+    params.surveyId
+  );
+  const title = JSON.parse(formStr).title;
+  const formUrl = `${location.origin}/answer?id=${params.surveyId}`;
+  const resultUrl = `${location.origin}/result?id=${params.surveyId}`;
+
+  return { formUrl, resultUrl, title };
+};
+
 const formListAtom = atom<Form[]>([]);
 const isLoadingAtom = atom<boolean>(true);
 
@@ -29,8 +43,18 @@ export const useFormList = () => {
       setIsLoading(true);
       const surveyIds: string[] = await submissionMarkContract.mySurveys();
 
-      const formList = await Promise.all(
-        surveyIds.map(async (surveyId) => {
+      if (surveyIds.length === 0) {
+        setFormList([]);
+        return;
+      }
+
+      const firstForm = await getFormData({
+        litCeramicIntegration,
+        surveyId: surveyIds[0],
+      });
+
+      const remainingFormList = await Promise.all(
+        surveyIds.slice(1).map(async (surveyId) => {
           const formStr = await litCeramicIntegration.readAndDecrypt(surveyId);
           const title = JSON.parse(formStr).title;
           const formUrl = `${location.origin}/answer?id=${surveyId}`;
@@ -40,7 +64,7 @@ export const useFormList = () => {
         })
       );
 
-      setFormList(formList);
+      setFormList([firstForm, ...remainingFormList]);
     } catch (error: any) {
       console.error(error);
       createToast({
