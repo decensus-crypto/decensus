@@ -5,8 +5,8 @@ import { useControllableState, Flex, Radio, Stack, Checkbox, Container, Box, Hea
 import Layout from '../layouts/default'
 
 const Answer = (page: ReactElement) => {
-  const FORM_TEMPLATE = {
-    "questions":[
+  const FORM_SAMPLE = {
+      "questions":[
        {
           "question_body":"What’s your age range?",
           "question_type":"single_choice",
