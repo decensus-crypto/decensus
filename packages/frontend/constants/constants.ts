@@ -1,8 +1,3 @@
-export const LIT_CERAMIC_INTEGRATION_PARAMS = [
-  "https://ceramic-clay.3boxlabs.com",
-  "ethereum",
-];
-
 export const SUBMISSION_MARK_CONTRACT_ADDRESS =
   "0x3990B7daEF78C23686EB93e0cea624C8504ef9A0";
 
@@ -10,6 +5,11 @@ export const TEST_NFT_CONTRACT_ADDRESS =
   "0xF37B2387a370Abf0d968F36134C77eb3D880D4E4";
 
 export const CHAIN_NAME = "goerli";
+
+export const LIT_CERAMIC_INTEGRATION_PARAMS = [
+  "https://ceramic-clay.3boxlabs.com",
+  CHAIN_NAME,
+];
 
 export const FORM_TEMPLATE = (params: { formName: string }) => ({
   formName: params.formName,
