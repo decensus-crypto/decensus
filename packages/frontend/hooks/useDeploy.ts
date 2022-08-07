@@ -25,7 +25,7 @@ const litAccessControlConditions = (nftAddress: string) => [
 export const useDeploy = () => {
   const [isDeploying, setIsDeploying] = useAtom(isDeployingAtom);
 
-  const { litCeramicIntegration, initLitCeramic } = useLitCeramic();
+  const { litCeramicIntegration } = useLitCeramic();
   const { account } = useAccount();
 
   const deploy = useCallback(
@@ -37,7 +37,6 @@ export const useDeploy = () => {
       formParamsToEncrypt: string;
     }) => {
       try {
-        initLitCeramic();
         const submissionMarkContract = getSubmissionMarkContract();
 
         if (!account || !litCeramicIntegration || !submissionMarkContract) {
@@ -81,7 +80,6 @@ export const useDeploy = () => {
             "Couldn't deploy form. Make sure the NFT address is ERC721 and you holds at least one token in it"
           );
         }
-        setIsDeploying(false);
 
         createToast({
           title: "Form successfully deployed!",
@@ -93,10 +91,11 @@ export const useDeploy = () => {
           description: error.message,
           status: "error",
         });
+      } finally {
         setIsDeploying(false);
       }
     },
-    [account, initLitCeramic, litCeramicIntegration, setIsDeploying]
+    [account, litCeramicIntegration, setIsDeploying]
   );
 
   return {
