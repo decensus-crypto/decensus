@@ -4,10 +4,9 @@ const AnswerForm = dynamic(() => import("../components/AnswerForm"), {
   ssr: false,
 });
 
-import { ReactElement } from "react";
 import Layout from "../layouts/default";
 
-const Answer = (page: ReactElement) => {
+const Answer = () => {
   return (
     <Layout>
       <AnswerForm />
