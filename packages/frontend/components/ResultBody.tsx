@@ -1,9 +1,24 @@
-import { useControllableState, Box, Container, Flex, Spinner, Text, Heading, Divider, Spacer, Center, Image, Badge, StatGroup, Stat, StatLabel, StatNumber } from "@chakra-ui/react";
-import { useEffect, useMemo } from "react";
-import { ZDK, ZDKNetwork, ZDKChain } from "@zoralabs/zdk";
+import {
+  Badge,
+  Box,
+  Container,
+  Divider,
+  Flex,
+  Heading,
+  Spacer,
+  Spinner,
+  Stat,
+  StatGroup,
+  StatLabel,
+  StatNumber,
+  Text,
+  useControllableState,
+} from "@chakra-ui/react";
+import { ZDK, ZDKChain, ZDKNetwork } from "@zoralabs/zdk";
 import Highcharts from "highcharts";
 import Highcharts3d from "highcharts/highcharts-3d";
 import HighchartsExporting from "highcharts/modules/exporting";
+import { useEffect, useMemo } from "react";
 
 import {
   AGE_QUESTION_ID,
@@ -14,68 +29,75 @@ import {
 import { useLitCeramic } from "../hooks/useLitCeramic";
 import { useResult } from "../hooks/useResult";
 
-
 const NftSummary = () => {
-  const [nftAddress, setNftAddress] = useControllableState({ defaultValue: '' })
-  const [nftName, setNftName] = useControllableState({ defaultValue: '' })
-  const [totalSupply, setTotalSupply] = useControllableState({ defaultValue: 0 })
+  const [nftAddress, setNftAddress] = useControllableState({
+    defaultValue: "",
+  });
+  const [nftName, setNftName] = useControllableState({ defaultValue: "" });
+  const [totalSupply, setTotalSupply] = useControllableState({
+    defaultValue: 0,
+  });
 
   const getNft = async () => {
     const networkInfo = {
       network: ZDKNetwork.Ethereum,
-//      chain: ZDKChain.Mainnet,
-      chain: ZDKChain.Goerli,
-    }
+      chain: ZDKChain.Mainnet,
+    };
     const args = {
       endPoint: "https://api.zora.co/graphql",
-      networks:[networkInfo]
-    } 
-    const zdk = new ZDK(args)
-    const resp = await zdk.collection({address: '0xca21d4228cdcc68d4e23807e5e370c07577dd152'})
-    console.log(resp)
-    setNftAddress(resp.address as string)
-    setNftName(resp.name as string)
-    setTotalSupply(resp.totalSupply as number)
-  }
+      networks: [networkInfo],
+    };
+    const zdk = new ZDK(args);
+    const resp = await zdk.collection({
+      address: "0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d",
+    });
+    console.log(resp);
+    setNftAddress(resp.address as string);
+    setNftName(resp.name as string);
+    setTotalSupply(resp.totalSupply as number);
+  };
 
   useEffect(() => {
     getNft();
-  })
+  });
 
-  return (    
-    <Box p={4} boxShadow={'lg'} rounded={'lg'} background={'gray.800'}>
-      <Flex>
-        <Box w={32} h={32}>
-          <Image rounded={80} src='https://bit.ly/dan-abramov' alt='Dan Abramov' />
-        </Box>
+  return (
+    <Box p={4} boxShadow={"lg"} rounded={"lg"} background={"gray.800"}>
+      <Flex px={4} py={4}>
+        <Heading as="h3" size="md" fontWeight="bold" color="white">
+          {nftName}
+        </Heading>
         <Spacer />
-        <Box>
-          <Badge top={3} right={3} colorScheme='green'>{nftAddress.substring(0, 12) + '...'}</Badge>
-        </Box>
+        <Badge
+          as="div"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          colorScheme="green"
+        >
+          {nftAddress.substring(0, 12) + "..."}
+        </Badge>
       </Flex>
-      <Box px={4} py={4}>
-        <Heading as='h3' size='md' fontWeight='bold' color='white'>{nftName}</Heading>
-      </Box>
       <Divider />
       <Box px={4} py={4}>
-      <StatGroup>
-        <Stat>
-          <StatLabel color='white'>Items</StatLabel>
-          <StatNumber color='white'>{totalSupply}</StatNumber>
-        </Stat>
-        <Stat>
-          <StatLabel color='white'>Owners</StatLabel>
-          <StatNumber color='white'>{totalSupply}</StatNumber>
-        </Stat>
-        <Stat>
-          <StatLabel color='white'>Sent</StatLabel>
-          <StatNumber color='white'>{totalSupply}</StatNumber>
-        </Stat>
-      </StatGroup>
+        <StatGroup>
+          <Stat>
+            <StatLabel color="white">Items</StatLabel>
+            <StatNumber color="white">{totalSupply}</StatNumber>
+          </Stat>
+          <Stat>
+            <StatLabel color="white">Owners</StatLabel>
+            <StatNumber color="white">{totalSupply}</StatNumber>
+          </Stat>
+          <Stat>
+            <StatLabel color="white">Sent</StatLabel>
+            <StatNumber color="white">{totalSupply}</StatNumber>
+          </Stat>
+        </StatGroup>
       </Box>
     </Box>
-  )
-}
+  );
+};
 
 const buildAgeChart = (data: [string, number][]) => {
   Highcharts.chart(
