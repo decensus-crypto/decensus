@@ -29,12 +29,6 @@ import {
   ModalHeader,
   ModalOverlay,
   Spacer,
-  Table,
-  TableContainer,
-  Tbody,
-  Th,
-  Thead,
-  Tr,
   useDisclosure,
 } from "@chakra-ui/react";
 import React, { ReactElement, useState } from "react";
@@ -80,20 +74,8 @@ const AppRoot = (page: ReactElement) => {
               </Flex>
             </GridItem>
           </Grid>
-          <TableContainer>
-            <Table size="lg">
-              <Thead>
-                <Tr>
-                  <Th></Th>
-                  <Th></Th>
-                  <Th></Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                <FormList />
-              </Tbody>
-            </Table>
-          </TableContainer>
+
+          <FormList />
         </Box>
       </Layout>
 

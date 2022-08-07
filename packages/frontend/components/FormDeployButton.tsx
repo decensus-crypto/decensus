@@ -38,6 +38,7 @@ const FormDeployButton = (props: {
         color="#FC8CC9"
         onClick={onSubmit}
         isLoading={isDeploying}
+        disabled={isDeploying || !props.title || !props.nftAddress}
       >
         Save
       </Button>

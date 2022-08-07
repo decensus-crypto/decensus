@@ -1,4 +1,16 @@
-import { Button, Spinner, Td, Text, Tr } from "@chakra-ui/react";
+import {
+  Button,
+  Flex,
+  Spinner,
+  Table,
+  TableContainer,
+  Tbody,
+  Td,
+  Text,
+  Th,
+  Thead,
+  Tr,
+} from "@chakra-ui/react";
 import { useEffect } from "react";
 import { Form, useFormList } from "../hooks/useFormList";
 import { useLitCeramic } from "../hooks/useLitCeramic";
@@ -44,16 +56,33 @@ const FormList = () => {
   return (
     <>
       {isLoadingFormList ? (
-        <Spinner />
+        <Flex w="100%" h="500px" align="center" justify="center">
+          <Spinner size="lg" />
+        </Flex>
       ) : (
-        formList.map((form, index) => (
-          <FormRow
-            key={`form_row_${index}`}
-            title={form.title}
-            formUrl={form.formUrl}
-            resultUrl={form.resultUrl}
-          />
-        ))
+        <TableContainer>
+          <Table size="lg">
+            <Thead>
+              <Tr>
+                <Th></Th>
+                <Th></Th>
+                <Th></Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {formList
+                .filter((f) => !!f.title && !!f.formUrl)
+                .map((form, index) => (
+                  <FormRow
+                    key={`form_row_${index}`}
+                    title={form.title}
+                    formUrl={form.formUrl}
+                    resultUrl={form.resultUrl}
+                  />
+                ))}
+            </Tbody>
+          </Table>
+        </TableContainer>
       )}
     </>
   );

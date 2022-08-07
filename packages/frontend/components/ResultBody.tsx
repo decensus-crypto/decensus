@@ -1,4 +1,4 @@
-import { Box, Container, Spinner } from "@chakra-ui/react";
+import { Box, Container, Flex, Spinner, Text } from "@chakra-ui/react";
 import { useEffect, useMemo } from "react";
 
 import Highcharts from "highcharts";
@@ -197,10 +197,23 @@ const ResultBody = () => {
     buildCountryChart(aggCountries);
   }, [aggAges, aggCountries]);
 
-  if (isLoadingAnswersList) return <Spinner />;
+  if (isLoadingAnswersList)
+    return (
+      <Flex w="100%" h="500px" align="center" justify="center">
+        <Spinner size="lg" />
+      </Flex>
+    );
+
+  if (!isLoadingAnswersList && answersList && answersList.length === 0) {
+    return (
+      <Flex w="100%" h="500px" align="center" justify="center">
+        <Text fontSize="xl">No results to show</Text>
+      </Flex>
+    );
+  }
 
   return (
-    <>
+    <Box w={"full"} mb={32}>
       <Container maxWidth={"2xl"} mt={32}>
         <Box boxShadow={"lg"} rounded={"lg"}>
           <figure className="highcharts-figure">
@@ -215,7 +228,7 @@ const ResultBody = () => {
           </figure>
         </Box>
       </Container>
-    </>
+    </Box>
   );
 };
 

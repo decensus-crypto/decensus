@@ -3,6 +3,7 @@ import {
   Button,
   Center,
   Checkbox,
+  Container,
   Flex,
   FormControl,
   FormLabel,
@@ -147,10 +148,16 @@ const AnswerForm = () => {
       window.location.href = `${location.origin}/result?id=${surveyId}`;
   };
 
-  if (!formData || !question || isLoading) return <Spinner />;
+  if (!formData || !question || isLoading) {
+    return (
+      <Flex w="100%" h="500px" align="center" justify="center">
+        <Spinner size="lg" />
+      </Flex>
+    );
+  }
 
   return (
-    <>
+    <Container>
       <Box mt={8}>
         <Center>
           <Heading as="h2" color="white" size="sm" fontWeight="bold">
@@ -217,7 +224,7 @@ const AnswerForm = () => {
           </Box>
         </FormControl>
       </Box>
-    </>
+    </Container>
   );
 };
 

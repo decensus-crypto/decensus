@@ -4,16 +4,13 @@ const AnswerForm = dynamic(() => import("../components/AnswerForm"), {
   ssr: false,
 });
 
-import { Container } from "@chakra-ui/react";
 import { ReactElement } from "react";
 import Layout from "../layouts/default";
 
 const Answer = (page: ReactElement) => {
   return (
     <Layout>
-      <Container>
-        <AnswerForm />
-      </Container>
+      <AnswerForm />
     </Layout>
   );
 };
