@@ -7,7 +7,7 @@ import { useLitCeramic } from "./useLitCeramic";
 const answersListAtom = atom<{ answers: Answer[] }[] | null>(null);
 const isLoadingAtom = atom<boolean>(false);
 
-const isAnswers = (data: any) => {
+const areAnswersValid = (data: any) => {
   if (typeof data !== "object" || !data) return false;
   if (!data.answers || !Array.isArray(data.answers)) return false;
 
@@ -37,8 +37,11 @@ export const useResult = () => {
       });
       const answerIds: string[] = await answerIdsRes.json();
 
+      console.log("ok");
+
       const rawAnswersList = await Promise.all(
         answerIds.map(async (answerId) => {
+          console.log("answerId", answerId);
           const str = await litCeramicIntegration.readAndDecrypt(answerId);
           try {
             const data = JSON.parse(str);
@@ -49,7 +52,7 @@ export const useResult = () => {
         })
       );
 
-      const validAnswersList = rawAnswersList.filter((a) => isAnswers(a));
+      const validAnswersList = rawAnswersList.filter((a) => areAnswersValid(a));
 
       setAnswersList(validAnswersList);
     } catch (error: any) {
@@ -66,5 +69,6 @@ export const useResult = () => {
   return {
     isLoadingAnswersList: isLoading,
     answersList,
+    fetchResults,
   };
 };
