@@ -12,7 +12,7 @@ import Layout from '../layouts/default'
 const Root = (page: ReactElement) => {
 
   const buildAgeChart = () => {
-    Highcharts.chart('ageChartContainer', {
+    Highcharts.chart('ageChartContainer' as any, {
       chart: {
         style: {
           color: "#ffffff"
@@ -83,7 +83,7 @@ const Root = (page: ReactElement) => {
           ["Prefer not to respond", 10],
         ]
       }]
-    });
+    } as any);
   }
 
   const buildCountryChart = () => {
@@ -151,7 +151,7 @@ const Root = (page: ReactElement) => {
     <Layout>
       <Box w={'full'} mb={32}>
         <Center>
-          <Heading as='h2' color='white' size='lg' fontWeight='bold'>Answer Summary For "Form Title"</Heading>
+          <Heading as='h2' color='white' size='lg' fontWeight='bold'>Answer Summary For Form Title</Heading>
         </Center>
         <Container maxWidth={"2xl"} mt={32}>
           <Box boxShadow={'lg'} rounded={'lg'}>
