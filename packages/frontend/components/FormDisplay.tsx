@@ -2,7 +2,7 @@ import { VStack } from "@chakra-ui/react";
 // @ts-expect-error
 import { Integration } from "lit-ceramic-sdk";
 import { useEffect, useState } from "react";
-import { LitCeramicIntegrationParams } from "../constants";
+import { LIT_CERAMIC_INTEGRATION_PARAMS } from "../constants/constants";
 
 const FormDisplay = () => {
   const [formHtmlStr, setFormHtmlStr] = useState("");
@@ -10,7 +10,7 @@ const FormDisplay = () => {
 
   useEffect(() => {
     const litCeramicIntegration = new Integration(
-      ...LitCeramicIntegrationParams
+      ...LIT_CERAMIC_INTEGRATION_PARAMS
     );
     litCeramicIntegration.startLitClient(window);
     litCeramicIntegration
