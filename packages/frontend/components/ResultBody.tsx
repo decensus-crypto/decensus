@@ -1,6 +1,6 @@
-import { Box, Container, Flex, Spinner, Text } from "@chakra-ui/react";
+import { Box, Container, Flex, Spinner, Text, Heading, Divider, Spacer, Center, Image, Badge, StatGroup, Stat, StatLabel, StatNumber } from "@chakra-ui/react";
 import { useEffect, useMemo } from "react";
-
+import { ZDK, ZDKNetwork, ZDKChain } from "@zoralabs/zdk";
 import Highcharts from "highcharts";
 import Highcharts3d from "highcharts/highcharts-3d";
 import HighchartsExporting from "highcharts/modules/exporting";
@@ -13,6 +13,61 @@ import {
 } from "../constants/constants";
 import { useLitCeramic } from "../hooks/useLitCeramic";
 import { useResult } from "../hooks/useResult";
+
+
+const NftSummary = (props: {}) => {
+
+  useEffect(() => {
+    const networkInfo = {
+      network: ZDKNetwork.Ethereum,
+      chain: ZDKChain.Goerli,
+    }
+    const args = {
+      endPoint: "https://api.zora.co/graphql",
+      networks:[networkInfo]
+    } 
+    const zdk = new ZDK(args)
+    zdk.collection({address: '0xc729Ce9bF1030fbb639849a96fA8BBD013680B64'}).then(resp => {
+      console.log(resp)
+    }).catch(err => {
+      console.error(err)
+    })
+  })
+
+  return (    
+    <Box p={4} boxShadow={'lg'} rounded={'lg'} background={'gray.800'}>
+      <Flex>
+        <Box w={32} h={32}>
+          <Image rounded={80} src='https://bit.ly/dan-abramov' alt='Dan Abramov' />
+        </Box>
+        <Spacer />
+        <Box>
+          <Badge top={3} right={3} colorScheme='green'>{'0xaaaaaaaaaaaAAAAA'.substring(0, 12) + '...'}</Badge>
+        </Box>
+      </Flex>
+      <Box px={4} py={4}>
+        <Heading as='h3' size='md' fontWeight='bold' color='white'>NFT NAME</Heading>
+      </Box>
+      <Divider />
+      <Box px={4} py={4}>
+      <StatGroup>
+        <Stat>
+          <StatLabel color='white'>Items</StatLabel>
+          <StatNumber color='white'>345,670</StatNumber>
+        </Stat>
+        <Stat>
+          <StatLabel color='white'>Owners</StatLabel>
+          <StatNumber color='white'>345,670</StatNumber>
+        </Stat>
+        <Stat>
+          <StatLabel color='white'>Sent</StatLabel>
+          <StatNumber color='white'>345,670</StatNumber>
+        </Stat>
+      </StatGroup>
+      </Box>
+    </Box>
+  )
+}
 
 const buildAgeChart = (data: [string, number][]) => {
   Highcharts.chart(
@@ -214,7 +269,10 @@ const ResultBody = () => {
 
   return (
     <Box w={"full"} mb={32}>
-      <Container maxWidth={"2xl"} mt={32}>
+      <Container maxWidth={"2xl"} mt={8}>
+        <NftSummary />
+      </Container>
+      <Container maxWidth={"2xl"} mt={8}>
         <Box boxShadow={"lg"} rounded={"lg"}>
           <figure className="highcharts-figure">
             <div id="ageChartContainer"></div>
