@@ -1,4 +1,4 @@
-import { Button, Td, Text, Tr } from "@chakra-ui/react";
+import { Button, Spinner, Td, Text, Tr } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { Form, useFormList } from "../hooks/useFormList";
 import { useLitCeramic } from "../hooks/useLitCeramic";
@@ -23,7 +23,7 @@ const FormRow = (props: Form) => {
 };
 
 const FormList = () => {
-  const { formList, fetchFormList } = useFormList();
+  const { formList, isLoadingFormList, fetchFormList } = useFormList();
   const { initLitCeramic } = useLitCeramic();
 
   useEffect(() => {
@@ -36,9 +36,17 @@ const FormList = () => {
 
   return (
     <>
-      {formList.map((form, index) => (
-        <FormRow key={`form_row_${index}`} title={form.title} url={form.url} />
-      ))}
+      {isLoadingFormList ? (
+        <Spinner />
+      ) : (
+        formList.map((form, index) => (
+          <FormRow
+            key={`form_row_${index}`}
+            title={form.title}
+            url={form.url}
+          />
+        ))
+      )}
     </>
   );
 };

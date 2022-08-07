@@ -11,11 +11,13 @@ export type Form = {
 };
 
 const formListAtom = atom<Form[]>([]);
+const isLoadingAtom = atom<boolean>(false);
 
 export const useFormList = () => {
   const { litCeramicIntegration } = useLitCeramic();
   const { account } = useAccount();
   const [formList, setFormList] = useAtom(formListAtom);
+  const [isLoading, setIsLoading] = useAtom(isLoadingAtom);
 
   const fetchFormList = useCallback(async () => {
     try {
@@ -23,6 +25,7 @@ export const useFormList = () => {
 
       if (!account || !litCeramicIntegration || !submissionMarkContract) return;
 
+      setIsLoading(true);
       const surveyIds: string[] = await submissionMarkContract.mySurveys();
 
       const formList = await Promise.all(
@@ -42,10 +45,13 @@ export const useFormList = () => {
         title: "Failed to fetch forms",
         status: "error",
       });
+    } finally {
+      setIsLoading(false);
     }
-  }, [account, litCeramicIntegration, setFormList]);
+  }, [account, litCeramicIntegration, setFormList, setIsLoading]);
 
   return {
+    isLoadingFormList: isLoading,
     fetchFormList,
     formList,
   };
