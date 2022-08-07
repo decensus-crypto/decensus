@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { prisma } from "../../../../lib/prisma";
+import { prisma } from "../../../../utils/prisma";
 
 // backend API to store stream IDs of survey answers in Ceramic
 
