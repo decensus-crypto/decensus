@@ -1,6 +1,6 @@
 import { atom, useAtom } from "jotai";
 import { useCallback } from "react";
-import { Answer, ANSWER_TEMPLATE } from "../constants/constants";
+import { Answer } from "../constants/constants";
 import { createToast } from "../utils/createToast";
 import { useLitCeramic } from "./useLitCeramic";
 
@@ -13,9 +13,10 @@ const areAnswersValid = (data: any) => {
 
   const answers = data.answers;
   for (const a of answers) {
-    if (!a.question_id || typeof !a.question_id !== "string") return false;
-    if (!a.question_type || typeof !a.question_type !== "string") return false;
-    if (!a.answer || typeof !a.answer !== "string") return false;
+    if (!a.question_id || typeof a.question_id !== "string") return false;
+    if (!a.question_type || typeof a.question_type !== "string") return false;
+    if (!a.answer) return false;
+    if (!Array.isArray(a.answer) && typeof a.answer !== "string") return false;
   }
 
   return true;
@@ -51,15 +52,7 @@ export const useResult = () => {
 
       const validAnswersList = rawAnswersList.filter((a) => areAnswersValid(a));
 
-      // dummy data for demo!!!!
-      const dummyAnswersList = [
-        ANSWER_TEMPLATE(true),
-        ANSWER_TEMPLATE(true),
-        ANSWER_TEMPLATE(true),
-        ...[...Array(9)].map(ANSWER_TEMPLATE),
-      ];
-      setAnswersList(dummyAnswersList);
-      //   setAnswersList(validAnswersList);
+      setAnswersList(validAnswersList);
     } catch (error: any) {
       console.error(error);
       createToast({
