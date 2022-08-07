@@ -29,9 +29,9 @@ export const useResult = () => {
   const surveyId = new URLSearchParams(location.search).get("id") || null;
 
   const fetchResults = useCallback(async () => {
-    try {
-      if (!litCeramicIntegration) return;
+    if (!litCeramicIntegration) return;
 
+    try {
       setIsLoading(true);
       const answerIdsRes = await fetch(`/api/survey/${surveyId}/answerIds`, {
         method: "GET",

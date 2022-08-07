@@ -12,13 +12,12 @@ import {
   StatLabel,
   StatNumber,
   Text,
-  useControllableState,
 } from "@chakra-ui/react";
 import { ZDK, ZDKChain, ZDKNetwork } from "@zoralabs/zdk";
 import Highcharts from "highcharts";
 import Highcharts3d from "highcharts/highcharts-3d";
 import HighchartsExporting from "highcharts/modules/exporting";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import {
   AGE_QUESTION_ID,
@@ -30,13 +29,11 @@ import { useLitCeramic } from "../hooks/useLitCeramic";
 import { useResult } from "../hooks/useResult";
 
 const NftSummary = () => {
-  const [nftAddress, setNftAddress] = useControllableState({
-    defaultValue: "",
-  });
-  const [nftName, setNftName] = useControllableState({ defaultValue: "" });
-  const [totalSupply, setTotalSupply] = useControllableState({
-    defaultValue: 0,
-  });
+  const [nftData, setNftData] = useState<{
+    name: string;
+    address: string;
+    totalSupply: number;
+  } | null>(null);
 
   const getNft = useCallback(async () => {
     const networkInfo = {
@@ -51,21 +48,24 @@ const NftSummary = () => {
     const resp = await zdk.collection({
       address: "0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d",
     });
-    console.log(resp);
-    setNftAddress(resp.address as string);
-    setNftName(resp.name as string);
-    setTotalSupply(resp.totalSupply as number);
-  }, [setNftAddress, setNftName, setTotalSupply]);
+
+    setNftData({
+      address: resp.address || "",
+      name: resp.name || "",
+      totalSupply: resp.totalSupply || 0,
+    });
+  }, []);
 
   useEffect(() => {
+    if (nftData) return;
     getNft();
-  }, [getNft]);
+  }, [nftData, getNft]);
 
   return (
     <Box p={4} boxShadow={"lg"} rounded={"lg"} background={"gray.800"}>
       <Flex px={4} py={4}>
         <Heading as="h3" size="md" fontWeight="bold" color="white">
-          {nftName}
+          {nftData?.name}
         </Heading>
         <Spacer />
         <Badge
@@ -75,7 +75,7 @@ const NftSummary = () => {
           justifyContent="center"
           colorScheme="green"
         >
-          {nftAddress.substring(0, 12) + "..."}
+          {nftData?.address.substring(0, 12) + "..."}
         </Badge>
       </Flex>
       <Divider />
@@ -83,15 +83,15 @@ const NftSummary = () => {
         <StatGroup>
           <Stat>
             <StatLabel color="white">Items</StatLabel>
-            <StatNumber color="white">{totalSupply}</StatNumber>
+            <StatNumber color="white">{nftData?.totalSupply}</StatNumber>
           </Stat>
           <Stat>
             <StatLabel color="white">Owners</StatLabel>
-            <StatNumber color="white">{totalSupply}</StatNumber>
+            <StatNumber color="white">{nftData?.totalSupply}</StatNumber>
           </Stat>
           <Stat>
             <StatLabel color="white">Sent</StatLabel>
-            <StatNumber color="white">{totalSupply}</StatNumber>
+            <StatNumber color="white">{nftData?.totalSupply}</StatNumber>
           </Stat>
         </StatGroup>
       </Box>

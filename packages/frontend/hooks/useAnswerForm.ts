@@ -64,11 +64,11 @@ export const useAnswerForm = () => {
   const [isSubmitting, setIsSubmitting] = useAtom(isSubmittingAtom);
 
   const fetchFormData = useCallback(async () => {
-    try {
-      if (!surveyId || !litCeramicIntegration) return;
-      const submissionMarkContract = getSubmissionMarkContract();
-      if (!submissionMarkContract) return;
+    if (!surveyId || !litCeramicIntegration) return;
+    const submissionMarkContract = getSubmissionMarkContract();
+    if (!submissionMarkContract) return;
 
+    try {
       setIsLoading(true);
 
       const [formDataStr, nftAddress]: [string, string] = await Promise.all([

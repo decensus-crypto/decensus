@@ -21,11 +21,11 @@ export const useFormList = () => {
   const [isLoading, setIsLoading] = useAtom(isLoadingAtom);
 
   const fetchFormList = useCallback(async () => {
+    const submissionMarkContract = getSubmissionMarkContract();
+
+    if (!account || !litCeramicIntegration || !submissionMarkContract) return;
+
     try {
-      const submissionMarkContract = getSubmissionMarkContract();
-
-      if (!account || !litCeramicIntegration || !submissionMarkContract) return;
-
       setIsLoading(true);
       const surveyIds: string[] = await submissionMarkContract.mySurveys();
 
