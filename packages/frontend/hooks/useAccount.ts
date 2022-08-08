@@ -1,6 +1,5 @@
 import { atom, useAtom } from "jotai";
 import { createToast } from "../utils/createToast";
-import { getSigner } from "../utils/getSigner";
 
 const accountAtom = atom<string | null>(null);
 const isLoadingAtom = atom<boolean>(true);
@@ -56,10 +55,7 @@ export const useAccount = () => {
         return;
       }
 
-      const address = await getSigner()?.getAddress();
-      if (!address) throw new Error();
-
-      setAccount(address);
+      setAccount(accounts[0]);
     } catch (error) {
       createToast({
         title: "Failed to connect wallet",
