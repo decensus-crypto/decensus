@@ -1,4 +1,5 @@
 import { atom, useAtom } from "jotai";
+import { useRouter } from "next/router";
 import { useCallback } from "react";
 import {
   CHAIN_NAME,
@@ -54,9 +55,10 @@ const isLoadingAtom = atom<boolean>(true);
 const isSubmittingAtom = atom<boolean>(false);
 
 export const useAnswerForm = () => {
+  const router = useRouter();
   const { litCeramicIntegration } = useLitCeramic();
   const { account } = useAccount();
-  const surveyId = new URLSearchParams(location.search).get("id") || null;
+  const surveyId = router.query?.id?.toString() || null;
 
   const [formData, setFormData] = useAtom(formDataAtom);
   const [nftAddress, setNftAddress] = useAtom(nftAddressAtom);

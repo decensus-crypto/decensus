@@ -1,6 +1,4 @@
 import { atom, useAtom } from "jotai";
-// @ts-expect-error
-import { Integration } from "lit-ceramic-sdk";
 import { useCallback } from "react";
 import { LIT_CERAMIC_INTEGRATION_PARAMS } from "../constants/constants";
 import { useAccount } from "./useAccount";
@@ -14,10 +12,16 @@ export const useLitCeramic = () => {
     litCeramicIntegrationAtom
   );
 
-  const initLitCeramic = useCallback(() => {
-    if (litCeramicIntegration || !account) return;
+  const initLitCeramic = useCallback(async () => {
+    const LitCeramic =
+      // @ts-expect-error
+      typeof window !== "undefined" ? await import("lit-ceramic-sdk") : null;
 
-    const integration = new Integration(...LIT_CERAMIC_INTEGRATION_PARAMS);
+    if (!LitCeramic || litCeramicIntegration || !account) return;
+
+    const integration = new LitCeramic.Integration(
+      ...LIT_CERAMIC_INTEGRATION_PARAMS
+    );
     integration.startLitClient(window);
     setLitCeramicIntegration(integration);
   }, [account, litCeramicIntegration, setLitCeramicIntegration]);

@@ -15,6 +15,7 @@ import {
   Stack,
   useControllableState,
 } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Answer, FormTemplate } from "../constants/constants";
 import { useAnswerForm } from "../hooks/useAnswerForm";
@@ -110,6 +111,7 @@ const AnswerForm = () => {
     submitAnswer,
   } = useAnswerForm();
   const { initLitCeramic } = useLitCeramic();
+  const router = useRouter();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useControllableState({
     defaultValue: 0,
   });
@@ -144,14 +146,13 @@ const AnswerForm = () => {
       submissionStrToEncrypt: JSON.stringify({ answers: answerArr }),
     });
 
-    if (success)
-      window.location.href = `${location.origin}/result?id=${surveyId}`;
+    if (success) router.push(`/result?id=${surveyId}`);
   };
 
   if (!formData || !question || isLoading) {
     return (
       <Flex w="100%" h="500px" align="center" justify="center">
-        <Spinner size="lg" color='white' />
+        <Spinner size="lg" color="white" />
       </Flex>
     );
   }

@@ -1,14 +1,5 @@
-// FormDeployButton component is dynamically imported because "lit-ceramic-sdk" used in it emits error when loaded in server-side.
-import dynamic from "next/dynamic";
-const FormDeployButoton = dynamic(
-  () => import("../../components/FormDeployButton"),
-  {
-    ssr: false,
-  }
-);
-const FormList = dynamic(() => import("../../components/FormList"), {
-  ssr: false,
-});
+import FormDeployButoton from "../../components/FormDeployButton";
+import FormList from "../../components/FormList";
 
 import {
   Box,
