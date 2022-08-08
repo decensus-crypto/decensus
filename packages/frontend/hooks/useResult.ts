@@ -1,4 +1,5 @@
 import { atom, useAtom } from "jotai";
+import { useRouter } from "next/router";
 import { useCallback } from "react";
 import { Answer } from "../constants/constants";
 import { createToast } from "../utils/createToast";
@@ -23,10 +24,11 @@ const areAnswersValid = (data: any) => {
 };
 
 export const useResult = () => {
+  const router = useRouter();
   const { litCeramicIntegration } = useLitCeramic();
   const [answersList, setAnswersList] = useAtom(answersListAtom);
   const [isLoading, setIsLoading] = useAtom(isLoadingAtom);
-  const surveyId = new URLSearchParams(location.search).get("id") || null;
+  const surveyId = router.query?.id?.toString() || null;
 
   const fetchResults = useCallback(async () => {
     if (!litCeramicIntegration) return;
