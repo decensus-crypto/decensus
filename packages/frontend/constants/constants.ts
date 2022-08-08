@@ -329,3 +329,6 @@ export type Answer = {
   question_type: string;
   answer: string | string[];
 };
+
+export const ZORA_DEMO_NFT_ADDRESS =
+  "0x8d04a8c79cEB0889Bdd12acdF3Fa9D207eD3Ff63";

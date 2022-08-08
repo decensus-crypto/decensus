@@ -24,6 +24,7 @@ import {
   AGE_QUESTION_OPTIONS,
   COUNTRY_QUESTION_ID,
   COUNTRY_QUESTION_OPTIONS,
+  ZORA_DEMO_NFT_ADDRESS,
 } from "../constants/constants";
 import { useLitCeramic } from "../hooks/useLitCeramic";
 import { useResult } from "../hooks/useResult";
@@ -33,39 +34,56 @@ const NftSummary = () => {
     name: string;
     address: string;
     totalSupply: number;
+    ownerCount: number;
+    floorPrice: number | null;
   } | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const getNft = useCallback(async () => {
-    const networkInfo = {
-      network: ZDKNetwork.Ethereum,
-      chain: ZDKChain.Mainnet,
-    };
-    const args = {
-      endPoint: "https://api.zora.co/graphql",
-      networks: [networkInfo],
-    };
-    const zdk = new ZDK(args);
-    const resp = await zdk.collection({
-      address: "0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d",
-    });
+    try {
+      setIsLoading(true);
+      const networkInfo = {
+        network: ZDKNetwork.Ethereum,
+        chain: ZDKChain.Mainnet,
+      };
+      const args = {
+        endPoint: "https://api.zora.co/graphql",
+        networks: [networkInfo],
+        includeFullDetails: true,
+      };
+      const zdk = new ZDK(args);
+      const [stats, baseInfo] = await Promise.all([
+        zdk.collectionStatsAggregate({
+          collectionAddress: ZORA_DEMO_NFT_ADDRESS,
+          network: networkInfo,
+        }),
+        zdk.collection({
+          address: ZORA_DEMO_NFT_ADDRESS,
+        }),
+      ]);
 
-    setNftData({
-      address: resp.address || "",
-      name: resp.name || "",
-      totalSupply: resp.totalSupply || 0,
-    });
+      setNftData({
+        address: baseInfo.address || "",
+        name: baseInfo.name || "",
+        totalSupply: baseInfo.totalSupply || 0,
+        ownerCount: stats.aggregateStat.ownerCount || 0,
+        floorPrice: stats.aggregateStat.floorPrice || null,
+      });
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
   useEffect(() => {
-    if (nftData) return;
+    if (nftData || isLoading) return;
     getNft();
-  }, [nftData, getNft]);
+  }, [nftData, isLoading, getNft]);
 
   return (
     <Box p={4} boxShadow={"lg"} rounded={"lg"} background={"gray.800"}>
       <Flex px={4} py={4}>
         <Heading as="h3" size="md" fontWeight="bold" color="white">
-          {nftData?.name}
+          {isLoading ? <Spinner /> : nftData?.name}
         </Heading>
         <Spacer />
         <Badge
@@ -83,15 +101,27 @@ const NftSummary = () => {
         <StatGroup>
           <Stat>
             <StatLabel color="white">Items</StatLabel>
-            <StatNumber color="white">{nftData?.totalSupply}</StatNumber>
+            <StatNumber color="white">
+              {isLoading ? <Spinner /> : nftData?.totalSupply}
+            </StatNumber>
           </Stat>
           <Stat>
             <StatLabel color="white">Owners</StatLabel>
-            <StatNumber color="white">{nftData?.totalSupply}</StatNumber>
+            <StatNumber color="white">
+              {isLoading ? <Spinner /> : nftData?.ownerCount}
+            </StatNumber>
           </Stat>
           <Stat>
-            <StatLabel color="white">Sent</StatLabel>
-            <StatNumber color="white">{nftData?.totalSupply}</StatNumber>
+            <StatLabel color="white">Floor Price</StatLabel>
+            <StatNumber color="white">
+              {isLoading ? (
+                <Spinner />
+              ) : nftData?.floorPrice == null ? (
+                "-"
+              ) : (
+                nftData?.floorPrice
+              )}
+            </StatNumber>
           </Stat>
         </StatGroup>
       </Box>
@@ -285,7 +315,7 @@ const ResultBody = () => {
   if (isLoadingAnswersList)
     return (
       <Flex w="100%" h="500px" align="center" justify="center">
-        <Spinner size="lg" color='white' />
+        <Spinner size="lg" color="white" />
       </Flex>
     );
 
