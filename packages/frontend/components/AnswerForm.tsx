@@ -151,7 +151,7 @@ const AnswerForm = () => {
   if (!formData || !question || isLoading) {
     return (
       <Flex w="100%" h="500px" align="center" justify="center">
-        <Spinner size="lg" />
+        <Spinner size="lg" color='white' />
       </Flex>
     );
   }
