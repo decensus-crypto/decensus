@@ -15,6 +15,7 @@ const args = {
 };
 const zdk = new ZDK(args);
 
+// because Zora API cannot be used in Goerli, we use Blitzmap for our demo.
 const nftAddressForDemo = (nftAddress: string) =>
   nftAddress === TEST_NFT_CONTRACT_ADDRESS ? ZORA_DEMO_NFT_ADDRESS : nftAddress;
 

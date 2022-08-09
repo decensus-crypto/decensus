@@ -3,10 +3,13 @@ import { useRouter } from "next/router";
 import { useCallback } from "react";
 import { Answer } from "../constants/constants";
 import { createToast } from "../utils/createToast";
+import { getSubmissionMarkContract } from "../utils/getSubmissionMarkContract";
 import { useLitCeramic } from "./useLitCeramic";
 
 const answersListAtom = atom<{ answers: Answer[] }[] | null>(null);
-const isLoadingAtom = atom<boolean>(true);
+const isLoadingAnswersListAtom = atom<boolean>(true);
+const nftAddressAtom = atom<string | null>(null);
+const isLoadingNftAddressAtom = atom<boolean>(true);
 
 const areAnswersValid = (data: any) => {
   if (typeof data !== "object" || !data) return false;
@@ -27,14 +30,21 @@ export const useResult = () => {
   const router = useRouter();
   const { litCeramicIntegration } = useLitCeramic();
   const [answersList, setAnswersList] = useAtom(answersListAtom);
-  const [isLoading, setIsLoading] = useAtom(isLoadingAtom);
+  const [isLoadingAnswersList, setIsLoadingAnswersList] = useAtom(
+    isLoadingAnswersListAtom
+  );
+  const [nftAddress, setNftAddress] = useAtom(nftAddressAtom);
+  const [isLoadingNftAddress, setIsLoadingNftAddress] = useAtom(
+    isLoadingNftAddressAtom
+  );
+
   const surveyId = router.query?.id?.toString() || null;
 
   const fetchResults = useCallback(async () => {
     if (!litCeramicIntegration) return;
 
     try {
-      setIsLoading(true);
+      setIsLoadingAnswersList(true);
       const answerIdsRes = await fetch(`/api/survey/${surveyId}/answerIds`, {
         method: "GET",
       });
@@ -62,13 +72,41 @@ export const useResult = () => {
         status: "error",
       });
     } finally {
-      setIsLoading(false);
+      setIsLoadingAnswersList(false);
     }
-  }, [litCeramicIntegration, setIsLoading, surveyId, setAnswersList]);
+  }, [
+    litCeramicIntegration,
+    setIsLoadingAnswersList,
+    surveyId,
+    setAnswersList,
+  ]);
+
+  const fetchNftAddress = useCallback(async () => {
+    const submissionMarkContract = getSubmissionMarkContract();
+
+    if (!submissionMarkContract || !surveyId) return;
+
+    try {
+      setIsLoadingNftAddress(true);
+      const nftAddress: string = await submissionMarkContract.surveys(surveyId);
+      setNftAddress(nftAddress);
+    } catch (error: any) {
+      console.error(error);
+      createToast({
+        title: "Failed to fetch NFT contract address",
+        status: "error",
+      });
+    } finally {
+      setIsLoadingNftAddress(false);
+    }
+  }, [setIsLoadingNftAddress, setNftAddress, surveyId]);
 
   return {
-    isLoadingAnswersList: isLoading,
     answersList,
+    nftAddress,
+    isLoadingAnswersList,
+    isLoadingNftAddress,
     fetchResults,
+    fetchNftAddress,
   };
 };

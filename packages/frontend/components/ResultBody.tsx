@@ -14,7 +14,6 @@ import {
   StatNumber,
   Text,
 } from "@chakra-ui/react";
-import { ZDK, ZDKChain, ZDKNetwork } from "@zoralabs/zdk";
 import Highcharts from "highcharts";
 import Highcharts3d from "highcharts/highcharts-3d";
 import HighchartsExporting from "highcharts/modules/exporting";
@@ -27,10 +26,14 @@ import {
   COUNTRY_QUESTION_OPTIONS,
   GENDER_QUESTION_ID,
   GENDER_QUESTION_OPTIONS,
-  ZORA_DEMO_NFT_ADDRESS,
 } from "../constants/constants";
 import { useLitCeramic } from "../hooks/useLitCeramic";
 import { useResult } from "../hooks/useResult";
+import {
+  fetchNftAggregationStats,
+  fetchNftBaseInfo,
+  fetchSampleToken,
+} from "../utils/zdk";
 
 const NftSummary = () => {
   const [nftData, setNftData] = useState<{
@@ -42,39 +45,19 @@ const NftSummary = () => {
     floorPrice: number | null;
   } | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const { nftAddress } = useResult();
 
   const getNft = useCallback(async () => {
+    if (!nftAddress) return;
+
     try {
       setIsLoading(true);
-      const networkInfo = {
-        network: ZDKNetwork.Ethereum,
-        chain: ZDKChain.Mainnet,
-      };
-      const args = {
-        endPoint: "https://api.zora.co/graphql",
-        networks: [networkInfo],
-        includeFullDetails: true,
-      };
-      const zdk = new ZDK(args);
+
       const [stats, baseInfo, tokens] = await Promise.all([
-        zdk.collectionStatsAggregate({
-          collectionAddress: ZORA_DEMO_NFT_ADDRESS,
-          network: networkInfo,
-        }),
-        zdk.collection({
-          address: ZORA_DEMO_NFT_ADDRESS,
-          includeFullDetails: true,
-        }),
-        zdk.tokens({
-          where: {
-            collectionAddresses: [ZORA_DEMO_NFT_ADDRESS],
-          },
-          pagination: { limit: 1 },
-          includeFullDetails: false,
-          includeSalesHistory: false,
-        }),
+        fetchNftAggregationStats(nftAddress),
+        fetchNftBaseInfo(nftAddress),
+        fetchSampleToken(nftAddress),
       ]);
-      console.log(stats, baseInfo, tokens);
 
       setNftData({
         address: baseInfo.address || "",
@@ -87,7 +70,7 @@ const NftSummary = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [nftAddress]);
 
   useEffect(() => {
     if (nftData || isLoading) return;
@@ -342,7 +325,8 @@ const buildCountryChart = (data: [string, number][]) => {
 
 const ResultBody = () => {
   const { initLitCeramic } = useLitCeramic();
-  const { isLoadingAnswersList, answersList, fetchResults } = useResult();
+  const { isLoadingAnswersList, answersList, fetchResults, fetchNftAddress } =
+    useResult();
 
   useEffect(() => {
     initLitCeramic();
@@ -351,6 +335,10 @@ const ResultBody = () => {
   useEffect(() => {
     fetchResults();
   }, [fetchResults]);
+
+  useEffect(() => {
+    fetchNftAddress();
+  }, [fetchNftAddress]);
 
   const aggAges = useMemo(() => {
     if (!answersList) return [];
@@ -427,8 +415,6 @@ const ResultBody = () => {
     Highcharts3d(Highcharts);
     HighchartsExporting(Highcharts);
   }, []);
-
-  console.log(answersList);
 
   useEffect(() => {
     if (aggAges.length === 0 || aggAges.every((r) => r[1] === 0)) return;
