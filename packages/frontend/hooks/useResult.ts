@@ -4,6 +4,7 @@ import { useCallback } from "react";
 import { Answer } from "../constants/constants";
 import { createToast } from "../utils/createToast";
 import { getSubmissionMarkContract } from "../utils/getSubmissionMarkContract";
+import { useAccount } from "./useAccount";
 import { useLitCeramic } from "./useLitCeramic";
 
 const answersListAtom = atom<{ answers: Answer[] }[] | null>(null);
@@ -29,6 +30,7 @@ const areAnswersValid = (data: any) => {
 export const useResult = () => {
   const router = useRouter();
   const { litCeramicIntegration } = useLitCeramic();
+  const { account } = useAccount();
   const [answersList, setAnswersList] = useAtom(answersListAtom);
   const [isLoadingAnswersList, setIsLoadingAnswersList] = useAtom(
     isLoadingAnswersListAtom
@@ -84,7 +86,7 @@ export const useResult = () => {
   const fetchNftAddress = useCallback(async () => {
     const submissionMarkContract = getSubmissionMarkContract();
 
-    if (!submissionMarkContract || !surveyId) return;
+    if (!submissionMarkContract || !surveyId || !account) return;
 
     try {
       setIsLoadingNftAddress(true);
@@ -99,7 +101,7 @@ export const useResult = () => {
     } finally {
       setIsLoadingNftAddress(false);
     }
-  }, [setIsLoadingNftAddress, setNftAddress, surveyId]);
+  }, [account, setIsLoadingNftAddress, setNftAddress, surveyId]);
 
   return {
     answersList,
