@@ -5,6 +5,7 @@ import {
   Divider,
   Flex,
   Heading,
+  Image,
   Spacer,
   Spinner,
   Stat,
@@ -35,6 +36,7 @@ const NftSummary = () => {
   const [nftData, setNftData] = useState<{
     name: string;
     address: string;
+    imageUrl: string;
     totalSupply: number;
     ownerCount: number;
     floorPrice: number | null;
@@ -54,19 +56,30 @@ const NftSummary = () => {
         includeFullDetails: true,
       };
       const zdk = new ZDK(args);
-      const [stats, baseInfo] = await Promise.all([
+      const [stats, baseInfo, tokens] = await Promise.all([
         zdk.collectionStatsAggregate({
           collectionAddress: ZORA_DEMO_NFT_ADDRESS,
           network: networkInfo,
         }),
         zdk.collection({
           address: ZORA_DEMO_NFT_ADDRESS,
+          includeFullDetails: true,
+        }),
+        zdk.tokens({
+          where: {
+            collectionAddresses: [ZORA_DEMO_NFT_ADDRESS],
+          },
+          pagination: { limit: 1 },
+          includeFullDetails: false,
+          includeSalesHistory: false,
         }),
       ]);
+      console.log(stats, baseInfo, tokens);
 
       setNftData({
         address: baseInfo.address || "",
         name: baseInfo.name || "",
+        imageUrl: tokens?.tokens?.nodes[0]?.token?.image?.url || "",
         totalSupply: baseInfo.totalSupply || 0,
         ownerCount: stats.aggregateStat.ownerCount || 0,
         floorPrice: stats.aggregateStat.floorPrice || null,
@@ -82,52 +95,65 @@ const NftSummary = () => {
   }, [nftData, isLoading, getNft]);
 
   return (
-    <Box p={4} boxShadow={"lg"} rounded={"lg"} background={"gray.800"}>
-      <Flex px={4} py={4}>
-        <Heading as="h3" size="md" fontWeight="bold" color="white">
-          {isLoading ? <Spinner /> : nftData?.name}
-        </Heading>
-        <Spacer />
-        <Badge
-          as="div"
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          colorScheme="green"
-        >
-          {nftData?.address.substring(0, 12) + "..."}
-        </Badge>
-      </Flex>
-      <Divider />
-      <Box px={4} py={4}>
-        <StatGroup>
-          <Stat>
-            <StatLabel color="white">Items</StatLabel>
-            <StatNumber color="white">
-              {isLoading ? <Spinner /> : nftData?.totalSupply}
-            </StatNumber>
-          </Stat>
-          <Stat>
-            <StatLabel color="white">Owners</StatLabel>
-            <StatNumber color="white">
-              {isLoading ? <Spinner /> : nftData?.ownerCount}
-            </StatNumber>
-          </Stat>
-          <Stat>
-            <StatLabel color="white">Floor Price</StatLabel>
-            <StatNumber color="white">
-              {isLoading ? (
-                <Spinner />
-              ) : nftData?.floorPrice == null ? (
-                "-"
-              ) : (
-                nftData?.floorPrice
-              )}
-            </StatNumber>
-          </Stat>
-        </StatGroup>
+    <Flex
+      p={4}
+      boxShadow={"lg"}
+      rounded={"lg"}
+      background={"gray.800"}
+      justify="stretch"
+    >
+      <Box w={16} h={16} mr={2} my={3}>
+        {nftData?.imageUrl && (
+          <Image rounded="50%" alt="nft icon" src={nftData?.imageUrl} />
+        )}
       </Box>
-    </Box>
+      <Box w="100%">
+        <Flex px={4} py={4} align="center">
+          <Heading as="h3" size="md" fontWeight="bold" color="white">
+            {isLoading ? <Spinner /> : nftData?.name}
+          </Heading>
+          <Spacer />
+          <Badge
+            as="div"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            colorScheme="green"
+          >
+            {nftData?.address.substring(0, 12) + "..."}
+          </Badge>
+        </Flex>
+        <Divider />
+        <Box px={4} py={4}>
+          <StatGroup>
+            <Stat>
+              <StatLabel color="white">Items</StatLabel>
+              <StatNumber color="white">
+                {isLoading ? <Spinner /> : nftData?.totalSupply}
+              </StatNumber>
+            </Stat>
+            <Stat>
+              <StatLabel color="white">Owners</StatLabel>
+              <StatNumber color="white">
+                {isLoading ? <Spinner /> : nftData?.ownerCount}
+              </StatNumber>
+            </Stat>
+            <Stat>
+              <StatLabel color="white">Floor Price</StatLabel>
+              <StatNumber color="white">
+                {isLoading ? (
+                  <Spinner />
+                ) : nftData?.floorPrice == null ? (
+                  "-"
+                ) : (
+                  nftData?.floorPrice
+                )}
+              </StatNumber>
+            </Stat>
+          </StatGroup>
+        </Box>
+      </Box>
+    </Flex>
   );
 };
 
