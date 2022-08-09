@@ -63,7 +63,7 @@ const AppRoot = (page: ReactElement) => {
             <Button
               size="sm"
               variant="outline"
-              color="white"
+              color="#FC8CC9"
               onClick={clickNew}
             >
               Create New Form
