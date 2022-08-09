@@ -10,12 +10,24 @@ import {
   Th,
   Thead,
   Tr,
+  useClipboard,
 } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { Form, useFormList } from "../hooks/useFormList";
 import { useLitCeramic } from "../hooks/useLitCeramic";
+import { createToast } from "../utils/createToast";
 
 const FormRow = (props: Form) => {
+  const { onCopy } = useClipboard(props.formUrl);
+
+  const onClickCopy = () => {
+    onCopy();
+    createToast({
+      title: "Form URL copied!",
+      status: "success",
+    });
+  };
+
   return (
     <Tr>
       <Td>
@@ -24,16 +36,21 @@ const FormRow = (props: Form) => {
         </Text>
       </Td>
       <Td w={16}>
+        <Button size="sm" variant="outline" color="white" onClick={onClickCopy}>
+          Copy form URL
+        </Button>
+      </Td>
+      <Td w={16}>
         <a href={props.formUrl} target="_blank" rel="noreferrer">
           <Button size="sm" variant="outline" color="white">
-            Form
+            Go to form
           </Button>
         </a>
       </Td>
       <Td w={16}>
         <a href={props.resultUrl} target="_blank" rel="noreferrer">
           <Button size="sm" variant="outline" color="white">
-            Result
+            See survey results
           </Button>
         </a>
       </Td>
@@ -57,13 +74,14 @@ const FormList = () => {
     <>
       {isLoadingFormList ? (
         <Flex w="100%" h="500px" align="center" justify="center">
-          <Spinner size="lg" color='white' />
+          <Spinner size="lg" color="white" />
         </Flex>
       ) : (
         <TableContainer>
           <Table size="lg">
             <Thead>
               <Tr>
+                <Th></Th>
                 <Th></Th>
                 <Th></Th>
                 <Th></Th>
