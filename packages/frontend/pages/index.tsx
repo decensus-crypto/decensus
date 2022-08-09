@@ -18,11 +18,11 @@ const Root = (page: ReactElement) => {
         <Grid templateColumns="repeat(12, 1fr)" gap={4}>
           <GridItem colSpan={{ base: 12, md: 6 }}>
             <Box mt={36}>
-              <Heading as="h2" color="white" size="lg" fontWeight="bold">
-                Metabolism Hackathon
+              <Heading as="h1" color="white" size="xl" fontWeight="bold">
+                decensus
               </Heading>
               <Heading as="h3" color="white" size="sm" fontWeight="light">
-                Metabolism Hackathon
+                Know your NFT community in a decentralized way
               </Heading>
             </Box>
             <Box mt={8}>
