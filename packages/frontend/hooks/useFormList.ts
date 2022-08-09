@@ -2,6 +2,7 @@ import { atom, useAtom } from "jotai";
 import { useCallback } from "react";
 import { createToast } from "../utils/createToast";
 import { getSubmissionMarkContract } from "../utils/getSubmissionMarkContract";
+import { getFormUrl, getResultUrl } from "../utils/urls";
 import { useAccount } from "./useAccount";
 import { useLitCeramic } from "./useLitCeramic";
 
@@ -19,8 +20,8 @@ const getFormData = async (params: {
     params.surveyId
   );
   const title = JSON.parse(formStr).title;
-  const formUrl = `${location.origin}/answer?id=${params.surveyId}`;
-  const resultUrl = `${location.origin}/result?id=${params.surveyId}`;
+  const formUrl = getFormUrl(location.origin, params.surveyId);
+  const resultUrl = getResultUrl(location.origin, params.surveyId);
 
   return { formUrl, resultUrl, title };
 };
@@ -57,8 +58,8 @@ export const useFormList = () => {
         surveyIds.slice(1).map(async (surveyId) => {
           const formStr = await litCeramicIntegration.readAndDecrypt(surveyId);
           const title = JSON.parse(formStr).title;
-          const formUrl = `${location.origin}/answer?id=${surveyId}`;
-          const resultUrl = `${location.origin}/result?id=${surveyId}`;
+          const formUrl = getFormUrl(location.origin, surveyId);
+          const resultUrl = getResultUrl(location.origin, surveyId);
 
           return { formUrl, resultUrl, title };
         })

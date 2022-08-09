@@ -8,7 +8,7 @@ import { useLitCeramic } from "../hooks/useLitCeramic";
 const FormDeployButton = (props: {
   nftAddress: string;
   title: string;
-  onDeployComplete: () => void;
+  onDeployComplete: (params: { formUrl: string } | null) => void;
 }) => {
   const { deploy, isDeploying } = useDeploy();
   const { initLitCeramic } = useLitCeramic();
@@ -19,13 +19,13 @@ const FormDeployButton = (props: {
   }, [initLitCeramic]);
 
   const onSubmit = async () => {
-    await deploy({
+    const res = await deploy({
       nftAddress: props.nftAddress,
       formParamsToEncrypt: JSON.stringify(
         FORM_TEMPLATE({ title: props.title })
       ),
     });
-    props.onDeployComplete();
+    props.onDeployComplete(res);
     await fetchFormList();
   };
 
@@ -40,7 +40,7 @@ const FormDeployButton = (props: {
         isLoading={isDeploying}
         disabled={isDeploying || !props.title || !props.nftAddress}
       >
-        Save
+        Create
       </Button>
     </>
   );

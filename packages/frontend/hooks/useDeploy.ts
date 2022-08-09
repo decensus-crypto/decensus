@@ -3,6 +3,7 @@ import { useCallback } from "react";
 import { CHAIN_NAME } from "../constants/constants";
 import { createToast } from "../utils/createToast";
 import { getSubmissionMarkContract } from "../utils/getSubmissionMarkContract";
+import { getFormUrl } from "../utils/urls";
 import { useAccount } from "./useAccount";
 import { useLitCeramic } from "./useLitCeramic";
 
@@ -35,7 +36,7 @@ export const useDeploy = () => {
     }: {
       nftAddress: string;
       formParamsToEncrypt: string;
-    }) => {
+    }): Promise<{ formUrl: string } | null> => {
       try {
         const submissionMarkContract = getSubmissionMarkContract();
 
@@ -85,12 +86,15 @@ export const useDeploy = () => {
           title: "Form successfully deployed!",
           status: "success",
         });
+
+        return { formUrl: getFormUrl(location.origin, surveyId) };
       } catch (error: any) {
         createToast({
           title: "Failed to deploy form",
           description: error.message,
           status: "error",
         });
+        return null;
       } finally {
         setIsDeploying(false);
       }
