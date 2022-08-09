@@ -181,20 +181,20 @@ const AnswerForm = () => {
                 setAnswer={(a) => setAnswers({ ...answers, [question.id]: a })}
               />
               <Center mt={8}>
-                {currentQuestionIndex < formData.questions.length - 1 && (
-                  <Flex>
-                    <Button
-                      size="lg"
-                      mr={8}
-                      variant="text"
-                      color="white"
-                      disabled={currentQuestionIndex === 0}
-                      onClick={() =>
-                        setCurrentQuestionIndex(currentQuestionIndex - 1)
-                      }
-                    >
-                      Back
-                    </Button>
+                <Flex>
+                  <Button
+                    size="lg"
+                    mr={8}
+                    variant="text"
+                    color="white"
+                    disabled={currentQuestionIndex === 0}
+                    onClick={() =>
+                      setCurrentQuestionIndex(currentQuestionIndex - 1)
+                    }
+                  >
+                    Back
+                  </Button>
+                  {currentQuestionIndex < formData.questions.length - 1 ? (
                     <Button
                       size="lg"
                       ml={8}
@@ -206,20 +206,19 @@ const AnswerForm = () => {
                     >
                       Next
                     </Button>
-                  </Flex>
-                )}
-                {currentQuestionIndex >= formData.questions.length - 1 && (
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    color="white"
-                    onClick={onSubmit}
-                    disabled={!canSubmit || isSubmitting}
-                    isLoading={isSubmitting}
-                  >
-                    Submit
-                  </Button>
-                )}
+                  ) : (
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      color="white"
+                      onClick={onSubmit}
+                      disabled={!canSubmit || isSubmitting}
+                      isLoading={isSubmitting}
+                    >
+                      Submit
+                    </Button>
+                  )}
+                </Flex>
               </Center>
             </Box>
           </Box>

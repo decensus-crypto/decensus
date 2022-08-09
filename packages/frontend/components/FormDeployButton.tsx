@@ -1,6 +1,6 @@
 import { Button } from "@chakra-ui/react";
 import { useEffect } from "react";
-import { FORM_TEMPLATE } from "../constants/constants";
+import { FORM_TEMPLATE, QuestionId } from "../constants/constants";
 import { useDeploy } from "../hooks/useDeploy";
 import { useFormList } from "../hooks/useFormList";
 import { useLitCeramic } from "../hooks/useLitCeramic";
@@ -9,6 +9,7 @@ const FormDeployButton = (props: {
   canDeploy: boolean;
   nftAddress: string;
   title: string;
+  questionIds: QuestionId[];
   onDeployComplete: (params: { formUrl: string } | null) => void;
 }) => {
   const { deploy, isDeploying } = useDeploy();
@@ -23,9 +24,15 @@ const FormDeployButton = (props: {
     const res = await deploy({
       nftAddress: props.nftAddress,
       formParamsToEncrypt: JSON.stringify(
-        FORM_TEMPLATE({ title: props.title })
+        FORM_TEMPLATE({ title: props.title, questionIds: props.questionIds })
       ),
     });
+
+    // null response means form creation failed
+    if (!res) {
+      return;
+    }
+
     props.onDeployComplete(res);
     await fetchFormList();
   };
