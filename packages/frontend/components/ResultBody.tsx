@@ -24,6 +24,8 @@ import {
   AGE_QUESTION_OPTIONS,
   COUNTRY_QUESTION_ID,
   COUNTRY_QUESTION_OPTIONS,
+  GENDER_QUESTION_ID,
+  GENDER_QUESTION_OPTIONS,
   ZORA_DEMO_NFT_ADDRESS,
 } from "../constants/constants";
 import { useLitCeramic } from "../hooks/useLitCeramic";
@@ -196,6 +198,73 @@ const buildAgeChart = (data: [string, number][]) => {
   );
 };
 
+const buildGenderChart = (data: [string, number][]) => {
+  Highcharts.chart(
+    "genderChartContainer" as any,
+    {
+      chart: {
+        style: {
+          color: "#ffffff",
+        },
+        type: "bar",
+        marginRight: 30,
+        backgroundColor: "#000000",
+      },
+      title: {
+        text: "Gender",
+        style: {
+          color: "#ffffff",
+        },
+      },
+      xAxis: {
+        type: "category",
+        title: {
+          text: null,
+          style: {
+            color: "#ffffff",
+          },
+        },
+        labels: {
+          style: {
+            color: "#ffffff",
+          },
+        },
+      },
+      yAxis: {
+        lineWidth: 1,
+        title: {
+          text: "Votes",
+          align: "high",
+          style: {
+            color: "#ffffff",
+          },
+        },
+        showLastLabel: false,
+        labels: {
+          style: {
+            color: "#ffffff",
+          },
+        },
+      },
+      plotOptions: {
+        bar: {
+          dataLabels: {
+            enabled: true,
+          },
+        },
+      },
+      legend: { enabled: false },
+      credits: { enabled: false },
+      series: [
+        {
+          name: "Votes",
+          data,
+        },
+      ],
+    } as any
+  );
+};
+
 const buildCountryChart = (data: [string, number][]) => {
   Highcharts.chart("countryChartContainer", {
     chart: {
@@ -281,6 +350,30 @@ const ResultBody = () => {
     ][];
   }, [answersList]);
 
+  const aggGenders = useMemo(() => {
+    if (!answersList) return [];
+    const genderAnswers = answersList
+      .flatMap((d) => d.answers)
+      .filter((a) => a.question_id === GENDER_QUESTION_ID);
+
+    const aggObj = GENDER_QUESTION_OPTIONS.reduce((p, c) => {
+      p[c.text] = 0;
+      return p;
+    }, {} as Record<string, number>);
+
+    for (const a of genderAnswers) {
+      const text = a.answer.toString();
+      if (aggObj[text] == null) continue;
+
+      aggObj[text] += 1;
+    }
+
+    return GENDER_QUESTION_OPTIONS.map((o) => [o.text, aggObj[o.text]]) as [
+      string,
+      number
+    ][];
+  }, [answersList]);
+
   const aggCountries = useMemo(() => {
     if (!answersList) return [];
     const countryAnswers = answersList
@@ -305,12 +398,24 @@ const ResultBody = () => {
   }, [answersList]);
 
   useEffect(() => {
-    if (aggAges.length === 0 || aggCountries.length === 0) return;
     Highcharts3d(Highcharts);
     HighchartsExporting(Highcharts);
+  }, []);
+
+  useEffect(() => {
+    if (aggAges.length === 0) return;
     buildAgeChart(aggAges);
+  }, [aggAges]);
+
+  useEffect(() => {
+    if (aggGenders.length === 0) return;
+    buildGenderChart(aggGenders);
+  }, [aggGenders]);
+
+  useEffect(() => {
+    if (aggCountries.length === 0) return;
     buildCountryChart(aggCountries);
-  }, [aggAges, aggCountries]);
+  }, [aggCountries]);
 
   if (isLoadingAnswersList)
     return (
@@ -336,6 +441,13 @@ const ResultBody = () => {
         <Box boxShadow={"lg"} rounded={"lg"}>
           <figure className="highcharts-figure">
             <div id="ageChartContainer"></div>
+          </figure>
+        </Box>
+      </Container>
+      <Container maxWidth={"2xl"} mt={8}>
+        <Box boxShadow={"lg"} rounded={"lg"}>
+          <figure className="highcharts-figure">
+            <div id="genderChartContainer"></div>
           </figure>
         </Box>
       </Container>

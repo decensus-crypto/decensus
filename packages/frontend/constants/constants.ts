@@ -11,44 +11,6 @@ export const LIT_CERAMIC_INTEGRATION_PARAMS = [
   CHAIN_NAME,
 ];
 
-export const ANSWER_TEMPLATE = (isDefault?: boolean) => ({
-  answers: [
-    {
-      question_id: AGE_QUESTION_ID,
-      question_type: "single_choice",
-      answer: isDefault
-        ? "Between 31 and 40"
-        : AGE_QUESTION_OPTIONS[
-            Math.floor(Math.random() * AGE_QUESTION_OPTIONS.length)
-          ].text,
-    },
-    {
-      question_id: "c31248e78aced0c36320b2f13a8a7891",
-      question_type: "single_choice",
-      answer: "Male",
-    },
-    {
-      question_id: "8e9c7a86c8295244c2f50e1049023b1b",
-      question_type: "single_choice",
-      answer: "Hispanic",
-    },
-    {
-      question_id: COUNTRY_QUESTION_ID,
-      question_type: "single_choice",
-      answer: isDefault
-        ? "United States"
-        : COUNTRY_QUESTION_OPTIONS[
-            Math.floor(Math.random() * COUNTRY_QUESTION_OPTIONS.length)
-          ].text,
-    },
-    {
-      question_id: "c570503c6bd0a44eb7ab38365ca83ced",
-      question_type: "multi_choice",
-      answer: ["Arts and entertainment", "Science and technology"],
-    },
-  ],
-});
-
 export const AGE_QUESTION_ID = "2f633cdd1181d42a9c7ae9a889362ff7";
 export const AGE_QUESTION_OPTIONS = [
   { text: "Under 21" },
@@ -57,6 +19,16 @@ export const AGE_QUESTION_OPTIONS = [
   { text: "Between 41 and 50" },
   { text: "Over 50" },
   { text: "Prefer not to respond" },
+];
+export const GENDER_QUESTION_ID = "c31248e78aced0c36320b2f13a8a7891";
+export const GENDER_QUESTION_OPTIONS = [
+  { text: "Male" },
+  { text: "Female" },
+  { text: "Transgender" },
+  { text: "Non-binary / non-conforming" },
+  { text: "Intersex" },
+  { text: "Other" },
+  { text: "Prefer not to say" },
 ];
 export const COUNTRY_QUESTION_ID = "5ca2aa845c8cd5ace6b016841f100d82";
 export const COUNTRY_QUESTION_OPTIONS = [
@@ -268,18 +240,10 @@ export const FORM_TEMPLATE = (params: { title: string }) => ({
       options: AGE_QUESTION_OPTIONS,
     },
     {
-      id: "c31248e78aced0c36320b2f13a8a7891",
+      id: GENDER_QUESTION_OPTIONS,
       question_body: "What's your gender?",
       question_type: "single_choice",
-      options: [
-        { text: "Male" },
-        { text: "Female" },
-        { text: "Transgender" },
-        { text: "Non-binary / non-conforming" },
-        { text: "Intersex" },
-        { text: "Other" },
-        { text: "Prefer not to say" },
-      ],
+      options: GENDER_QUESTION_OPTIONS,
     },
     {
       id: "8e9c7a86c8295244c2f50e1049023b1b",
@@ -322,7 +286,6 @@ export const FORM_TEMPLATE = (params: { title: string }) => ({
   ],
 });
 
-export type AnswerTemplate = ReturnType<typeof ANSWER_TEMPLATE>;
 export type FormTemplate = ReturnType<typeof FORM_TEMPLATE>;
 export type Answer = {
   question_id: string;
