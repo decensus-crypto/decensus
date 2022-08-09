@@ -240,7 +240,7 @@ export const FORM_TEMPLATE = (params: { title: string }) => ({
       options: AGE_QUESTION_OPTIONS,
     },
     {
-      id: GENDER_QUESTION_OPTIONS,
+      id: GENDER_QUESTION_ID,
       question_body: "What's your gender?",
       question_type: "single_choice",
       options: GENDER_QUESTION_OPTIONS,
