@@ -169,7 +169,7 @@ const AppRoot = (page: ReactElement) => {
                   Form &quot;{title}&quot; has been created! 🎉{" "}
                 </Heading>
                 <Text>
-                  Let&lsquo;s share your form to your community members
+                  Let&lsquo;s share the form to your community members
                 </Text>
 
                 <Button
@@ -238,6 +238,7 @@ const AppRoot = (page: ReactElement) => {
                     Cancel
                   </Button>
                   <FormDeployButoton
+                    canDeploy={title.length > 0 && !!nftName}
                     nftAddress={contractAddress}
                     title={title}
                     onDeployComplete={onDeployComplete}

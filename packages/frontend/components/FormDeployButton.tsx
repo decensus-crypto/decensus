@@ -6,6 +6,7 @@ import { useFormList } from "../hooks/useFormList";
 import { useLitCeramic } from "../hooks/useLitCeramic";
 
 const FormDeployButton = (props: {
+  canDeploy: boolean;
   nftAddress: string;
   title: string;
   onDeployComplete: (params: { formUrl: string } | null) => void;
@@ -38,7 +39,7 @@ const FormDeployButton = (props: {
         color="#FC8CC9"
         onClick={onSubmit}
         isLoading={isDeploying}
-        disabled={isDeploying || !props.title || !props.nftAddress}
+        disabled={isDeploying || !props.canDeploy}
       >
         Create
       </Button>
