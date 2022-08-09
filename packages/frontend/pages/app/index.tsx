@@ -77,6 +77,9 @@ const AppRoot = (page: ReactElement) => {
     onOpen();
   };
 
+  const isContractAddressFormatValid =
+    contractAddress.startsWith("0x") && contractAddress.length === 42;
+
   useEffect(() => {
     (async () => {
       if (contractAddress.length === 0) {
@@ -85,7 +88,7 @@ const AppRoot = (page: ReactElement) => {
         setLoadedNftName(false);
         return;
       }
-      if (!contractAddress.startsWith("0x") || contractAddress.length !== 42) {
+      if (!isContractAddressFormatValid) {
         setIsLoadingNftName(false);
         setNftName("");
         setLoadedNftName(false);
@@ -110,7 +113,13 @@ const AppRoot = (page: ReactElement) => {
         setLoadedNftName(true);
       }
     })();
-  }, [contractAddress, isLoadingNftName, loadedNftName, nftName]);
+  }, [
+    contractAddress,
+    isContractAddressFormatValid,
+    isLoadingNftName,
+    loadedNftName,
+    nftName,
+  ]);
 
   const onDeployComplete = (params: { formUrl: string } | null) => {
     setFormCreated(true);
@@ -166,7 +175,7 @@ const AppRoot = (page: ReactElement) => {
             <>
               <ModalBody pb={6}>
                 <Heading size="md" mt={6} mb={2}>
-                  Form &quot;{title}&quot; has been created! 🎉{" "}
+                  Form &quot;{title}&quot; has been created! 🎉
                 </Heading>
                 <Text>
                   Let&lsquo;s share the form to your community members
@@ -238,7 +247,7 @@ const AppRoot = (page: ReactElement) => {
                     Cancel
                   </Button>
                   <FormDeployButoton
-                    canDeploy={title.length > 0 && !!nftName}
+                    canDeploy={title.length > 0 && isContractAddressFormatValid}
                     nftAddress={contractAddress}
                     title={title}
                     onDeployComplete={onDeployComplete}
