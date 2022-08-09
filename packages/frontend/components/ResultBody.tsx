@@ -428,13 +428,15 @@ const ResultBody = () => {
     HighchartsExporting(Highcharts);
   }, []);
 
+  console.log(answersList);
+
   useEffect(() => {
-    if (aggAges.length === 0) return;
+    if (aggAges.length === 0 || aggAges.every((r) => r[1] === 0)) return;
     buildAgeChart(aggAges);
   }, [aggAges]);
 
   useEffect(() => {
-    if (aggGenders.length === 0) return;
+    if (aggGenders.length === 0 || aggGenders.every((r) => r[1] === 0)) return;
     buildGenderChart(aggGenders);
   }, [aggGenders]);
 
@@ -453,7 +455,9 @@ const ResultBody = () => {
   if (!isLoadingAnswersList && answersList && answersList.length === 0) {
     return (
       <Flex w="100%" h="500px" align="center" justify="center">
-        <Text fontSize="xl">No results to show</Text>
+        <Text fontSize="xl" color="white">
+          No results to show
+        </Text>
       </Flex>
     );
   }
