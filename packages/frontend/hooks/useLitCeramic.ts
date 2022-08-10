@@ -13,11 +13,13 @@ export const useLitCeramic = () => {
   );
 
   const initLitCeramic = useCallback(async () => {
+    if (litCeramicIntegration) return;
+
     const LitCeramic =
       // @ts-expect-error
       typeof window !== "undefined" ? await import("lit-ceramic-sdk") : null;
 
-    if (!LitCeramic || litCeramicIntegration || !account) return;
+    if (!LitCeramic || !account) return;
 
     const integration = new LitCeramic.Integration(
       ...LIT_CERAMIC_INTEGRATION_PARAMS
