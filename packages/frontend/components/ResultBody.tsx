@@ -136,7 +136,12 @@ const NftSummary = () => {
 
 const chartContainerName = (title: string) => `${title}ChartContainer`;
 
+const chartContainerExists = (title: string) =>
+  document.querySelectorAll(`#${chartContainerName(title)}`).length > 0;
+
 const buildBarChart = (params: { data: [string, number][]; title: string }) => {
+  if (!chartContainerExists(params.title)) return;
+
   Highcharts.chart(chartContainerName(params.title), {
     chart: {
       style: {
@@ -201,6 +206,8 @@ const buildBarChart = (params: { data: [string, number][]; title: string }) => {
 };
 
 const buildPieChart = (params: { data: [string, number][]; title: string }) => {
+  if (!chartContainerExists(params.title)) return;
+
   Highcharts.chart(chartContainerName(params.title), {
     chart: {
       type: "pie",
