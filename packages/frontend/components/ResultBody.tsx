@@ -311,6 +311,8 @@ const ResultBody = () => {
   }, []);
 
   useEffect(() => {
+    if (!answersList || answersList.length === 0) return;
+
     aggData.forEach((data) => {
       if (data.id !== COUNTRY_QUESTION.id) {
         buildBarChart({ title: data.title, data: data.data });
@@ -324,9 +326,7 @@ const ResultBody = () => {
         });
       }
     });
-  }, [aggData]);
-
-  console.log("data", isLoadingAnswersList, answersList);
+  }, [aggData, answersList]);
 
   if (isLoadingAnswersList)
     return (
