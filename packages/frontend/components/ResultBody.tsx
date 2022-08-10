@@ -305,8 +305,6 @@ const ResultBody = () => {
     });
   }, [answersList, questions]);
 
-  console.log(aggData);
-
   useEffect(() => {
     Highcharts3d(Highcharts);
     HighchartsExporting(Highcharts);
@@ -327,9 +325,6 @@ const ResultBody = () => {
       }
     });
   }, [aggData]);
-
-  console.log(aggData);
-  console.log(questions);
 
   if (isLoadingAnswersList)
     return (

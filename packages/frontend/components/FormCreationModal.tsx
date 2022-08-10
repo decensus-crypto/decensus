@@ -141,7 +141,7 @@ const FormCreationModal = (props: {
   };
 
   return (
-    <Modal isOpen={props.isOpen} onClose={props.onClose}>
+    <Modal isOpen={props.isOpen} onClose={props.onClose} isCentered>
       <ModalOverlay />
       <ModalContent color="white" background="gray.700">
         <ModalHeader>Create new form with our template</ModalHeader>

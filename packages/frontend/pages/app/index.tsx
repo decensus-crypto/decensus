@@ -1,6 +1,5 @@
 import FormList from "../../components/FormList";
 
-import { CheckIcon, WarningTwoIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -10,46 +9,17 @@ import {
   GridItem,
   Heading,
   Spacer,
-  Spinner,
-  Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import { ReactElement } from "react";
+import { useState } from "react";
 import FormCreationModal from "../../components/FormCreationModal";
 import Layout from "../../layouts/default";
 
-const NftName = (props: {
-  nftName: string | null;
-  isLoadingNftName: boolean;
-}) => {
-  if (props.isLoadingNftName) {
-    return <Spinner size="sm" />;
-  } else if (props.nftName == null) {
-    return <></>;
-  } else if (props.nftName.length === 0) {
-    return (
-      <Text color="gray.500" display="flex" alignItems="center">
-        <WarningTwoIcon mr={1} />
-        No NFT project found for the address
-      </Text>
-    );
-  } else {
-    return (
-      <Text display="flex" alignItems="center">
-        <CheckIcon mr={1} fontWeight="100" color="green.500" />
-        Project found: {props.nftName}
-      </Text>
-    );
-  }
-};
-
-const AppRoot = (page: ReactElement) => {
+const AppRoot = () => {
   // modal control
-  const formCreationModal = useDisclosure();
-
-  const clickNew = () => {
-    formCreationModal.onOpen();
-  };
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  // key of the modal component. By changing this key, force the modal component to be refreshed.
+  const [modalKey, setModalKey] = useState(0);
 
   return (
     <>
@@ -64,7 +34,7 @@ const AppRoot = (page: ReactElement) => {
               size="sm"
               variant="outline"
               color="#FC8CC9"
-              onClick={clickNew}
+              onClick={onOpen}
             >
               Create New Form
             </Button>
@@ -82,7 +52,15 @@ const AppRoot = (page: ReactElement) => {
         </Box>
       </Layout>
 
-      <FormCreationModal {...formCreationModal} />
+      <FormCreationModal
+        key={modalKey}
+        isOpen={isOpen}
+        onOpen={onOpen}
+        onClose={() => {
+          onClose();
+          setModalKey(modalKey + 1);
+        }}
+      />
     </>
   );
 };
