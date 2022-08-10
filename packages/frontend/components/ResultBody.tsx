@@ -326,6 +326,8 @@ const ResultBody = () => {
     });
   }, [aggData]);
 
+  console.log("data", isLoadingAnswersList, answersList);
+
   if (isLoadingAnswersList)
     return (
       <Flex w="100%" h="500px" align="center" justify="center">
