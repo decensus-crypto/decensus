@@ -8,7 +8,7 @@ import {
 import { createToast } from "../utils/createToast";
 import { getSubmissionMarkContract } from "../utils/getSubmissionMarkContract";
 import { useAccount } from "./useAccount";
-import { useFormData } from "./useFormdata";
+import { useFormData } from "./useFormData";
 import { useLitCeramic } from "./useLitCeramic";
 
 const litAccessControlConditions = ({ surveyId }: { surveyId: string }) => [
@@ -55,7 +55,7 @@ export const useAnswerSubmit = () => {
   const router = useRouter();
   const { litCeramicIntegration } = useLitCeramic();
   const { account } = useAccount();
-  const { formData, nftAddress, isLoadingFormData } = useFormData();
+  const { nftAddress } = useFormData();
   const surveyId = router.query?.id?.toString() || null;
 
   const [isSubmitting, setIsSubmitting] = useAtom(isSubmittingAtom);

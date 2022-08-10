@@ -20,7 +20,7 @@ import HighchartsExporting from "highcharts/modules/exporting";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { COUNTRY_QUESTION } from "../constants/constants";
-import { useFormData } from "../hooks/useFormdata";
+import { useFormData } from "../hooks/useFormData";
 import { useLitCeramic } from "../hooks/useLitCeramic";
 import { useResult } from "../hooks/useResult";
 import {
