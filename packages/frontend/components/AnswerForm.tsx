@@ -11,6 +11,7 @@ import {
   Input,
   Radio,
   RadioGroup,
+  Select,
   Spinner,
   Stack,
   useControllableState,
@@ -69,6 +70,24 @@ const FormInput = ({
             ))}
           </Stack>
         </RadioGroup>
+      );
+    case "single_choice_dropdown":
+      return (
+        <Select
+          value={currentSingleAnswer}
+          onChange={(e) =>
+            setAnswer({ ...answerParams, answer: e.target.value })
+          }
+          placeholder="Please select"
+          color="white"
+          mt={8}
+        >
+          {question.options.map((option, i) => (
+            <option key={i} value={option.text}>
+              {option.text}
+            </option>
+          ))}
+        </Select>
       );
     case "multi_choice":
       return (
@@ -133,7 +152,9 @@ const AnswerForm = () => {
       null
     : null;
 
-  const canSubmit = Object.keys(answers).length === formData?.questions.length;
+  const canSubmit =
+    Object.keys(answers).length === formData?.questions.length &&
+    Object.values(answers).every((a) => a.answer && a.answer.length > 0);
 
   const onSubmit = async () => {
     if (!canSubmit) return;

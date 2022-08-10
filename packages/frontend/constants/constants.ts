@@ -46,7 +46,7 @@ export const COUNTRY_QUESTION = {
   id: "5ca2aa845c8cd5ace6b016841f100d82",
   question_title: "Country",
   question_body: "In what country are you based?",
-  question_type: "single_choice",
+  question_type: "single_choice_dropdown",
   options: [
     { text: "Afghanistan" },
     { text: "Albania" },
