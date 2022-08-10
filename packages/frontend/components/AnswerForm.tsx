@@ -183,7 +183,7 @@ const AnswerForm = () => {
     <Container>
       <Box mt={8}>
         <Center>
-          <Heading as="h2" color="white" size="sm" fontWeight="bold">
+          <Heading as="h2" color="white" size="md" fontWeight="bold">
             {formData ? formData.title : "-"}
           </Heading>
         </Center>

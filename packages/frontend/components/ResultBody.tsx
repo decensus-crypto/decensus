@@ -13,6 +13,7 @@ import {
   StatLabel,
   StatNumber,
   Text,
+  VStack,
 } from "@chakra-ui/react";
 import Highcharts from "highcharts";
 import Highcharts3d from "highcharts/highcharts-3d";
@@ -72,65 +73,71 @@ const NftSummary = () => {
   }, [nftData, isLoading, getNft]);
 
   return (
-    <Flex
+    <Container
+      maxWidth={"2xl"}
       p={4}
       boxShadow={"lg"}
       rounded={"lg"}
       background={"gray.800"}
-      justify="stretch"
+      justifyContent="stretch"
     >
-      <Box w={16} h={16} mr={2} my={3}>
-        {nftData?.imageUrl && (
-          <Image rounded="50%" alt="nft icon" src={nftData?.imageUrl} />
-        )}
-      </Box>
-      <Box w="100%">
-        <Flex px={4} py={4} align="center">
-          <Heading as="h3" size="md" fontWeight="bold" color="white">
-            {isLoading ? <Spinner /> : nftData?.name}
-          </Heading>
-          <Spacer />
-          <Badge
-            as="div"
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            colorScheme="green"
-          >
-            {nftData?.address.substring(0, 12) + "..."}
-          </Badge>
-        </Flex>
-        <Divider />
-        <Box px={4} py={4}>
-          <StatGroup>
-            <Stat>
-              <StatLabel color="white">Items</StatLabel>
-              <StatNumber color="white">
-                {isLoading ? <Spinner /> : nftData?.totalSupply}
-              </StatNumber>
-            </Stat>
-            <Stat>
-              <StatLabel color="white">Owners</StatLabel>
-              <StatNumber color="white">
-                {isLoading ? <Spinner /> : nftData?.ownerCount}
-              </StatNumber>
-            </Stat>
-            <Stat>
-              <StatLabel color="white">Floor Price</StatLabel>
-              <StatNumber color="white">
-                {isLoading ? (
-                  <Spinner />
-                ) : nftData?.floorPrice == null ? (
-                  "-"
-                ) : (
-                  nftData?.floorPrice
-                )}
-              </StatNumber>
-            </Stat>
-          </StatGroup>
+      <Heading size="md" color="white" mb={4}>
+        Project Summary
+      </Heading>
+      <Flex justifyContent="stretch">
+        <Box w={16} h={16} mr={2} my={3}>
+          {nftData?.imageUrl && (
+            <Image rounded="50%" alt="nft icon" src={nftData?.imageUrl} />
+          )}
         </Box>
-      </Box>
-    </Flex>
+        <Box w="100%">
+          <Flex px={4} py={4} align="center">
+            <Heading as="h3" size="md" fontWeight="bold" color="white">
+              {isLoading ? <Spinner /> : nftData?.name}
+            </Heading>
+            <Spacer />
+            <Badge
+              as="div"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              colorScheme="green"
+            >
+              {nftData?.address.substring(0, 12) + "..."}
+            </Badge>
+          </Flex>
+          <Divider />
+          <Box px={4} pt={4}>
+            <StatGroup>
+              <Stat>
+                <StatLabel color="white">Items</StatLabel>
+                <StatNumber color="white">
+                  {isLoading ? <Spinner /> : nftData?.totalSupply}
+                </StatNumber>
+              </Stat>
+              <Stat>
+                <StatLabel color="white">Owners</StatLabel>
+                <StatNumber color="white">
+                  {isLoading ? <Spinner /> : nftData?.ownerCount}
+                </StatNumber>
+              </Stat>
+              <Stat>
+                <StatLabel color="white">Floor Price</StatLabel>
+                <StatNumber color="white">
+                  {isLoading ? (
+                    <Spinner />
+                  ) : nftData?.floorPrice == null ? (
+                    "-"
+                  ) : (
+                    nftData?.floorPrice
+                  )}
+                </StatNumber>
+              </Stat>
+            </StatGroup>
+          </Box>
+        </Box>
+      </Flex>
+    </Container>
   );
 };
 
@@ -353,20 +360,45 @@ const ResultBody = () => {
   }
 
   return (
-    <Box w={"full"} mb={32}>
-      <Container maxWidth={"2xl"} mt={8}>
-        <NftSummary />
-      </Container>
-      {aggData.map((d) => (
-        <Container key={d.id} maxWidth={"2xl"} mt={8}>
-          <Box boxShadow={"lg"} rounded={"lg"}>
+    <VStack w={"full"} mb={32} spacing={3}>
+      <Heading size="lg" color="white" mb={4}>
+        {formData?.title}
+      </Heading>
+      <NftSummary />
+      <Container
+        p={4}
+        maxWidth={"2xl"}
+        boxShadow={"lg"}
+        rounded={"lg"}
+        background={"gray.800"}
+      >
+        <Flex justify="stretch" mb={4}>
+          <Heading size="md" color="white">
+            Survey Results
+          </Heading>
+          <Spacer />
+          <Text color="white">
+            <Text as="span" fontWeight="bold">
+              {answersList?.length || 0}
+            </Text>{" "}
+            respondants
+          </Text>
+        </Flex>
+        {aggData.map((d) => (
+          <Box
+            key={d.id}
+            boxShadow={"lg"}
+            rounded={"lg"}
+            background={"gray.800"}
+            mb={8}
+          >
             <figure className="highcharts-figure">
               <div id={chartContainerName(d.title)}></div>
             </figure>
           </Box>
-        </Container>
-      ))}
-    </Box>
+        ))}
+      </Container>
+    </VStack>
   );
 };
 
