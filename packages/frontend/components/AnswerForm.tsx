@@ -18,8 +18,10 @@ import {
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Answer, FormTemplate } from "../constants/constants";
-import { useAnswerForm } from "../hooks/useAnswerForm";
+import { useAnswerSubmit } from "../hooks/useAnswerSubmit";
+import { useFormData } from "../hooks/useFormdata";
 import { useLitCeramic } from "../hooks/useLitCeramic";
+import { useSurveyIdInQuery } from "../hooks/useSurveyIdInQuery";
 
 type AnswerInForm = Omit<Answer, "question_id">;
 
@@ -41,7 +43,7 @@ const FormInput = ({
   const currentMultiAnswer =
     typeof answer?.answer === "object" ? answer?.answer : [] || [];
 
-  switch (question.question_type) {
+  switch (question.question_type as string) {
     case "text":
       return (
         <Input
@@ -102,14 +104,13 @@ const FormInput = ({
 };
 
 const AnswerForm = () => {
+  const { surveyId } = useSurveyIdInQuery();
+  const { isSubmitting, submitAnswer } = useAnswerSubmit();
   const {
     formData,
-    surveyId,
     isLoadingFormData: isLoading,
-    isSubmitting,
     fetchFormData,
-    submitAnswer,
-  } = useAnswerForm();
+  } = useFormData();
   const { initLitCeramic } = useLitCeramic();
   const router = useRouter();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useControllableState({

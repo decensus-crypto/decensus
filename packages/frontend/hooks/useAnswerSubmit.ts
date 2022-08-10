@@ -3,12 +3,12 @@ import { useRouter } from "next/router";
 import { useCallback } from "react";
 import {
   CHAIN_NAME,
-  FormTemplate,
   SUBMISSION_MARK_CONTRACT_ADDRESS,
 } from "../constants/constants";
 import { createToast } from "../utils/createToast";
 import { getSubmissionMarkContract } from "../utils/getSubmissionMarkContract";
 import { useAccount } from "./useAccount";
+import { useFormData } from "./useFormdata";
 import { useLitCeramic } from "./useLitCeramic";
 
 const litAccessControlConditions = ({ surveyId }: { surveyId: string }) => [
@@ -49,61 +49,16 @@ const litAccessControlConditions = ({ surveyId }: { surveyId: string }) => [
   },
 ];
 
-const formDataAtom = atom<FormTemplate | null>(null);
-const nftAddressAtom = atom<string | null>(null);
-const isLoadingAtom = atom<boolean>(true);
 const isSubmittingAtom = atom<boolean>(false);
 
-export const useAnswerForm = () => {
+export const useAnswerSubmit = () => {
   const router = useRouter();
   const { litCeramicIntegration } = useLitCeramic();
   const { account } = useAccount();
+  const { formData, nftAddress, isLoadingFormData } = useFormData();
   const surveyId = router.query?.id?.toString() || null;
 
-  const [formData, setFormData] = useAtom(formDataAtom);
-  const [nftAddress, setNftAddress] = useAtom(nftAddressAtom);
-  const [isLoading, setIsLoading] = useAtom(isLoadingAtom);
   const [isSubmitting, setIsSubmitting] = useAtom(isSubmittingAtom);
-
-  const fetchFormData = useCallback(async () => {
-    if (!surveyId || !litCeramicIntegration) return;
-    const submissionMarkContract = getSubmissionMarkContract();
-    if (!submissionMarkContract) return;
-
-    try {
-      setIsLoading(true);
-
-      const [formDataStr, nftAddress]: [string, string] = await Promise.all([
-        litCeramicIntegration.readAndDecrypt(surveyId),
-        submissionMarkContract.surveys(surveyId),
-      ]);
-
-      try {
-        // should perform type validation!!!!
-        const formData = JSON.parse(formDataStr);
-
-        setFormData(formData);
-      } catch {
-        throw new Error("invalid form data");
-      }
-
-      setNftAddress(nftAddress);
-    } catch (error: any) {
-      createToast({
-        title: "Failed to get form data",
-        description: error.message,
-        status: "error",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  }, [
-    litCeramicIntegration,
-    setFormData,
-    setIsLoading,
-    setNftAddress,
-    surveyId,
-  ]);
 
   const submitAnswer = useCallback(
     async ({
@@ -202,12 +157,7 @@ export const useAnswerForm = () => {
   );
 
   return {
-    formData,
-    nftAddress,
-    surveyId,
-    isLoadingFormData: isLoading,
     isSubmitting,
-    fetchFormData,
     submitAnswer,
   };
 };

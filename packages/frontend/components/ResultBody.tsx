@@ -19,14 +19,8 @@ import Highcharts3d from "highcharts/highcharts-3d";
 import HighchartsExporting from "highcharts/modules/exporting";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import {
-  AGE_QUESTION_ID,
-  AGE_QUESTION_OPTIONS,
-  COUNTRY_QUESTION_ID,
-  COUNTRY_QUESTION_OPTIONS,
-  GENDER_QUESTION_ID,
-  GENDER_QUESTION_OPTIONS,
-} from "../constants/constants";
+import { COUNTRY_QUESTION } from "../constants/constants";
+import { useFormData } from "../hooks/useFormdata";
 import { useLitCeramic } from "../hooks/useLitCeramic";
 import { useResult } from "../hooks/useResult";
 import {
@@ -140,142 +134,74 @@ const NftSummary = () => {
   );
 };
 
-const buildAgeChart = (data: [string, number][]) => {
-  Highcharts.chart(
-    "ageChartContainer" as any,
-    {
-      chart: {
-        style: {
-          color: "#ffffff",
-        },
-        type: "bar",
-        marginRight: 30,
-        backgroundColor: "#000000",
+const chartContainerName = (title: string) => `${title}ChartContainer`;
+
+const buildBarChart = (params: { data: [string, number][]; title: string }) => {
+  Highcharts.chart(chartContainerName(params.title), {
+    chart: {
+      style: {
+        color: "#ffffff",
       },
+      type: "bar",
+      marginRight: 30,
+      backgroundColor: "#000000",
+    },
+    title: {
+      text: params.title,
+      style: {
+        color: "#ffffff",
+      },
+    },
+    xAxis: {
+      type: "category",
       title: {
-        text: "Age",
+        text: null,
         style: {
           color: "#ffffff",
         },
       },
-      xAxis: {
-        type: "category",
-        title: {
-          text: null,
-          style: {
-            color: "#ffffff",
-          },
-        },
-        labels: {
-          style: {
-            color: "#ffffff",
-          },
+      labels: {
+        style: {
+          color: "#ffffff",
         },
       },
-      yAxis: {
-        lineWidth: 1,
-        title: {
-          text: "Votes",
-          align: "high",
-          style: {
-            color: "#ffffff",
-          },
-        },
-        showLastLabel: false,
-        labels: {
-          style: {
-            color: "#ffffff",
-          },
+    },
+    yAxis: {
+      lineWidth: 1,
+      title: {
+        text: "Votes",
+        align: "high",
+        style: {
+          color: "#ffffff",
         },
       },
-      plotOptions: {
-        bar: {
-          dataLabels: {
-            enabled: true,
-          },
+      showLastLabel: false,
+      labels: {
+        style: {
+          color: "#ffffff",
         },
       },
-      legend: { enabled: false },
-      credits: { enabled: false },
-      series: [
-        {
-          name: "Votes",
-          data,
+    },
+    plotOptions: {
+      bar: {
+        dataLabels: {
+          enabled: true,
         },
-      ],
-    } as any
-  );
+      },
+    },
+    legend: { enabled: false },
+    credits: { enabled: false },
+    series: [
+      {
+        name: "Votes",
+        data: params.data,
+      },
+    ],
+  } as any);
 };
 
-const buildGenderChart = (data: [string, number][]) => {
-  Highcharts.chart(
-    "genderChartContainer" as any,
-    {
-      chart: {
-        style: {
-          color: "#ffffff",
-        },
-        type: "bar",
-        marginRight: 30,
-        backgroundColor: "#000000",
-      },
-      title: {
-        text: "Gender",
-        style: {
-          color: "#ffffff",
-        },
-      },
-      xAxis: {
-        type: "category",
-        title: {
-          text: null,
-          style: {
-            color: "#ffffff",
-          },
-        },
-        labels: {
-          style: {
-            color: "#ffffff",
-          },
-        },
-      },
-      yAxis: {
-        lineWidth: 1,
-        title: {
-          text: "Votes",
-          align: "high",
-          style: {
-            color: "#ffffff",
-          },
-        },
-        showLastLabel: false,
-        labels: {
-          style: {
-            color: "#ffffff",
-          },
-        },
-      },
-      plotOptions: {
-        bar: {
-          dataLabels: {
-            enabled: true,
-          },
-        },
-      },
-      legend: { enabled: false },
-      credits: { enabled: false },
-      series: [
-        {
-          name: "Votes",
-          data,
-        },
-      ],
-    } as any
-  );
-};
-
-const buildCountryChart = (data: [string, number][]) => {
-  Highcharts.chart("countryChartContainer", {
+const buildPieChart = (params: { data: [string, number][]; title: string }) => {
+  Highcharts.chart(chartContainerName(params.title), {
     chart: {
       type: "pie",
       options3d: {
@@ -286,7 +212,7 @@ const buildCountryChart = (data: [string, number][]) => {
       backgroundColor: "#000000",
     },
     title: {
-      text: "Country",
+      text: params.title,
       style: {
         color: "#ffffff",
       },
@@ -316,8 +242,7 @@ const buildCountryChart = (data: [string, number][]) => {
     series: [
       {
         type: "pie",
-        name: "Country of residence",
-        data,
+        data: params.data,
       },
     ],
   });
@@ -325,12 +250,17 @@ const buildCountryChart = (data: [string, number][]) => {
 
 const ResultBody = () => {
   const { initLitCeramic } = useLitCeramic();
+  const { formData, isLoadingFormData, fetchFormData } = useFormData();
   const { isLoadingAnswersList, answersList, fetchResults, fetchNftAddress } =
     useResult();
 
   useEffect(() => {
     initLitCeramic();
   }, [initLitCeramic]);
+
+  useEffect(() => {
+    fetchFormData();
+  }, [fetchFormData]);
 
   useEffect(() => {
     fetchResults();
@@ -340,76 +270,42 @@ const ResultBody = () => {
     fetchNftAddress();
   }, [fetchNftAddress]);
 
-  const aggAges = useMemo(() => {
-    if (!answersList) return [];
-    const ageAnswers = answersList
-      .flatMap((d) => d.answers)
-      .filter((a) => a.question_id === AGE_QUESTION_ID);
+  const questions = formData?.questions;
 
-    const aggObj = AGE_QUESTION_OPTIONS.reduce((p, c) => {
-      p[c.text] = 0;
-      return p;
-    }, {} as Record<string, number>);
+  const aggData = useMemo(() => {
+    if (!answersList || !questions) return [];
 
-    for (const a of ageAnswers) {
-      const text = a.answer.toString();
-      if (aggObj[text] == null) continue;
+    return questions.map((question) => {
+      const options = [...question.options];
 
-      aggObj[text] += 1;
-    }
+      const answers = answersList
+        .flatMap((d) => d.answers)
+        .filter((a) => a.question_id === question.id);
 
-    return AGE_QUESTION_OPTIONS.map((o) => [o.text, aggObj[o.text]]) as [
-      string,
-      number
-    ][];
-  }, [answersList]);
+      const aggObj = options.reduce((p, c) => {
+        p[c.text] = 0;
+        return p;
+      }, {} as Record<string, number>);
 
-  const aggGenders = useMemo(() => {
-    if (!answersList) return [];
-    const genderAnswers = answersList
-      .flatMap((d) => d.answers)
-      .filter((a) => a.question_id === GENDER_QUESTION_ID);
+      for (const a of answers) {
+        const text = a.answer.toString();
+        if (aggObj[text] == null) continue;
 
-    const aggObj = GENDER_QUESTION_OPTIONS.reduce((p, c) => {
-      p[c.text] = 0;
-      return p;
-    }, {} as Record<string, number>);
+        aggObj[text] += 1;
+      }
 
-    for (const a of genderAnswers) {
-      const text = a.answer.toString();
-      if (aggObj[text] == null) continue;
+      return {
+        id: question.id,
+        title: question.question_title,
+        data: options.map((o) => [o.text, aggObj[o.text]]) as [
+          string,
+          number
+        ][],
+      };
+    });
+  }, [answersList, questions]);
 
-      aggObj[text] += 1;
-    }
-
-    return GENDER_QUESTION_OPTIONS.map((o) => [o.text, aggObj[o.text]]) as [
-      string,
-      number
-    ][];
-  }, [answersList]);
-
-  const aggCountries = useMemo(() => {
-    if (!answersList) return [];
-    const countryAnswers = answersList
-      .flatMap((d) => d.answers)
-      .filter((a) => a.question_id === COUNTRY_QUESTION_ID);
-
-    const aggObj = COUNTRY_QUESTION_OPTIONS.reduce((p, c) => {
-      p[c.text] = 0;
-      return p;
-    }, {} as Record<string, number>);
-
-    for (const a of countryAnswers) {
-      const text = a.answer.toString();
-      if (aggObj[text] == null) continue;
-
-      aggObj[text] += 1;
-    }
-
-    return Object.entries(aggObj)
-      .filter((r) => r[1] > 0)
-      .sort((r1, r2) => r1[1] - r2[1]);
-  }, [answersList]);
+  console.log(aggData);
 
   useEffect(() => {
     Highcharts3d(Highcharts);
@@ -417,19 +313,23 @@ const ResultBody = () => {
   }, []);
 
   useEffect(() => {
-    if (aggAges.length === 0 || aggAges.every((r) => r[1] === 0)) return;
-    buildAgeChart(aggAges);
-  }, [aggAges]);
+    aggData.forEach((data) => {
+      if (data.id !== COUNTRY_QUESTION.id) {
+        buildBarChart({ title: data.title, data: data.data });
+      } else {
+        const _data = data.data
+          .filter((r) => r[1] > 0)
+          .sort((r1, r2) => r2[1] - r1[1]);
+        buildPieChart({
+          title: data.title,
+          data: _data,
+        });
+      }
+    });
+  }, [aggData]);
 
-  useEffect(() => {
-    if (aggGenders.length === 0 || aggGenders.every((r) => r[1] === 0)) return;
-    buildGenderChart(aggGenders);
-  }, [aggGenders]);
-
-  useEffect(() => {
-    if (aggCountries.length === 0) return;
-    buildCountryChart(aggCountries);
-  }, [aggCountries]);
+  console.log(aggData);
+  console.log(questions);
 
   if (isLoadingAnswersList)
     return (
@@ -453,27 +353,15 @@ const ResultBody = () => {
       <Container maxWidth={"2xl"} mt={8}>
         <NftSummary />
       </Container>
-      <Container maxWidth={"2xl"} mt={8}>
-        <Box boxShadow={"lg"} rounded={"lg"}>
-          <figure className="highcharts-figure">
-            <div id="ageChartContainer"></div>
-          </figure>
-        </Box>
-      </Container>
-      <Container maxWidth={"2xl"} mt={8}>
-        <Box boxShadow={"lg"} rounded={"lg"}>
-          <figure className="highcharts-figure">
-            <div id="genderChartContainer"></div>
-          </figure>
-        </Box>
-      </Container>
-      <Container maxWidth={"2xl"} mt={8}>
-        <Box boxShadow={"lg"} rounded={"lg"} p={8}>
-          <figure className="highcharts-figure">
-            <div id="countryChartContainer"></div>
-          </figure>
-        </Box>
-      </Container>
+      {aggData.map((d) => (
+        <Container key={d.id} maxWidth={"2xl"} mt={8}>
+          <Box boxShadow={"lg"} rounded={"lg"}>
+            <figure className="highcharts-figure">
+              <div id={chartContainerName(d.title)}></div>
+            </figure>
+          </Box>
+        </Container>
+      ))}
     </Box>
   );
 };
