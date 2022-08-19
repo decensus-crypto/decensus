@@ -11,8 +11,15 @@ import { useAccount } from "./useAccount";
 import { useFormData } from "./useFormData";
 import { useLitCeramic } from "./useLitCeramic";
 
-const litAccessControlConditions = ({ surveyId }: { surveyId: string }) => [
+const litAccessControlConditions = ({
+  surveyId,
+  nftAddress,
+}: {
+  surveyId: string;
+  nftAddress: string;
+}) => [
   {
+    conditionType: "evmContract",
     contractAddress: SUBMISSION_MARK_CONTRACT_ADDRESS,
     functionName: "hasMark",
     functionParams: [":userAddress", surveyId],
@@ -45,6 +52,19 @@ const litAccessControlConditions = ({ surveyId }: { surveyId: string }) => [
       key: "",
       comparator: "=",
       value: "true",
+    },
+  },
+  { operator: "and" },
+  {
+    conditionType: "evmBasic",
+    contractAddress: nftAddress,
+    standardContractType: "ERC721",
+    chain: CHAIN_NAME,
+    method: "balanceOf",
+    parameters: [":userAddress"],
+    returnValueTest: {
+      comparator: ">",
+      value: "0",
     },
   },
 ];
@@ -93,12 +113,12 @@ export const useAnswerSubmit = () => {
         try {
           answerId = await litCeramicIntegration.encryptAndWrite(
             submissionStrToEncrypt,
-            litAccessControlConditions({ surveyId }),
-            "evmContractConditions" // undocumented in lit docs
+            litAccessControlConditions({ surveyId, nftAddress }),
+            "unifiedAccessControlConditions" // supported only in our forked version!!!
           );
           // encryptAnsWrite does not necessarily throw error even if error occurs
           if (answerId.includes("wrong")) {
-            throw new Error();
+            throw new Error(JSON.stringify(answerId));
           }
         } catch (error) {
           console.error(error);
