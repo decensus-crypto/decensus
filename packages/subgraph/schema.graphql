@@ -1,0 +1,7 @@
+type Answer @entity {
+  id: Bytes!
+  encryptedAnswer: String!
+  contractAddress: Bytes!
+  respondentAddress: Bytes!
+  mintedTokenId: Int!
+}

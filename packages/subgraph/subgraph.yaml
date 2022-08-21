@@ -1,0 +1,23 @@
+specVersion: 0.0.4
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: FormCollection
+    network: goerli
+    source:
+      abi: FormCollection
+      startBlock: 7445610
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Answers
+      abis:
+        - name: FormCollection
+          file: ./abis/FormCollection.json
+      eventHandlers:
+        - event: AnswerSubmitted(address,string)
+          handler: handleAnswerSubmitted
+      file: ./src/formCollection.ts
