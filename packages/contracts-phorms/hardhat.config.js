@@ -28,6 +28,11 @@ module.exports = {
       url: process.env.POLYGON_URL || "",
       accounts: [process.env.PRIVATE_KEY],
     },
+    // just for test purpose
+    goerli: {
+      url: process.env.GOERLI_URL || "",
+      accounts: [process.env.PRIVATE_KEY],
+    },
   },
   etherscan: {
     apiKey: process.env.POLYGONSCAN_API_KEY,
