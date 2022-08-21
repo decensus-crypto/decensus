@@ -70,11 +70,11 @@ describe("form collection", function () {
   it("Should succeed in submitting answer", async () => {
     const proof = getProofForAddress(randomPerson.address, merkleTree);
 
-    const answers = "this is a sample answer";
+    const encryptedAnswer = "encrypted!!!";
 
     const res2 = await formContract
       .connect(randomPerson)
-      .submitAnswers(proof, answers)
+      .submitAnswers(proof, encryptedAnswer)
       .then((tx) => tx.wait());
 
     const submittedEvent = res2.events?.find(
@@ -83,16 +83,17 @@ describe("form collection", function () {
     const submittedArgs = submittedEvent?.args ? submittedEvent.args : [];
 
     expect(submittedArgs[0]).to.eql(randomPerson.address);
-    expect(submittedArgs[1]).to.eql(answers);
+    expect(submittedArgs[1]).to.eql(encryptedAnswer);
+    expect(submittedArgs[2].toString()).to.eql("0");
   });
 
   it("Should reject answers from non-whitelisted wallet", async () => {
     const proof = getProofForAddress(owner.address, merkleTree);
 
-    const answers = "this is a sample answer";
+    const encryptedAnswer = "encrypted!!!";
 
     await expect(
-      formContract.connect(owner).submitAnswers(proof, answers)
+      formContract.connect(owner).submitAnswers(proof, encryptedAnswer)
     ).to.rejectedWith();
   });
 });

@@ -11,8 +11,14 @@
       {
         "indexed": false,
         "internalType": "string",
-        "name": "encryptedAnswers",
+        "name": "encryptedAnswer",
         "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
       }
     ],
     "name": "AnswerSubmitted",
@@ -488,7 +494,7 @@
       },
       {
         "internalType": "string",
-        "name": "_encryptedAnswers",
+        "name": "_encryptedAnswer",
         "type": "string"
       }
     ],

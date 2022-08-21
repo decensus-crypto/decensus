@@ -18,6 +18,6 @@ dataSources:
         - name: FormCollection
           file: ./abis/FormCollection.json
       eventHandlers:
-        - event: AnswerSubmitted(address,string)
+        - event: AnswerSubmitted(address,string,uint256)
           handler: handleAnswerSubmitted
       file: ./src/formCollection.ts

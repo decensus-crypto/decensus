@@ -20,7 +20,11 @@ contract FormCollection is
     mapping(address => string) public encryptedAnswers;
     uint256 public numberOfAnswers;
 
-    event AnswerSubmitted(address respondent, string encryptedAnswers);
+    event AnswerSubmitted(
+        address respondent,
+        string encryptedAnswer,
+        uint256 tokenId
+    );
 
     function initialize(
         string memory _name,
@@ -42,7 +46,7 @@ contract FormCollection is
 
     function submitAnswers(
         bytes32[] calldata _merkleProof,
-        string calldata _encryptedAnswers
+        string calldata _encryptedAnswer
     ) public {
         require(
             bytes(encryptedAnswers[msg.sender]).length == 0,
@@ -59,11 +63,11 @@ contract FormCollection is
         }
 
         _safeMint(msg.sender, numberOfAnswers);
-        encryptedAnswers[msg.sender] = _encryptedAnswers;
+        encryptedAnswers[msg.sender] = _encryptedAnswer;
+
+        emit AnswerSubmitted(msg.sender, _encryptedAnswer, numberOfAnswers);
 
         numberOfAnswers++;
-
-        emit AnswerSubmitted(msg.sender, _encryptedAnswers);
     }
 
     function contractURI() public view returns (string memory) {

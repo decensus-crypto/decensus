@@ -27,8 +27,12 @@ export class AnswerSubmitted__Params {
     return this._event.parameters[0].value.toAddress();
   }
 
-  get encryptedAnswers(): string {
+  get encryptedAnswer(): string {
     return this._event.parameters[1].value.toString();
+  }
+
+  get tokenId(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
   }
 }
 
@@ -721,7 +725,7 @@ export class SubmitAnswersCall__Inputs {
     return this._call.inputValues[0].value.toBytesArray();
   }
 
-  get _encryptedAnswers(): string {
+  get _encryptedAnswer(): string {
     return this._call.inputValues[1].value.toString();
   }
 }
