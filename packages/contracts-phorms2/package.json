@@ -12,6 +12,7 @@
     "deploy:polygon": "hardhat clean && hardhat run --network polygon scripts/deploy-factory.ts",
     "deploy:goerli": "hardhat clean && hardhat run --network goerli scripts/deploy-factory.ts",
     "verify:goerli": "npx hardhat verify --network goerli",
+    "genTestMerkleTree": "hardhat clean && hardhat run scripts/generateTestMerkleTree.ts",
     "accounts": "hardhat accounts",
     "balance": "hardhat balance",
     "generate": "hardhat generate",

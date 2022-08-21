@@ -67,6 +67,7 @@ describe("form collection", function () {
 
   it("Should succeed in submitting answer", async () => {
     const proof = getProofForAddress(randomPerson.address, merkleTree);
+    console.log("proof!", JSON.stringify(proof));
 
     const answers = "this is a sample answer";
 
