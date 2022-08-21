@@ -19,6 +19,8 @@ contract FormCollection is
     mapping(address => string) public answers;
     uint256 public numberOfAnswers;
 
+    event AnswerSubmited(address respondent, string answers);
+
     function initialize(
         string memory name_,
         string memory _description,
@@ -64,6 +66,8 @@ contract FormCollection is
         answers[msg.sender] = _answers;
 
         numberOfAnswers++;
+
+        emit AnswerSubmited(msg.sender, _answers);
     }
 
     function contractURI() public view returns (string memory) {
