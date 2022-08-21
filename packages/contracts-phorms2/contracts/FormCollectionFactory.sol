@@ -5,20 +5,9 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/proxy/Clones.sol";
 
 contract FormCollectionFactory is Ownable {
-    // struct formCollectionAddress {
-    //     address formOwner;
-    // }
-
     address public baseFormCollection;
-    // mapping(address => formCollectionAddress[] ) public formOwners;
 
     mapping(address => address[]) public formOwners;
-
-    // struct ContractAddresses {
-    //     address[] addresess;
-    // };
-
-    // mapping(address => ContractAddresses ) public formOwners;
 
     event FormCollectionCreated(address newFormCollection);
 
@@ -36,31 +25,24 @@ contract FormCollectionFactory is Ownable {
     function createFormCollection(
         string memory _name,
         string memory _description,
-        string memory _questions,
         bytes32 _merkleRoot,
-        string memory _merkleTreeURL
-    )
-        public
-        returns (
-            // bytes calldata _ownerPubKey
-            address instance
-        )
-    {
+        string memory _formDataId,
+        string memory _merkleTreeId,
+        string memory _answerEncryptionPublicKey
+    ) public {
         address clone = Clones.clone(baseFormCollection);
         FormCollection(clone).initialize(
             _name,
             _description,
-            _questions,
             _merkleRoot,
-            // _ownerPubKey, // TODO
-            _merkleTreeURL,
+            _formDataId,
+            _merkleTreeId,
+            _answerEncryptionPublicKey,
             msg.sender
         );
 
         emit FormCollectionCreated(clone);
 
         formOwners[msg.sender].push(clone);
-
-        return instance;
     }
 }

@@ -11,45 +11,41 @@ contract FormCollection is
     ERC721Upgradeable,
     OwnableUpgradeable
 {
-    string public description;
-    string public questions;
     bytes32 public merkleRoot;
-    string public merkleTreeURL;
-    //bytes public ownerPubKey;
-    mapping(address => string) public answers;
+    string public description;
+    string public formDataId;
+    string public merkleTreeId;
+    string public answerEncryptionPublicKey;
+
+    mapping(address => string) public encryptedAnswers;
     uint256 public numberOfAnswers;
 
-    event AnswerSubmitted(address respondent, string answers);
+    event AnswerSubmitted(address respondent, string encryptedAnswers);
 
     function initialize(
-        string memory name_,
+        string memory _name,
         string memory _description,
-        string memory _questions, // base64 encoded
         bytes32 _merkleRoot,
-        string memory _merkleTreeURL,
-        // bytes calldata _ownerPubKey, // TODO: private answers option encrypted with owner and responder public keys
+        string memory _formDataId,
+        string memory _merkleTreeId,
+        string memory _answerEncryptionPublicKey,
         address _owner
     ) public initializer {
-        __ERC721_init(name_, "PH");
+        __ERC721_init(_name, "PH");
         _transferOwnership(_owner);
-        description = _description;
-        questions = _questions;
         merkleRoot = _merkleRoot;
-        merkleTreeURL = _merkleTreeURL;
-        // ownerPubKey = _ownerPubKey;
+        description = _description;
+        formDataId = _formDataId;
+        merkleTreeId = _merkleTreeId;
+        answerEncryptionPublicKey = _answerEncryptionPublicKey;
     }
 
     function submitAnswers(
         bytes32[] calldata _merkleProof,
-        string calldata _answers
+        string calldata _encryptedAnswers
     ) public {
-        // require(
-        //     answers.length == questions.length,
-        //     "Number of answers must be the same as number of questions."
-        // ); // front-end has to check this now
-
         require(
-            bytes(answers[msg.sender]).length == 0,
+            bytes(encryptedAnswers[msg.sender]).length == 0,
             "Forms can only be filled in once per address."
         );
 
@@ -63,11 +59,11 @@ contract FormCollection is
         }
 
         _safeMint(msg.sender, numberOfAnswers);
-        answers[msg.sender] = _answers;
+        encryptedAnswers[msg.sender] = _encryptedAnswers;
 
         numberOfAnswers++;
 
-        emit AnswerSubmitted(msg.sender, _answers);
+        emit AnswerSubmitted(msg.sender, _encryptedAnswers);
     }
 
     function contractURI() public view returns (string memory) {
@@ -107,7 +103,7 @@ contract FormCollection is
                 '<svg viewBox="0 0 360 360"><path d="M20 10v310M10 40h310M10 80" style="stroke:gray"/><text x="30" y="30" style="font-family:Avenir,Helvetica,sans-serif;font-size:15px;font-weight:700;text-transform:uppercase">',
                 name(),
                 '</text><foreignObject x="20" y="60" width="300" height="360"><p xmlns="http://www.w3.org/1999/xhtml" style="font-family:Avenir,Helvetica,sans-serif;font-size:8px">',
-                Base64.decode(answers[ownerOf(tokenId)]),
+                Base64.decode(encryptedAnswers[ownerOf(tokenId)]),
                 '</p></foreignObject><linearGradient id="a" x1="0" y1="0" x2="100%" y2="100%"><stop stop-color="hsl(245.6, 85.78%, 44.12%)" offset="10%"/><stop stop-color="hsl(125.64, 86.32%, 54.12%)" offset="90%"/></linearGradient><text text-anchor="middle" x="50%" y="80%" dy=".35em" class="text" fill="url(#a)">phorms.xyz</text></svg>'
             )
         );
