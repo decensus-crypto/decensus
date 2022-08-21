@@ -1924,9 +1924,9 @@
   integrity sha512-jhuKLIRrhvCPLqwPcx6INqmKeiA5EWrsCOPhrlFSrbrmU4ZMPjj5Ul/oLCMDO98XRUIwVm78xICz4EPCektzeQ==
 
 "@types/node@*":
-  version "18.7.6"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.7.6.tgz#31743bc5772b6ac223845e18c3fc26f042713c83"
-  integrity sha512-EdxgKRXgYsNITy5mjjXjVE/CS8YENSdhiagGrLqjG0pvA2owgJ6i4l7wy/PFZGC0B1/H20lWKN7ONVDNYDZm7A==
+  version "18.7.8"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.7.8.tgz#6bbf2be6fbf9c187a5040d4277d24a06a18957a1"
+  integrity sha512-/YP55EMK2341JkODUb8DM9O0x1SIz2aBvyF33Uf1c76St3VpsMXEIW0nxuKkq/5cxnbz0RD9cfwNZHEAZQD3ag==
 
 "@types/node@18.6.4":
   version "18.6.4"
@@ -5711,7 +5711,7 @@ lines-and-columns@^1.1.6:
 
 "lit-ceramic-sdk@git+https://github.com/decensus-crypto/CeramicIntegration.git#main":
   version "1.1.13"
-  resolved "git+https://github.com/decensus-crypto/CeramicIntegration.git#1048214ffd20657c4c8bda34f80ba507126d2674"
+  resolved "git+https://github.com/decensus-crypto/CeramicIntegration.git#2e6f14fa44580f1deb80bfec30f28cc72d63d6f0"
   dependencies:
     "@3id/connect" "^0.1.6"
     "@ceramicnetwork/3id-did-resolver" "^1.2.7"
