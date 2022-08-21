@@ -1,6 +1,6 @@
 specVersion: 0.0.4
 schema:
-  file: ./schema.graphql
+  file: schema.graphql
 dataSources:
   - kind: ethereum
     name: form-collection
@@ -16,8 +16,8 @@ dataSources:
         - Answers
       abis:
         - name: FormCollection
-          file: ./abis/FormCollection.json
+          file: form-collection/abis/FormCollection.json
       eventHandlers:
         - event: AnswerSubmitted(address,string,uint256)
           handler: handleAnswerSubmitted
-      file: ./src/formCollection.ts
+      file: form-collection/form-collection.wasm
