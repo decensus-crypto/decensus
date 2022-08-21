@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Flex,
   Spinner,
@@ -12,6 +13,7 @@ import {
   Tr,
   useClipboard,
 } from "@chakra-ui/react";
+import { CopyIcon, EditIcon, LinkIcon } from '@chakra-ui/icons'
 import { useEffect } from "react";
 import { Form, useFormList } from "../hooks/useFormList";
 import { useLitCeramic } from "../hooks/useLitCeramic";
@@ -35,24 +37,28 @@ const FormRow = (props: Form) => {
           {props.title}
         </Text>
       </Td>
-      <Td w={16}>
-        <Button size="sm" variant="outline" color="white" onClick={onClickCopy}>
-          Copy form URL
-        </Button>
-      </Td>
-      <Td w={16}>
-        <a href={props.formUrl} target="_blank" rel="noreferrer">
-          <Button size="sm" variant="outline" color="white">
-            Go to form
-          </Button>
-        </a>
-      </Td>
-      <Td w={16}>
-        <a href={props.resultUrl} target="_blank" rel="noreferrer">
-          <Button size="sm" variant="outline" color="white">
-            See survey results
-          </Button>
-        </a>
+      <Td w={32}>
+        <Flex>
+          <Box>
+            <Button size="sm" variant="outline" color="white" leftIcon={<CopyIcon />} onClick={onClickCopy}>
+              Copy URL
+            </Button>
+          </Box>
+          <Box ml={2}>
+            <a href={props.formUrl} target="_blank" rel="noreferrer">
+              <Button size="sm" variant="outline" color="white" leftIcon={<EditIcon />} >
+                Go to Form
+              </Button>
+            </a>
+          </Box>
+          <Box ml={2}>
+            <a href={props.resultUrl} target="_blank" rel="noreferrer">
+              <Button size="sm" variant="outline" color="white" leftIcon={<LinkIcon />} >
+                Survey Results
+              </Button>
+            </a>
+          </Box>
+        </Flex>
       </Td>
     </Tr>
   );
@@ -81,8 +87,6 @@ const FormList = () => {
           <Table size="lg">
             <Thead>
               <Tr>
-                <Th></Th>
-                <Th></Th>
                 <Th></Th>
                 <Th></Th>
               </Tr>

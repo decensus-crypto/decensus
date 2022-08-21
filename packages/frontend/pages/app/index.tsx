@@ -11,6 +11,7 @@ import {
   Spacer,
   useDisclosure,
 } from "@chakra-ui/react";
+import { AddIcon } from '@chakra-ui/icons'
 import { useState } from "react";
 import FormCreationModal from "../../components/FormCreationModal";
 import Layout from "../../layouts/default";
@@ -34,6 +35,8 @@ const AppRoot = () => {
               size="sm"
               variant="outline"
               color="#FC8CC9"
+              colorScheme='magenta'
+              leftIcon={<AddIcon />} 
               onClick={onOpen}
             >
               Create New Form
@@ -47,7 +50,6 @@ const AppRoot = () => {
               </Flex>
             </GridItem>
           </Grid>
-
           <FormList />
         </Box>
       </Layout>
