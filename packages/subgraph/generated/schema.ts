@@ -69,12 +69,12 @@ export class Answer extends Entity {
     this.set("respondentAddress", Value.fromBytes(value));
   }
 
-  get mintedTokenId(): i32 {
+  get mintedTokenId(): BigInt {
     let value = this.get("mintedTokenId");
-    return value!.toI32();
+    return value!.toBigInt();
   }
 
-  set mintedTokenId(value: i32) {
-    this.set("mintedTokenId", Value.fromI32(value));
+  set mintedTokenId(value: BigInt) {
+    this.set("mintedTokenId", Value.fromBigInt(value));
   }
 }

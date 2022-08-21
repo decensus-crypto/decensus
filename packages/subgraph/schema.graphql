@@ -3,5 +3,5 @@ type Answer @entity {
   encryptedAnswer: String!
   contractAddress: Bytes!
   respondentAddress: Bytes!
-  mintedTokenId: Int!
+  mintedTokenId: BigInt!
 }
