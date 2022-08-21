@@ -1,6 +1,6 @@
 {
   "solidity.defaultCompiler": "localFile",
-  "solidity.packageDefaultDependenciesDirectory": "packages/contracts-phorms/node_modules",
+  "solidity.packageDefaultDependenciesDirectory": "packages/contracts-phorms2/node_modules",
   "editor.codeActionsOnSave": {
     "source.organizeImports": true
   },
