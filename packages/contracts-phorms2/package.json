@@ -11,6 +11,7 @@
     "deploy:mumbai": "hardhat clean && hardhat run --network mumbai scripts/deploy-factory.ts",
     "deploy:polygon": "hardhat clean && hardhat run --network polygon scripts/deploy-factory.ts",
     "deploy:goerli": "hardhat clean && hardhat run --network goerli scripts/deploy-factory.ts",
+    "submitAnswers:goerli": "hardhat clean && hardhat run --network goerli scripts/submitAnswers.ts",
     "verify:goerli": "npx hardhat verify --network goerli",
     "genTestMerkleTree": "hardhat clean && hardhat run scripts/generateTestMerkleTree.ts",
     "accounts": "hardhat accounts",
