@@ -1,4 +1,3 @@
-import chalk from "chalk";
 import { ethers } from "hardhat";
 
 async function main() {
@@ -12,10 +11,8 @@ async function main() {
 
   await formCollectionFactory.deployed();
   console.log(
-    chalk.blue(
-      "FormCollectionFactory deployed to:",
-      formCollectionFactory.address
-    )
+    "FormCollectionFactory deployed to:",
+    formCollectionFactory.address
   );
 }
 
