@@ -4,7 +4,7 @@ import {
   getProofForAddress,
 } from "./utils/cryptography";
 
-const address = process.env.TEST_WALLET_ADDRESS || "";
+const address = (process.env.TEST_WALLET_ADDRESS || "").toLowerCase();
 
 const tree = getMerkleTree([address]);
 
