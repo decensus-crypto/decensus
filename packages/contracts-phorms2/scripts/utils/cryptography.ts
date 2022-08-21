@@ -20,7 +20,7 @@ export const getMerkleTree = (addresses: string[], hashLeaves = true) => {
 
 export const getProofForAddress = (address: string, merkleTree: MerkleTree) => {
   const leaf = ethers.utils.keccak256(address);
-  const proof = merkleTree.getProof(leaf);
+  const proof = merkleTree.getHexProof(leaf);
   return proof;
 };
 

@@ -18,6 +18,7 @@ const deployFactory = async () => {
 
 let owner: SignerWithAddress;
 let randomPerson: SignerWithAddress;
+let randomPerson2: SignerWithAddress;
 let factoryContract: FormCollectionFactory;
 let formContract: FormCollection;
 let merkleTree: MerkleTree;
@@ -32,9 +33,10 @@ describe("form collection", function () {
     const signers = await ethers.getSigners();
     owner = signers[0];
     randomPerson = signers[1];
+    randomPerson2 = signers[2];
     factoryContract = await deployFactory();
 
-    merkleTree = getMerkleTree([randomPerson.address]);
+    merkleTree = getMerkleTree([randomPerson.address, randomPerson2.address]);
     const merkleRoot = getMerkleTreeRootHash(merkleTree);
     const res = await factoryContract
       .createFormCollection(
@@ -67,7 +69,6 @@ describe("form collection", function () {
 
   it("Should succeed in submitting answer", async () => {
     const proof = getProofForAddress(randomPerson.address, merkleTree);
-    console.log("proof!", JSON.stringify(proof));
 
     const answers = "this is a sample answer";
 
