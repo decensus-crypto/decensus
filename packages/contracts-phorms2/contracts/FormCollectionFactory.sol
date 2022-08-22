@@ -26,18 +26,18 @@ contract FormCollectionFactory is Ownable {
         string memory _name,
         string memory _description,
         bytes32 _merkleRoot,
-        string memory _formDataId,
-        string memory _merkleTreeId,
-        string memory _answerEncryptionPublicKey
+        string memory _formDataURI,
+        string memory _answerEncryptionKey,
+        string memory _answerDecryptionKeyURI
     ) public {
         address clone = Clones.clone(baseFormCollection);
         FormCollection(clone).initialize(
             _name,
             _description,
             _merkleRoot,
-            _formDataId,
-            _merkleTreeId,
-            _answerEncryptionPublicKey,
+            _formDataURI,
+            _answerEncryptionKey,
+            _answerDecryptionKeyURI,
             msg.sender
         );
 

@@ -133,7 +133,20 @@
   },
   {
     "inputs": [],
-    "name": "answerEncryptionPublicKey",
+    "name": "answerDecryptionKeyURI",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "answerEncryptionKey",
     "outputs": [
       {
         "internalType": "string",
@@ -228,7 +241,7 @@
   },
   {
     "inputs": [],
-    "name": "formDataId",
+    "name": "formDataURI",
     "outputs": [
       {
         "internalType": "string",
@@ -277,17 +290,17 @@
       },
       {
         "internalType": "string",
-        "name": "_formDataId",
+        "name": "_formDataURI",
         "type": "string"
       },
       {
         "internalType": "string",
-        "name": "_merkleTreeId",
+        "name": "_answerEncryptionKey",
         "type": "string"
       },
       {
         "internalType": "string",
-        "name": "_answerEncryptionPublicKey",
+        "name": "_answerDecryptionKeyURI",
         "type": "string"
       },
       {
@@ -333,19 +346,6 @@
         "internalType": "bytes32",
         "name": "",
         "type": "bytes32"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "merkleTreeId",
-    "outputs": [
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
       }
     ],
     "stateMutability": "view",

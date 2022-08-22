@@ -24,9 +24,9 @@ let formContract: FormCollection;
 let merkleTree: MerkleTree;
 const name = "form name";
 const description = "this is a test form";
-const formDataId = "f-id";
-const merkleTreeId = "m-id";
-const answerEncryptionPublicKey = "key";
+const formDataURI = "f-uri";
+const answerEncryptionKey = "key";
+const answerDecryptionKeyURI = "key-uri";
 
 describe("form collection", function () {
   beforeEach(async () => {
@@ -43,9 +43,9 @@ describe("form collection", function () {
         name,
         description,
         merkleRoot,
-        formDataId,
-        merkleTreeId,
-        answerEncryptionPublicKey
+        formDataURI,
+        answerEncryptionKey,
+        answerDecryptionKeyURI
       )
       .then((tx) => tx.wait());
 
@@ -60,10 +60,12 @@ describe("form collection", function () {
 
   it("Should have correct form metadata", async () => {
     expect(await formContract.description()).to.eql(description);
-    expect(await formContract.formDataId()).to.eql(formDataId);
-    expect(await formContract.merkleTreeId()).to.eql(merkleTreeId);
-    expect(await formContract.answerEncryptionPublicKey()).to.eql(
-      answerEncryptionPublicKey
+    expect(await formContract.formDataURI()).to.eql(formDataURI);
+    expect(await formContract.answerEncryptionKey()).to.eql(
+      answerEncryptionKey
+    );
+    expect(await formContract.answerDecryptionKeyURI()).to.eql(
+      answerDecryptionKeyURI
     );
   });
 

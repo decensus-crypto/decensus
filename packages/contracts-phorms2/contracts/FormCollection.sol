@@ -13,9 +13,9 @@ contract FormCollection is
 {
     bytes32 public merkleRoot;
     string public description;
-    string public formDataId;
-    string public merkleTreeId;
-    string public answerEncryptionPublicKey;
+    string public formDataURI;
+    string public answerEncryptionKey;
+    string public answerDecryptionKeyURI;
 
     mapping(address => string) public encryptedAnswers;
     uint256 public numberOfAnswers;
@@ -30,18 +30,18 @@ contract FormCollection is
         string memory _name,
         string memory _description,
         bytes32 _merkleRoot,
-        string memory _formDataId,
-        string memory _merkleTreeId,
-        string memory _answerEncryptionPublicKey,
+        string memory _formDataURI,
+        string memory _answerEncryptionKey,
+        string memory _answerDecryptionKeyURI,
         address _owner
     ) public initializer {
-        __ERC721_init(_name, "PH");
+        __ERC721_init(_name, "DCS");
         _transferOwnership(_owner);
-        merkleRoot = _merkleRoot;
         description = _description;
-        formDataId = _formDataId;
-        merkleTreeId = _merkleTreeId;
-        answerEncryptionPublicKey = _answerEncryptionPublicKey;
+        merkleRoot = _merkleRoot;
+        formDataURI = _formDataURI;
+        answerEncryptionKey = _answerEncryptionKey;
+        answerDecryptionKeyURI = _answerDecryptionKeyURI;
     }
 
     function submitAnswers(
