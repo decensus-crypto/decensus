@@ -6,7 +6,7 @@ import {
   SUBMISSION_MARK_CONTRACT_ADDRESS,
 } from "../constants/constants";
 import { createToast } from "../utils/createToast";
-import { getSubmissionMarkContract } from "../utils/getSubmissionMarkContract";
+import { getSubmissionMarkContract } from "../utils/getContract";
 import { useAccount } from "./useAccount";
 import { useFormData } from "./useFormData";
 import { useLitCeramic } from "./useLitCeramic";

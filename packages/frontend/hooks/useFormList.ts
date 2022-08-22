@@ -1,7 +1,7 @@
 import { atom, useAtom } from "jotai";
 import { useCallback } from "react";
 import { createToast } from "../utils/createToast";
-import { getSubmissionMarkContract } from "../utils/getSubmissionMarkContract";
+import { getSubmissionMarkContract } from "../utils/getContract";
 import { getFormUrl, getResultUrl } from "../utils/urls";
 import { useAccount } from "./useAccount";
 import { useLitCeramic } from "./useLitCeramic";

@@ -22,6 +22,7 @@
     "lit-ceramic-sdk": "git+https://github.com/decensus-crypto/CeramicIntegration.git#main",
     "lit-js-sdk": "^1.1.207",
     "luxon": "^3.0.1",
+    "merkletreejs": "^0.2.32",
     "next": "12.2.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",

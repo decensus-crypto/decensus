@@ -8,7 +8,7 @@ import {
   Image,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
-import type { ReactElement } from "react";
+import { ReactElement } from "react";
 import Layout from "../layouts/default";
 
 const Root = (page: ReactElement) => {

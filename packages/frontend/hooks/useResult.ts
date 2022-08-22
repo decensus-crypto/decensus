@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useCallback } from "react";
 import { Answer } from "../constants/constants";
 import { createToast } from "../utils/createToast";
-import { getSubmissionMarkContract } from "../utils/getSubmissionMarkContract";
+import { getSubmissionMarkContract } from "../utils/getContract";
 import { useAccount } from "./useAccount";
 import { useLitCeramic } from "./useLitCeramic";
 

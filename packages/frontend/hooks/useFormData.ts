@@ -2,7 +2,7 @@ import { atom, useAtom } from "jotai";
 import { useCallback } from "react";
 import { FormTemplate } from "../constants/constants";
 import { createToast } from "../utils/createToast";
-import { getSubmissionMarkContract } from "../utils/getSubmissionMarkContract";
+import { getSubmissionMarkContract } from "../utils/getContract";
 import { useAccount } from "./useAccount";
 import { useLitCeramic } from "./useLitCeramic";
 import { useSurveyIdInQuery } from "./useSurveyIdInQuery";

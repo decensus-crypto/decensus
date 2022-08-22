@@ -21,6 +21,7 @@ import {
   Spinner,
   Stack,
   Text,
+  Textarea,
   useClipboard,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
@@ -64,6 +65,7 @@ const FormCreationModal = (props: {
 }) => {
   // form title and contract address
   const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const [contractAddress, setContractAddress] = useState("");
   const [isLoadingNftName, setIsLoadingNftName] = useState(false);
   const [loadedNftName, setLoadedNftName] = useState(false);
@@ -160,6 +162,15 @@ const FormCreationModal = (props: {
                 />
               </FormControl>
               <FormControl mt={4}>
+                <FormLabel>Form Description</FormLabel>
+                <Textarea
+                  required
+                  placeholder="A survey to analyze the demography of NFT holders"
+                  value={description}
+                  onChange={(evt) => setDescription(evt.target.value)}
+                />
+              </FormControl>
+              <FormControl mt={4}>
                 <FormLabel display="flex" justifyContent="stretch" mr="0">
                   NFT Contract Address
                   <Spacer />
@@ -247,6 +258,7 @@ const FormCreationModal = (props: {
                   canDeploy={isFirstStepValid && isSecondStepValid}
                   nftAddress={contractAddress}
                   title={title}
+                  description={description}
                   questionIds={questionIds}
                   onDeployComplete={onDeployComplete}
                 />

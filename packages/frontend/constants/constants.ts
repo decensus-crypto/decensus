@@ -1,3 +1,6 @@
+export const FORM_COLLECTION_FACTORY_CONTRACT_ADDRESS =
+  "0x5B4C3ae457d5A923A8d40466de60bc04b29f123b";
+
 export const SUBMISSION_MARK_CONTRACT_ADDRESS =
   "0x3990B7daEF78C23686EB93e0cea624C8504ef9A0";
 
@@ -295,9 +298,11 @@ export type QuestionId = typeof QUESTIONS[number]["id"];
 
 export const FORM_TEMPLATE = (params: {
   title: string;
+  description: string;
   questionIds: QuestionId[];
 }) => ({
   title: params.title,
+  description: params.description,
   questions: QUESTIONS.flatMap((q) =>
     params.questionIds.includes(q.id) ? [q] : []
   ),

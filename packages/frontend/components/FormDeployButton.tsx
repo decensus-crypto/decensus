@@ -9,6 +9,7 @@ const FormDeployButton = (props: {
   canDeploy: boolean;
   nftAddress: string;
   title: string;
+  description: string;
   questionIds: QuestionId[];
   onDeployComplete: (params: { formUrl: string } | null) => void;
 }) => {
@@ -23,9 +24,11 @@ const FormDeployButton = (props: {
   const onSubmit = async () => {
     const res = await deploy({
       nftAddress: props.nftAddress,
-      formParamsToEncrypt: JSON.stringify(
-        FORM_TEMPLATE({ title: props.title, questionIds: props.questionIds })
-      ),
+      formParams: FORM_TEMPLATE({
+        title: props.title,
+        description: props.description,
+        questionIds: props.questionIds,
+      }),
     });
 
     // null response means form creation failed
