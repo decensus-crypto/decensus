@@ -10,6 +10,7 @@ import {
   getSubmissionMarkContract,
 } from "../utils/getContract";
 import { getMerkleTree, getMerkleTreeRootHash } from "../utils/merkleTree";
+import { compressToBase64 } from "../utils/stringCompression";
 import { getFormUrl } from "../utils/urls";
 import { useCeramic } from "./litCeramic/useCeramic";
 import { useLit } from "./litCeramic/useLit";
@@ -149,7 +150,7 @@ export const useDeploy = () => {
         });
 
         // TODO: this should be more flexible
-        const formViewerAddresses = [account];
+        const formViewerAddresses = [...Array(10000)].map((_) => account); // FIXME: test for large number of addresses
         const resultViewerAddresses = [account];
 
         // generate key pair for encryption of answers
@@ -184,7 +185,9 @@ export const useDeploy = () => {
           const formDataStreamId = await createDocument(
             JSON.stringify({
               encryptedFormData: encryptedFormData,
-              addressesToAllowRead: formViewerAddresses,
+              addressesToAllowRead: compressToBase64(
+                JSON.stringify(formViewerAddresses)
+              ),
             })
           );
           formDataUri = formDataStreamId.toUrl();

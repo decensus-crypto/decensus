@@ -2,8 +2,13 @@ import { atom, useAtom } from "jotai";
 // @ts-expect-error
 import LitJsSdk from "lit-js-sdk";
 import { useCallback } from "react";
-import { toString as uint8ArrayToString } from "uint8arrays/to-string";
 import { CHAIN_NAME } from "../../constants/constants";
+import {
+  blobToBase64,
+  decodeb64,
+  encodeb64,
+  uint8ArrayToString,
+} from "../../utils/dataConverters";
 
 const litClientAtom = atom<any | null>(null);
 const litAuthSigAtom = atom<any | null>(null);
@@ -26,27 +31,6 @@ const accFromAddresses = (params: {
       },
     },
   ]);
-
-const encodeb64 = (uintarray: Uint8Array) => {
-  const b64 = Buffer.from(uintarray).toString("base64");
-  return b64;
-};
-
-const blobToBase64 = async (blob: Blob): Promise<string> => {
-  return new Promise((resolve, _) => {
-    const reader = new FileReader();
-    reader.onloadend = () =>
-      resolve(
-        // @ts-ignore
-        reader.result.replace("data:application/octet-stream;base64,", "")
-      );
-    reader.readAsDataURL(blob);
-  });
-};
-
-const decodeb64 = (b64String: string) => {
-  return new Uint8Array(Buffer.from(b64String, "base64"));
-};
 
 export const useLit = () => {
   const [client, setClient] = useAtom(litClientAtom);
