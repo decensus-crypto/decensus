@@ -19,6 +19,8 @@ import {
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Answer, FormTemplate } from "../constants/constants";
+import { useCeramic } from "../hooks/litCeramic/useCeramic";
+import { useLit } from "../hooks/litCeramic/useLit";
 import { useAnswerSubmit } from "../hooks/useAnswerSubmit";
 import { useFormData } from "../hooks/useFormData";
 import { useLitCeramic } from "../hooks/useLitCeramic";
@@ -139,6 +141,9 @@ const AnswerForm = () => {
     Record<string, { question_type: string; answer: string | string[] }>
   >({});
 
+  const { initLitClient, getLitAuthSig } = useLit();
+  const { initCeramic } = useCeramic();
+
   useEffect(() => {
     initLitCeramic();
   }, [initLitCeramic]);
@@ -146,6 +151,18 @@ const AnswerForm = () => {
   useEffect(() => {
     fetchFormData();
   }, [fetchFormData]);
+
+  useEffect(() => {
+    initLitClient();
+  }, [initLitClient]);
+
+  useEffect(() => {
+    getLitAuthSig();
+  }, [getLitAuthSig]);
+
+  useEffect(() => {
+    initCeramic();
+  }, [initCeramic]);
 
   const question = formData
     ? formData["questions"].filter((q, i) => i === currentQuestionIndex)[0] ||

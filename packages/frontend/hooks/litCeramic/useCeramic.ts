@@ -65,5 +65,11 @@ export const useCeramic = () => {
     [ceramic]
   );
 
-  return { initCeramic, authenticateCeramic, createDocument, loadDocument };
+  return {
+    initCeramic,
+    authenticateCeramic,
+    createDocument,
+    loadDocument,
+    isCeramicReady: !!ceramic,
+  };
 };

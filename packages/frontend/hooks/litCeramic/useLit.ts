@@ -120,5 +120,12 @@ export const useLit = () => {
     [authSig, client]
   );
 
-  return { initLitClient, getLitAuthSig, encryptWithLit, decryptWithLit };
+  return {
+    initLitClient,
+    getLitAuthSig,
+    encryptWithLit,
+    decryptWithLit,
+    isLitClientReady: !!client,
+    litAuthSig: authSig,
+  };
 };

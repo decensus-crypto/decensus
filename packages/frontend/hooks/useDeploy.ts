@@ -37,8 +37,8 @@ export const useDeploy = () => {
   const [isDeploying, setIsDeploying] = useAtom(isDeployingAtom);
 
   const { litCeramicIntegration } = useLitCeramic();
-  const { authenticateCeramic, createDocument, loadDocument } = useCeramic();
-  const { getLitAuthSig, encryptWithLit, decryptWithLit } = useLit();
+  const { authenticateCeramic, createDocument } = useCeramic();
+  const { getLitAuthSig, encryptWithLit } = useLit();
 
   const { account } = useAccount();
 
@@ -151,7 +151,7 @@ export const useDeploy = () => {
         });
 
         // TODO: this should be more flexible
-        const formViewerAddresses = [...Array(10000)].map((_) => account); // FIXME: test for large number of addresses
+        const formViewerAddresses = [...Array(100)].map((_) => account); // FIXME: test for large number of addresses
         const resultViewerAddresses = [account];
 
         // generate key pair for encryption of answers
@@ -168,9 +168,7 @@ export const useDeploy = () => {
           await getLitAuthSig();
 
           const encryptedFormData = await encryptWithLit({
-            strToEncrypt: JSON.stringify({
-              formParams,
-            }),
+            strToEncrypt: JSON.stringify(formParams),
             addressesToAllowRead: formViewerAddresses,
             chain: CHAIN_NAME,
           });
@@ -184,20 +182,22 @@ export const useDeploy = () => {
           await authenticateCeramic();
 
           const formDataStreamId = await createDocument(
-            JSON.stringify({
-              encryptedFormData: encryptedFormData,
-              addressesToAllowRead: compressToBase64(
-                JSON.stringify(formViewerAddresses)
-              ),
-            })
+            compressToBase64(
+              JSON.stringify({
+                encryptedFormData: encryptedFormData,
+                addressesToAllowRead: formViewerAddresses,
+              })
+            )
           );
           formDataUri = formDataStreamId.toUrl();
 
           const keyStreamId = await createDocument(
-            JSON.stringify({
-              encryptedFormData: encryptedKey,
-              addressesToAllowRead: resultViewerAddresses,
-            })
+            compressToBase64(
+              JSON.stringify({
+                encryptedFormData: encryptedKey,
+                addressesToAllowRead: resultViewerAddresses,
+              })
+            )
           );
           answerDecryptionKeyUri = keyStreamId.toUrl();
         } catch (error) {
