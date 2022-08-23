@@ -11,6 +11,8 @@ import {
 } from "../utils/getContract";
 import { getMerkleTree, getMerkleTreeRootHash } from "../utils/merkleTree";
 import { getFormUrl } from "../utils/urls";
+import { useCeramic } from "./litCeramic/useCeramic";
+import { useLit } from "./litCeramic/useLit";
 import { useAccount } from "./useAccount";
 import { useLitCeramic } from "./useLitCeramic";
 
@@ -30,26 +32,13 @@ const litAccessControlConditions = (nftAddress: string) => [
   },
 ];
 
-const litResultViewerAccessControlConditions = (addresses: string[]) =>
-  addresses.flatMap((a, i) => [
-    ...(i === 0 ? [] : [{ operator: "or" }]),
-    {
-      contractAddress: "",
-      standardContractType: "",
-      chain: CHAIN_NAME,
-      method: "",
-      parameters: [":userAddress"],
-      returnValueTest: {
-        comparator: "=",
-        value: a,
-      },
-    },
-  ]);
-
 export const useDeploy = () => {
   const [isDeploying, setIsDeploying] = useAtom(isDeployingAtom);
 
   const { litCeramicIntegration } = useLitCeramic();
+  const { authenticateCeramic, createDocument, loadDocument } = useCeramic();
+  const { getLitAuthSig, encryptWithLit, decryptWithLit } = useLit();
+
   const { account } = useAccount();
 
   const router = useRouter();
@@ -160,6 +149,7 @@ export const useDeploy = () => {
         });
 
         // TODO: this should be more flexible
+        const formViewerAddresses = [account];
         const resultViewerAddresses = [account];
 
         // generate key pair for encryption of answers
@@ -170,14 +160,42 @@ export const useDeploy = () => {
         const merkleRoot = getMerkleTreeRootHash(merkleTree);
 
         // deploy form, private key, merkle tree to Ceramic.
-        // the stream ID of Ceramic becomes the form data ID.
-        let formDataId: string;
+        let formDataUri: string;
+        let answerDecryptionKeyUri: string;
         try {
-          formDataId = await litCeramicIntegration.encryptAndWrite(
-            JSON.stringify(formParams),
-            litAccessControlConditions(nftAddress)
+          await getLitAuthSig();
+
+          const encryptedFormData = await encryptWithLit({
+            strToEncrypt: JSON.stringify({
+              formParams,
+            }),
+            addressesToAllowRead: formViewerAddresses,
+            chain: CHAIN_NAME,
+          });
+
+          const encryptedKey = await encryptWithLit({
+            strToEncrypt: keyPair.privateKey,
+            addressesToAllowRead: resultViewerAddresses,
+            chain: CHAIN_NAME,
+          });
+
+          await authenticateCeramic();
+
+          const formDataStreamId = await createDocument(
+            JSON.stringify({
+              encryptedFormData: encryptedFormData,
+              addressesToAllowRead: formViewerAddresses,
+            })
           );
-          // TODO: store merkle tree, private key
+          formDataUri = formDataStreamId.toUrl();
+
+          const keyStreamId = await createDocument(
+            JSON.stringify({
+              encryptedFormData: encryptedKey,
+              addressesToAllowRead: resultViewerAddresses,
+            })
+          );
+          answerDecryptionKeyUri = keyStreamId.toUrl();
         } catch (error) {
           console.error(error);
           throw new Error("Upload form to Ceramic failed");
@@ -187,11 +205,11 @@ export const useDeploy = () => {
           formParams.title,
           formParams.description,
           merkleRoot,
-          formDataId,
-          "", // TODO: merkle tree ID
+          formDataUri,
           keyPair.publicKey,
+          answerDecryptionKeyUri,
           {
-            gasLimit: 1000000,
+            gasLimit: 2000000,
           }
         );
 
@@ -226,7 +244,15 @@ export const useDeploy = () => {
         setIsDeploying(false);
       }
     },
-    [account, litCeramicIntegration, setIsDeploying]
+    [
+      account,
+      authenticateCeramic,
+      createDocument,
+      encryptWithLit,
+      getLitAuthSig,
+      litCeramicIntegration,
+      setIsDeploying,
+    ]
   );
 
   // switch the deploy function depending on the query string

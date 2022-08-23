@@ -1,6 +1,8 @@
 import { Button } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { FORM_TEMPLATE, QuestionId } from "../constants/constants";
+import { useCeramic } from "../hooks/litCeramic/useCeramic";
+import { useLit } from "../hooks/litCeramic/useLit";
 import { useDeploy } from "../hooks/useDeploy";
 import { useFormList } from "../hooks/useFormList";
 import { useLitCeramic } from "../hooks/useLitCeramic";
@@ -16,10 +18,14 @@ const FormDeployButton = (props: {
   const { deploy, isDeploying } = useDeploy();
   const { initLitCeramic } = useLitCeramic();
   const { fetchFormList } = useFormList();
+  const { initLitClient } = useLit();
+  const { initCeramic } = useCeramic();
 
   useEffect(() => {
     initLitCeramic();
-  }, [initLitCeramic]);
+    initLitClient();
+    initCeramic();
+  }, [initCeramic, initLitCeramic, initLitClient]);
 
   const onSubmit = async () => {
     const res = await deploy({

@@ -1,5 +1,5 @@
 import { getResolver as get3IDResolver } from "@ceramicnetwork/3id-did-resolver";
-import { CeramicClient } from "@ceramicnetwork/http-client";
+import type { CeramicClient } from "@ceramicnetwork/http-client";
 import { TileDocument } from "@ceramicnetwork/stream-tile";
 import { ResolverRegistry } from "did-resolver";
 import { DID } from "dids";
@@ -15,10 +15,13 @@ const ceramicAtom = atom<CeramicClient | null>(null);
 export const useCeramic = () => {
   const [ceramic, setCeramic] = useAtom(ceramicAtom);
 
-  const initCeramic = useCallback(() => {
+  const initCeramic = useCallback(async () => {
     if (ceramic) return;
 
-    const _ceramic = new CeramicClient(CERAMIC_URL);
+    // dynamic import due to esm
+    const _ceramicClient = await import("@ceramicnetwork/http-client");
+
+    const _ceramic = new _ceramicClient.CeramicClient(CERAMIC_URL);
     setCeramic(_ceramic);
   }, [ceramic, setCeramic]);
 
@@ -42,7 +45,7 @@ export const useCeramic = () => {
 
   const createDocument = useCallback(
     async (content: string) => {
-      if (!ceramic) return;
+      if (!ceramic) throw new Error("Ceramic is not initialized");
 
       const doc = await TileDocument.create(ceramic, content);
 
@@ -53,9 +56,11 @@ export const useCeramic = () => {
 
   const loadDocument = useCallback(
     async (id: string) => {
-      if (!ceramic) return;
+      if (!ceramic) throw new Error("Ceramic is not initialized");
 
-      return await TileDocument.load(ceramic, id);
+      return (await (
+        await TileDocument.load(ceramic, id)
+      ).content) as string;
     },
     [ceramic]
   );

@@ -2,6 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-}
+  esmExternals: true,
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

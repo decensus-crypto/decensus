@@ -2,6 +2,7 @@ import { atom, useAtom } from "jotai";
 // @ts-expect-error
 import LitJsSdk from "lit-js-sdk";
 import { useCallback } from "react";
+import { toString as uint8ArrayToString } from "uint8arrays/to-string";
 import { CHAIN_NAME } from "../../constants/constants";
 
 const litClientAtom = atom<any | null>(null);
@@ -26,15 +27,38 @@ const accFromAddresses = (params: {
     },
   ]);
 
+const encodeb64 = (uintarray: Uint8Array) => {
+  const b64 = Buffer.from(uintarray).toString("base64");
+  return b64;
+};
+
+const blobToBase64 = async (blob: Blob): Promise<string> => {
+  return new Promise((resolve, _) => {
+    const reader = new FileReader();
+    reader.onloadend = () =>
+      resolve(
+        // @ts-ignore
+        reader.result.replace("data:application/octet-stream;base64,", "")
+      );
+    reader.readAsDataURL(blob);
+  });
+};
+
+const decodeb64 = (b64String: string) => {
+  return new Uint8Array(Buffer.from(b64String, "base64"));
+};
+
 export const useLit = () => {
   const [client, setClient] = useAtom(litClientAtom);
   const [authSig, setAuthSig] = useAtom(litAuthSigAtom);
 
   const initLitClient = useCallback(() => {
-    const client = new LitJsSdk.LitNodeClient();
-    client.connect();
-    setClient(client);
-  }, [setClient]);
+    if (client) return;
+
+    const _client = new LitJsSdk.LitNodeClient();
+    _client.connect();
+    setClient(_client);
+  }, [client, setClient]);
 
   const getLitAuthSig = useCallback(async () => {
     if (authSig) return;
@@ -48,12 +72,11 @@ export const useLit = () => {
   const encryptWithLit = useCallback(
     async (params: {
       strToEncrypt: string;
-      accessControlConditions: any[];
       addressesToAllowRead: string[];
       chain: string;
     }): Promise<{
-      encryptedZipStr: string;
-      encryptedSymmKey: string;
+      encryptedZipBase64: string;
+      encryptedSymmKeyBase64: string;
     }> => {
       if (!authSig || !client) throw new Error("Lit initialization incomplete");
 
@@ -69,12 +92,12 @@ export const useLit = () => {
         permanant: true,
       });
 
-      const decoder = new TextDecoder();
-      const encryptedZipStr = decoder.decode(encryptedZip);
+      const encryptedZipBase64 = await blobToBase64(encryptedZip);
+      const encryptedSymmKeyBase64 = encodeb64(encryptedSymmKey);
 
       return {
-        encryptedZipStr,
-        encryptedSymmKey,
+        encryptedZipBase64,
+        encryptedSymmKeyBase64,
       };
     },
     [authSig, client]
@@ -82,24 +105,28 @@ export const useLit = () => {
 
   const decryptWithLit = useCallback(
     async (params: {
-      encryptedZipStr: string;
-      encryptedSymmKey: string;
+      encryptedZipBase64: string;
+      encryptedSymmKeyBase64: string;
       addressesToAllowRead: string[];
       chain: string;
     }): Promise<string> => {
       if (!authSig || !client) throw new Error("Lit initialization incomplete");
 
+      const toDecrypt = uint8ArrayToString(
+        decodeb64(params.encryptedSymmKeyBase64),
+        "base16"
+      );
+
       const decryptedSymmKey = await client.getEncryptionKey({
         accessControlConditions: accFromAddresses(params),
-        toDecrypt: params.encryptedSymmKey,
+        toDecrypt,
         chain: CHAIN_NAME,
         authSig,
       });
 
       // decrypt the files
-      const encoder = new TextEncoder();
       const decryptedFiles = await LitJsSdk.decryptZip(
-        encoder.encode(params.encryptedZipStr),
+        new Blob([decodeb64(params.encryptedZipBase64)]),
         decryptedSymmKey
       );
       const decryptedString = await decryptedFiles["string.txt"].async("text");
