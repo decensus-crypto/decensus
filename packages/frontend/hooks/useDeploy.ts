@@ -1,6 +1,5 @@
 import { ContractReceipt } from "ethers";
 import { atom, useAtom } from "jotai";
-import { useRouter } from "next/router";
 import { useCallback } from "react";
 import { CHAIN_NAME, FormTemplate } from "../constants/constants";
 import { createToast } from "../utils/createToast";
@@ -16,6 +15,7 @@ import { useCeramic } from "./litCeramic/useCeramic";
 import { useLit } from "./litCeramic/useLit";
 import { useAccount } from "./useAccount";
 import { useLitCeramic } from "./useLitCeramic";
+import { usePhormsMode } from "./usePhormsMode";
 
 const isDeployingAtom = atom<boolean>(false);
 
@@ -42,7 +42,8 @@ export const useDeploy = () => {
 
   const { account } = useAccount();
 
-  const router = useRouter();
+  // TODO: remove test mode
+  const { isPhormsMode } = usePhormsMode();
 
   const deployOld = useCallback(
     async ({
@@ -261,13 +262,13 @@ export const useDeploy = () => {
   // switch the deploy function depending on the query string
   const deploy = useCallback(
     async (params: { nftAddress: string; formParams: FormTemplate }) => {
-      if (router.query.test != null) {
+      if (isPhormsMode) {
         return await deployPhorms(params);
       } else {
         return await deployOld(params);
       }
     },
-    [deployOld, deployPhorms, router.query.test]
+    [deployOld, deployPhorms, isPhormsMode]
   );
 
   return {
