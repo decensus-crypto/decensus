@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ceramicnetwork/http-client": "^2.3.3",
+    "@ceramicnetwork/stream-tile": "^2.4.2",
     "@chakra-ui/icons": "^2.0.4",
     "@chakra-ui/react": "^2.2.3",
     "@emotion/react": "^11.9.3",
