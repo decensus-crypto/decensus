@@ -30,7 +30,6 @@ export const useCeramic = () => {
 
     const provider = await getProvider();
     const resolverRegistry: ResolverRegistry = {
-      // @ts-expect-error
       ...get3IDResolver(ceramic),
       ...getKeyResolver(),
     };
