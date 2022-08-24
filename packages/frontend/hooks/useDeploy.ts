@@ -157,8 +157,8 @@ export const useDeploy = () => {
         // generate key pair for encryption of answers
         const keyPair = await genKeyPair();
 
-        // generate Merkle tree (for now, only allow form owner to view results)
-        const merkleTree = getMerkleTree([account]);
+        // generate Merkle tree
+        const merkleTree = getMerkleTree(formViewerAddresses);
         const merkleRoot = getMerkleTreeRootHash(merkleTree);
 
         // deploy form, private key, merkle tree to Ceramic.

@@ -25,6 +25,7 @@ import { useAnswerSubmit } from "../hooks/useAnswerSubmit";
 import { useFormData } from "../hooks/useFormData";
 import { useLitCeramic } from "../hooks/useLitCeramic";
 import { useSurveyIdInQuery } from "../hooks/useSurveyIdInQuery";
+import { createToast } from "../utils/createToast";
 
 type AnswerInForm = Omit<Answer, "question_id">;
 
@@ -181,11 +182,18 @@ const AnswerForm = () => {
       ...params,
     }));
 
-    const { success } = await submitAnswer({
-      submissionStrToEncrypt: JSON.stringify({ answers: answerArr }),
-    });
-
-    if (success) router.push(`/result?id=${surveyId}`);
+    try {
+      await submitAnswer({
+        submissionStrToEncrypt: JSON.stringify({ answers: answerArr }),
+      });
+      router.push(`/result?id=${surveyId}`);
+    } catch (error: any) {
+      createToast({
+        title: "Failed to submit answer",
+        description: error.message,
+        status: "error",
+      });
+    }
   };
 
   if (!formData || !question || isLoading) {

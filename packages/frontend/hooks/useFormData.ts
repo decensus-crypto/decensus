@@ -18,6 +18,7 @@ import { useSurveyIdInQuery } from "./useSurveyIdInQuery";
 const formDataAtom = atom<FormTemplate | null>(null);
 const nftAddressAtom = atom<string | null>(null);
 const isLoadingAtom = atom<boolean>(true);
+const formViewerAddressesAtom = atom<string[] | null>(null);
 
 export const useFormData = () => {
   const { surveyId } = useSurveyIdInQuery();
@@ -39,6 +40,9 @@ export const useFormData = () => {
   const [formData, setFormData] = useAtom(formDataAtom);
   const [nftAddress, setNftAddress] = useAtom(nftAddressAtom);
   const [isLoading, setIsLoading] = useAtom(isLoadingAtom);
+  const [formViewerAddresses, setFormViewerAddresses] = useAtom(
+    formViewerAddressesAtom
+  );
 
   // TODO: remove test mode
   const { isPhormsMode } = usePhormsMode();
@@ -127,12 +131,11 @@ export const useFormData = () => {
         const formData = JSON.parse(formDataStr);
 
         setFormData(formData);
+        setFormViewerAddresses(addressesToAllowRead);
       } catch (error) {
         console.error(error);
         throw new Error("invalid form data");
       }
-
-      setNftAddress(nftAddress);
     } catch (error: any) {
       createToast({
         title: "Failed to get form data",
@@ -150,10 +153,9 @@ export const useFormData = () => {
     isLitClientReady,
     litAuthSig,
     loadDocument,
-    nftAddress,
     setFormData,
+    setFormViewerAddresses,
     setIsLoading,
-    setNftAddress,
   ]);
 
   // switch the deploy function depending on the query string
@@ -170,6 +172,8 @@ export const useFormData = () => {
     nftAddress,
     surveyId,
     isLoadingFormData: isLoading,
+    formCollectionAddress,
+    formViewerAddresses,
     fetchFormData,
   };
 };
