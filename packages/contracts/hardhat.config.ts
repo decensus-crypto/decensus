@@ -1,7 +1,8 @@
-import * as dotenv from "dotenv";
-
 import "@nomicfoundation/hardhat-toolbox";
+import "@nomiclabs/hardhat-solhint";
 import { HardhatUserConfig } from "hardhat/config";
+
+import dotenv from "dotenv";
 
 dotenv.config();
 
