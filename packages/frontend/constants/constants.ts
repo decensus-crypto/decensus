@@ -14,6 +14,11 @@ export const LIT_CERAMIC_INTEGRATION_PARAMS = [
   CHAIN_NAME,
 ];
 
+// TODO: use API Key
+export const SUBGRAPH_URL =
+  "https://api.studio.thegraph.com/query/28717/form-collection-goerli/0.0.3";
+//  "https://api.thegraph.com/subgraphs/name/nakaakist/form-collection-goerli";
+
 export const AGE_QUESTION = {
   id: "2f633cdd1181d42a9c7ae9a889362ff7",
   question_title: "Age",
