@@ -266,7 +266,7 @@ const buildPieChart = (params: { data: [string, number][]; title: string }) => {
 const ResultBody = () => {
   const { initLitClient, getLitAuthSig } = useLit();
   const { initCeramic } = useCeramic();
-  const { formData, fetchFormData } = useFormData();
+  const { formData, isLoadingFormData, fetchFormData } = useFormData();
   const { isLoadingAnswersList, answersList, fetchResults, fetchNftAddress } =
     useResult();
 
@@ -352,7 +352,7 @@ const ResultBody = () => {
     });
   }, [aggData, answersList]);
 
-  if (isLoadingAnswersList)
+  if (isLoadingAnswersList || isLoadingFormData)
     return (
       <Flex w="100%" h="500px" align="center" justify="center">
         <Spinner size="lg" color="white" />
