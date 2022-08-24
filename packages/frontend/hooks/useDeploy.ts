@@ -194,7 +194,7 @@ export const useDeploy = () => {
           const keyStreamId = await createDocument(
             compressToBase64(
               JSON.stringify({
-                encryptedFormData: encryptedKey,
+                encryptedKey,
                 addressesToAllowRead: resultViewerAddresses,
               })
             )

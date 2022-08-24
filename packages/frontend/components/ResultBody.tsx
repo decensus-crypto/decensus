@@ -21,8 +21,9 @@ import HighchartsExporting from "highcharts/modules/exporting";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { COUNTRY_QUESTION } from "../constants/constants";
+import { useCeramic } from "../hooks/litCeramic/useCeramic";
+import { useLit } from "../hooks/litCeramic/useLit";
 import { useFormData } from "../hooks/useFormData";
-import { useLitCeramic } from "../hooks/useLitCeramic";
 import { useResult } from "../hooks/useResult";
 import {
   fetchNftAggregationStats,
@@ -263,14 +264,23 @@ const buildPieChart = (params: { data: [string, number][]; title: string }) => {
 };
 
 const ResultBody = () => {
-  const { initLitCeramic } = useLitCeramic();
+  const { initLitClient, getLitAuthSig } = useLit();
+  const { initCeramic } = useCeramic();
   const { formData, isLoadingFormData, fetchFormData } = useFormData();
   const { isLoadingAnswersList, answersList, fetchResults, fetchNftAddress } =
     useResult();
 
   useEffect(() => {
-    initLitCeramic();
-  }, [initLitCeramic]);
+    initLitClient();
+  }, [initLitClient]);
+
+  useEffect(() => {
+    getLitAuthSig();
+  }, [getLitAuthSig]);
+
+  useEffect(() => {
+    initCeramic();
+  }, [initCeramic]);
 
   useEffect(() => {
     fetchFormData();

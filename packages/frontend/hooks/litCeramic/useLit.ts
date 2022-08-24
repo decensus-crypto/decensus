@@ -36,11 +36,11 @@ export const useLit = () => {
   const [client, setClient] = useAtom(litClientAtom);
   const [authSig, setAuthSig] = useAtom(litAuthSigAtom);
 
-  const initLitClient = useCallback(() => {
+  const initLitClient = useCallback(async () => {
     if (client) return;
 
     const _client = new LitJsSdk.LitNodeClient();
-    _client.connect();
+    await _client.connect();
     setClient(_client);
   }, [client, setClient]);
 
