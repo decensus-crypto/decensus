@@ -6,7 +6,7 @@ export function handleFormCollectionCreated(
 ): void {
   let collection = new FormCollection(event.params.newFormCollection);
 
-  collection.contractAddress = event.address;
+  collection.contractAddress = event.params.newFormCollection;
   collection.owner = event.transaction.from;
   collection.name = event.params.name;
   collection.description = event.params.description;
