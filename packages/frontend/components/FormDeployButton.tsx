@@ -5,7 +5,6 @@ import { useCeramic } from "../hooks/litCeramic/useCeramic";
 import { useLit } from "../hooks/litCeramic/useLit";
 import { useDeploy } from "../hooks/useDeploy";
 import { useFormList } from "../hooks/useFormList";
-import { useLitCeramic } from "../hooks/useLitCeramic";
 
 const FormDeployButton = (props: {
   canDeploy: boolean;
@@ -16,20 +15,20 @@ const FormDeployButton = (props: {
   onDeployComplete: (params: { formUrl: string } | null) => void;
 }) => {
   const { deploy, isDeploying } = useDeploy();
-  const { initLitCeramic } = useLitCeramic();
   const { fetchFormList } = useFormList();
   const { initLitClient } = useLit();
   const { initCeramic } = useCeramic();
 
   useEffect(() => {
-    initLitCeramic();
     initLitClient();
+  }, [initLitClient]);
+
+  useEffect(() => {
     initCeramic();
-  }, [initCeramic, initLitCeramic, initLitClient]);
+  }, [initCeramic]);
 
   const onSubmit = async () => {
     const res = await deploy({
-      nftAddress: props.nftAddress,
       formParams: FORM_TEMPLATE({
         title: props.title,
         description: props.description,

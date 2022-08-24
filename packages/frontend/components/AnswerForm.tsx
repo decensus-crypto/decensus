@@ -22,9 +22,8 @@ import { Answer, FormTemplate } from "../constants/constants";
 import { useCeramic } from "../hooks/litCeramic/useCeramic";
 import { useLit } from "../hooks/litCeramic/useLit";
 import { useAnswerSubmit } from "../hooks/useAnswerSubmit";
+import { useFormCollectionAddress } from "../hooks/useFormCollectionAddress";
 import { useFormData } from "../hooks/useFormData";
-import { useLitCeramic } from "../hooks/useLitCeramic";
-import { useSurveyIdInQuery } from "../hooks/useSurveyIdInQuery";
 import { createToast } from "../utils/createToast";
 
 type AnswerInForm = Omit<Answer, "question_id">;
@@ -126,14 +125,14 @@ const FormInput = ({
 };
 
 const AnswerForm = () => {
-  const { surveyId } = useSurveyIdInQuery();
+  const { formCollectionAddress } = useFormCollectionAddress();
   const { isSubmitting, submitAnswer } = useAnswerSubmit();
   const {
     formData,
     isLoadingFormData: isLoading,
     fetchFormData,
   } = useFormData();
-  const { initLitCeramic } = useLitCeramic();
+
   const router = useRouter();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useControllableState({
     defaultValue: 0,
@@ -144,10 +143,6 @@ const AnswerForm = () => {
 
   const { initLitClient, getLitAuthSig } = useLit();
   const { initCeramic } = useCeramic();
-
-  useEffect(() => {
-    initLitCeramic();
-  }, [initLitCeramic]);
 
   useEffect(() => {
     fetchFormData();
@@ -186,7 +181,7 @@ const AnswerForm = () => {
       await submitAnswer({
         submissionStrToEncrypt: JSON.stringify({ answers: answerArr }),
       });
-      router.push(`/result?id=${surveyId}`);
+      router.push(`/result?id=${formCollectionAddress}`);
     } catch (error: any) {
       createToast({
         title: "Failed to submit answer",

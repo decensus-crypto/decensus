@@ -51,16 +51,6 @@ export const useResult = () => {
   const { decryptWithLit, isLitClientReady, litAuthSig } = useLit();
 
   const fetchResults = useCallback(async () => {
-    console.log("ok1");
-
-    console.log(
-      formCollectionAddress,
-      isLitClientReady,
-      litAuthSig,
-      isCeramicReady,
-      account
-    );
-
     if (
       !formCollectionAddress ||
       !isLitClientReady ||

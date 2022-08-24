@@ -266,7 +266,7 @@ const buildPieChart = (params: { data: [string, number][]; title: string }) => {
 const ResultBody = () => {
   const { initLitClient, getLitAuthSig } = useLit();
   const { initCeramic } = useCeramic();
-  const { formData, isLoadingFormData, fetchFormData } = useFormData();
+  const { formData, fetchFormData } = useFormData();
   const { isLoadingAnswersList, answersList, fetchResults, fetchNftAddress } =
     useResult();
 

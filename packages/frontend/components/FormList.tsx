@@ -1,3 +1,4 @@
+import { CopyIcon, EditIcon, LinkIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -13,10 +14,8 @@ import {
   Tr,
   useClipboard,
 } from "@chakra-ui/react";
-import { CopyIcon, EditIcon, LinkIcon } from '@chakra-ui/icons'
 import { useEffect } from "react";
 import { Form, useFormList } from "../hooks/useFormList";
-import { useLitCeramic } from "../hooks/useLitCeramic";
 import { createToast } from "../utils/createToast";
 
 const FormRow = (props: Form) => {
@@ -40,20 +39,36 @@ const FormRow = (props: Form) => {
       <Td w={32}>
         <Flex>
           <Box>
-            <Button size="sm" variant="outline" color="white" leftIcon={<CopyIcon />} onClick={onClickCopy}>
+            <Button
+              size="sm"
+              variant="outline"
+              color="white"
+              leftIcon={<CopyIcon />}
+              onClick={onClickCopy}
+            >
               Copy URL
             </Button>
           </Box>
           <Box ml={2}>
             <a href={props.formUrl} target="_blank" rel="noreferrer">
-              <Button size="sm" variant="outline" color="white" leftIcon={<EditIcon />} >
+              <Button
+                size="sm"
+                variant="outline"
+                color="white"
+                leftIcon={<EditIcon />}
+              >
                 Go to Form
               </Button>
             </a>
           </Box>
           <Box ml={2}>
             <a href={props.resultUrl} target="_blank" rel="noreferrer">
-              <Button size="sm" variant="outline" color="white" leftIcon={<LinkIcon />} >
+              <Button
+                size="sm"
+                variant="outline"
+                color="white"
+                leftIcon={<LinkIcon />}
+              >
                 Survey Results
               </Button>
             </a>
@@ -66,11 +81,6 @@ const FormRow = (props: Form) => {
 
 const FormList = () => {
   const { formList, isLoadingFormList, fetchFormList } = useFormList();
-  const { initLitCeramic } = useLitCeramic();
-
-  useEffect(() => {
-    initLitCeramic();
-  }, [initLitCeramic]);
 
   useEffect(() => {
     fetchFormList();
@@ -92,7 +102,7 @@ const FormList = () => {
               </Tr>
             </Thead>
             <Tbody>
-              {formList
+              {(formList || [])
                 .filter((f) => !!f.title && !!f.formUrl)
                 .map((form, index) => (
                   <FormRow
