@@ -13,7 +13,7 @@ export const LIT_CERAMIC_INTEGRATION_PARAMS = [
 
 // TODO: use API Key
 export const SUBGRAPH_URL =
-  "https://api.studio.thegraph.com/query/28717/form-collection-goerli/0.0.4";
+  "https://api.studio.thegraph.com/query/28717/form-collection-goerli/0.0.5";
 
 export const AGE_QUESTION = {
   id: "2f633cdd1181d42a9c7ae9a889362ff7",
