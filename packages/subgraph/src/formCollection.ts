@@ -3,7 +3,7 @@ import { Answer } from "../generated/schema";
 
 export function handleAnswerSubmitted(event: AnswerSubmitted): void {
   let answer = new Answer(
-    `${event.address.toString()}${event.params.tokenId.toString()}`
+    `${event.address.toHexString()}${event.params.tokenId.toString()}`
   );
 
   answer.encryptedAnswer = event.params.encryptedAnswer;

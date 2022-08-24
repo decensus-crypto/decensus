@@ -5,3 +5,12 @@ type Answer @entity {
   respondentAddress: Bytes!
   mintedTokenId: BigInt!
 }
+
+type FormCollection @entity {
+  id: Bytes!
+  contractAddress: Bytes!
+  owner: Bytes!
+  name: String!
+  description: String!
+  createdAt: BigInt!
+}

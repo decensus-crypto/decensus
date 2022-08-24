@@ -3,7 +3,7 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum
-    name: form-collection
+    name: FormCollection
     network: goerli
     source:
       abi: FormCollection
@@ -13,7 +13,7 @@ dataSources:
       apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
-        - Answers
+        - Answer
       abis:
         - name: FormCollection
           file: ./abis/FormCollection.json
@@ -21,3 +21,23 @@ dataSources:
         - event: AnswerSubmitted(address,string,uint256)
           handler: handleAnswerSubmitted
       file: ./src/formCollection.ts
+  - kind: ethereum
+    name: FormCollectionFactory
+    network: goerli
+    source:
+      address: "0x7FF1EfB5E9F61C519E4192eA5cc7c93266a27fE9"
+      abi: FormCollectionFactory
+      startBlock: 7445610
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - FormCollection
+      abis:
+        - name: FormCollectionFactory
+          file: ./abis/FormCollectionFactory.json
+      eventHandlers:
+        - event: FormCollectionCreated(address,string,string)
+          handler: handleFormCollectionCreated
+      file: ./src/formCollectionFactory.ts

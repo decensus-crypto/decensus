@@ -159,20 +159,43 @@ export class FormCollection extends ethereum.SmartContract {
     return new FormCollection("FormCollection", address);
   }
 
-  answerEncryptionPublicKey(): string {
+  answerDecryptionKeyURI(): string {
     let result = super.call(
-      "answerEncryptionPublicKey",
-      "answerEncryptionPublicKey():(string)",
+      "answerDecryptionKeyURI",
+      "answerDecryptionKeyURI():(string)",
       []
     );
 
     return result[0].toString();
   }
 
-  try_answerEncryptionPublicKey(): ethereum.CallResult<string> {
+  try_answerDecryptionKeyURI(): ethereum.CallResult<string> {
     let result = super.tryCall(
-      "answerEncryptionPublicKey",
-      "answerEncryptionPublicKey():(string)",
+      "answerDecryptionKeyURI",
+      "answerDecryptionKeyURI():(string)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toString());
+  }
+
+  answerEncryptionKey(): string {
+    let result = super.call(
+      "answerEncryptionKey",
+      "answerEncryptionKey():(string)",
+      []
+    );
+
+    return result[0].toString();
+  }
+
+  try_answerEncryptionKey(): ethereum.CallResult<string> {
+    let result = super.tryCall(
+      "answerEncryptionKey",
+      "answerEncryptionKey():(string)",
       []
     );
     if (result.reverted) {
@@ -254,14 +277,14 @@ export class FormCollection extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toString());
   }
 
-  formDataId(): string {
-    let result = super.call("formDataId", "formDataId():(string)", []);
+  formDataURI(): string {
+    let result = super.call("formDataURI", "formDataURI():(string)", []);
 
     return result[0].toString();
   }
 
-  try_formDataId(): ethereum.CallResult<string> {
-    let result = super.tryCall("formDataId", "formDataId():(string)", []);
+  try_formDataURI(): ethereum.CallResult<string> {
+    let result = super.tryCall("formDataURI", "formDataURI():(string)", []);
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -329,21 +352,6 @@ export class FormCollection extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toBytes());
-  }
-
-  merkleTreeId(): string {
-    let result = super.call("merkleTreeId", "merkleTreeId():(string)", []);
-
-    return result[0].toString();
-  }
-
-  try_merkleTreeId(): ethereum.CallResult<string> {
-    let result = super.tryCall("merkleTreeId", "merkleTreeId():(string)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toString());
   }
 
   name(): string {
@@ -539,15 +547,15 @@ export class InitializeCall__Inputs {
     return this._call.inputValues[2].value.toBytes();
   }
 
-  get _formDataId(): string {
+  get _formDataURI(): string {
     return this._call.inputValues[3].value.toString();
   }
 
-  get _merkleTreeId(): string {
+  get _answerEncryptionKey(): string {
     return this._call.inputValues[4].value.toString();
   }
 
-  get _answerEncryptionPublicKey(): string {
+  get _answerDecryptionKeyURI(): string {
     return this._call.inputValues[5].value.toString();
   }
 
