@@ -12,6 +12,18 @@
         "internalType": "address",
         "name": "newFormCollection",
         "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "description",
+        "type": "string"
       }
     ],
     "name": "FormCollectionCreated",
@@ -68,17 +80,17 @@
       },
       {
         "internalType": "string",
-        "name": "_formDataId",
+        "name": "_formDataURI",
         "type": "string"
       },
       {
         "internalType": "string",
-        "name": "_merkleTreeId",
+        "name": "_answerEncryptionKey",
         "type": "string"
       },
       {
         "internalType": "string",
-        "name": "_answerEncryptionPublicKey",
+        "name": "_answerDecryptionKeyURI",
         "type": "string"
       }
     ],
