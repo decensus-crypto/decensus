@@ -144,7 +144,7 @@ export const useResult = () => {
     } catch (error: any) {
       console.error(error);
       createToast({
-        title: "Failed to fetch answers",
+        title: `Failed to fetch answers: ${error.message}`,
         status: "error",
       });
     } finally {

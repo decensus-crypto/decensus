@@ -16,15 +16,12 @@ import {
   Stack,
   useControllableState,
 } from "@chakra-ui/react";
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Answer, FormTemplate } from "../constants/constants";
 import { useCeramic } from "../hooks/litCeramic/useCeramic";
 import { useLit } from "../hooks/litCeramic/useLit";
 import { useAnswerSubmit } from "../hooks/useAnswerSubmit";
-import { useFormCollectionAddress } from "../hooks/useFormCollectionAddress";
 import { useFormData } from "../hooks/useFormData";
-import { createToast } from "../utils/createToast";
 
 type AnswerInForm = Omit<Answer, "question_id">;
 
@@ -125,7 +122,6 @@ const FormInput = ({
 };
 
 const AnswerForm = () => {
-  const { formCollectionAddress } = useFormCollectionAddress();
   const { isSubmitting, submitAnswer } = useAnswerSubmit();
   const {
     formData,
@@ -133,7 +129,6 @@ const AnswerForm = () => {
     fetchFormData,
   } = useFormData();
 
-  const router = useRouter();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useControllableState({
     defaultValue: 0,
   });
@@ -177,18 +172,9 @@ const AnswerForm = () => {
       ...params,
     }));
 
-    try {
-      await submitAnswer({
-        submissionStrToEncrypt: JSON.stringify({ answers: answerArr }),
-      });
-      router.push(`/result?id=${formCollectionAddress}`);
-    } catch (error: any) {
-      createToast({
-        title: "Failed to submit answer",
-        description: error.message,
-        status: "error",
-      });
-    }
+    await submitAnswer({
+      submissionStrToEncrypt: JSON.stringify({ answers: answerArr }),
+    });
   };
 
   if (!formData || !question || isLoading) {

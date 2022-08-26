@@ -1,4 +1,5 @@
 import { atom, useAtom } from "jotai";
+import { useRouter } from "next/router";
 import { useCallback } from "react";
 import { createToast } from "../utils/createToast";
 import { encrypt } from "../utils/crypto";
@@ -15,6 +16,7 @@ export const useAnswerSubmit = () => {
   const { account } = useAccount();
   const { formCollectionAddress } = useFormCollectionAddress();
   const { formViewerAddresses } = useFormData();
+  const router = useRouter();
 
   const [isSubmitting, setIsSubmitting] = useAtom(isSubmittingAtom);
 
@@ -41,39 +43,55 @@ export const useAnswerSubmit = () => {
         status: "success",
       });
 
-      // get Merkle proof
-      const merkleTree = getMerkleTree(formViewerAddresses);
-      const merkleProof = getProofForAddress(account, merkleTree);
-
-      // get encryption key
-      const publicKey = await formCollectionContract.answerEncryptionKey();
-
-      // encrypt answer
-      const encryptedAnswer = await encrypt({
-        text: submissionStrToEncrypt,
-        key: publicKey,
-      });
-
-      // submit encrypted answer to contract
       try {
-        const tx = await formCollectionContract.submitAnswers(
-          merkleProof,
-          compressToBase64(encryptedAnswer)
-        );
-        await tx.wait();
-      } catch (error) {
-        console.error(error);
-        throw new Error("Submit answer to contract failed");
+        // get Merkle proof
+        const merkleTree = getMerkleTree(formViewerAddresses);
+        const merkleProof = getProofForAddress(account, merkleTree);
+
+        // get encryption key
+        const publicKey = await formCollectionContract.answerEncryptionKey();
+
+        // encrypt answer
+        const encryptedAnswer = await encrypt({
+          text: submissionStrToEncrypt,
+          key: publicKey,
+        });
+
+        // submit encrypted answer to contract
+        try {
+          const tx = await formCollectionContract.submitAnswers(
+            merkleProof,
+            compressToBase64(encryptedAnswer)
+          );
+          await tx.wait();
+        } catch (error: any) {
+          console.error(error);
+          throw new Error(error.reason || "unknown reason");
+        }
+
+        createToast({
+          title: "Answer successfully submitted!",
+          status: "success",
+        });
+
+        router.push(`/result?id=${formCollectionAddress}`);
+      } catch (error: any) {
+        createToast({
+          title: "Failed to submit answer",
+          description: error.message,
+          status: "error",
+        });
+      } finally {
+        setIsSubmitting(false);
       }
-
-      createToast({
-        title: "Answer successfully submitted!",
-        status: "success",
-      });
-
-      setIsSubmitting(false);
     },
-    [account, formCollectionAddress, formViewerAddresses, setIsSubmitting]
+    [
+      account,
+      formCollectionAddress,
+      formViewerAddresses,
+      router,
+      setIsSubmitting,
+    ]
   );
 
   return {
