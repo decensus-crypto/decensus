@@ -4,6 +4,7 @@ import { createToast } from "../utils/createToast";
 import { encrypt } from "../utils/crypto";
 import { getFormCollectionContract } from "../utils/getContract";
 import { getMerkleTree, getProofForAddress } from "../utils/merkleTree";
+import { compressToBase64 } from "../utils/stringCompression";
 import { useAccount } from "./useAccount";
 import { useFormCollectionAddress } from "./useFormCollectionAddress";
 import { useFormData } from "./useFormData";
@@ -57,7 +58,7 @@ export const useAnswerSubmit = () => {
       try {
         const tx = await formCollectionContract.submitAnswers(
           merkleProof,
-          encryptedAnswer
+          compressToBase64(encryptedAnswer)
         );
         await tx.wait();
       } catch (error) {

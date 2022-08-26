@@ -122,7 +122,7 @@ export const useResult = () => {
           data.data.answers.map(async (row: any) => {
             try {
               const str = await decrypt({
-                encrypted: row.encryptedAnswer,
+                encrypted: decompressFromBase64(row.encryptedAnswer),
                 key: keyStr,
               });
               const data = JSON.parse(str);
