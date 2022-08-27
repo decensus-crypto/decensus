@@ -58,18 +58,22 @@ export const useDeploy = () => {
         let formDataUri: string;
         let answerDecryptionKeyUri: string;
         try {
-          await getLitAuthSig();
+          // because the auth sig got here is not reflected when executing the following processes,
+          // explicitly get the sig and pass it to the encryption functions
+          const authSig = await getLitAuthSig();
 
           const encryptedFormData = await encryptWithLit({
             strToEncrypt: JSON.stringify(formParams),
             addressesToAllowRead: formViewerAddresses,
             chain: CHAIN_NAME,
+            authSig,
           });
 
           const encryptedKey = await encryptWithLit({
             strToEncrypt: keyPair.privateKey,
             addressesToAllowRead: resultViewerAddresses,
             chain: CHAIN_NAME,
+            authSig,
           });
 
           await authenticateCeramic();

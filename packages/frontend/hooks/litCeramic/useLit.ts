@@ -54,6 +54,7 @@ export const useLit = () => {
         chain: CHAIN_NAME,
       });
       setAuthSig(_authSig);
+      return _authSig;
     } catch (error) {
       console.error(error);
     }
@@ -64,11 +65,13 @@ export const useLit = () => {
       strToEncrypt: string;
       addressesToAllowRead: string[];
       chain: string;
+      authSig?: any; // input auth sig explicitly in case the stored auth sig is null due to rendering behavior
     }): Promise<{
       encryptedZipBase64: string;
       encryptedSymmKeyBase64: string;
     }> => {
-      if (!authSig || !client) throw new Error("Lit initialization incomplete");
+      if ((!authSig && !params.authSig) || !client)
+        throw new Error("Lit initialization incomplete");
 
       const { encryptedZip, symmetricKey } = await LitJsSdk.zipAndEncryptString(
         params.strToEncrypt
@@ -77,7 +80,7 @@ export const useLit = () => {
       const encryptedSymmKey = await client.saveEncryptionKey({
         accessControlConditions: accFromAddresses(params),
         symmetricKey,
-        authSig: authSig,
+        authSig: authSig || params.authSig,
         chain: params.chain,
         permanant: true,
       });
