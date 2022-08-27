@@ -11,7 +11,7 @@ export type Form = {
 };
 
 const formListAtom = atom<Form[] | null>(null);
-const isLoadingAtom = atom<boolean>(true);
+const isLoadingAtom = atom<boolean>(false);
 
 export const useFormList = () => {
   const { account } = useAccount();

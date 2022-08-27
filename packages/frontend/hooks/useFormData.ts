@@ -10,7 +10,7 @@ import { useAccount } from "./useAccount";
 import { useFormCollectionAddress } from "./useFormCollectionAddress";
 
 const formDataAtom = atom<FormTemplate | null>(null);
-const isLoadingAtom = atom<boolean>(true);
+const isLoadingAtom = atom<boolean>(false);
 const formViewerAddressesAtom = atom<string[] | null>(null);
 
 export const useFormData = () => {

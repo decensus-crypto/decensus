@@ -16,9 +16,9 @@ import { useAccount } from "./useAccount";
 import { useFormCollectionAddress } from "./useFormCollectionAddress";
 
 const answersListAtom = atom<{ answers: Answer[] }[] | null>(null);
-const isLoadingAnswersListAtom = atom<boolean>(true);
+const isLoadingAnswersListAtom = atom<boolean>(false);
 const nftAddressAtom = atom<string | null>(null);
-const isLoadingNftAddressAtom = atom<boolean>(true);
+const isLoadingNftAddressAtom = atom<boolean>(false);
 
 const areAnswersValid = (data: any) => {
   if (typeof data !== "object" || !data) return false;

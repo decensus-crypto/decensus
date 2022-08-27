@@ -12,9 +12,13 @@ export const useAccount = () => {
   const [web3, setWeb3] = useAtom(web3Atom);
 
   const connectWallet = useCallback(async () => {
-    const { web3, account } = await LitJsSdk.connectWeb3();
-    setAccount(account);
-    setWeb3(web3);
+    try {
+      const { web3, account } = await LitJsSdk.connectWeb3();
+      setAccount(account);
+      setWeb3(web3);
+    } catch (error) {
+      console.error(error);
+    }
   }, [setAccount, setWeb3]);
 
   const getDidProvider = useCallback(async () => {
