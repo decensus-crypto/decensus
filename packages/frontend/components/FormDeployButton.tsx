@@ -5,6 +5,7 @@ import { useCeramic } from "../hooks/litCeramic/useCeramic";
 import { useLit } from "../hooks/litCeramic/useLit";
 import { useDeploy } from "../hooks/useDeploy";
 import { useFormList } from "../hooks/useFormList";
+import { wait } from "../utils/wait";
 
 const FormDeployButton = (props: {
   canDeploy: boolean;
@@ -42,6 +43,8 @@ const FormDeployButton = (props: {
     }
 
     props.onDeployComplete(res);
+
+    await wait(3000); // wait for a few seconds for the graph to index the tx. TODO: more robust method
     await fetchFormList();
   };
 
