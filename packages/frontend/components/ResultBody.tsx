@@ -23,6 +23,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { COUNTRY_QUESTION } from "../constants/constants";
 import { useCeramic } from "../hooks/litCeramic/useCeramic";
 import { useLit } from "../hooks/litCeramic/useLit";
+import { useAccount } from "../hooks/useAccount";
 import { useFormData } from "../hooks/useFormData";
 import { useResult } from "../hooks/useResult";
 import {
@@ -269,6 +270,7 @@ const ResultBody = () => {
   const { formData, isLoadingFormData, fetchFormData } = useFormData();
   const { isLoadingAnswersList, answersList, fetchResults, fetchNftAddress } =
     useResult();
+  const { account } = useAccount();
 
   useEffect(() => {
     initLitClient();
@@ -359,7 +361,10 @@ const ResultBody = () => {
       </Flex>
     );
 
-  if (!isLoadingAnswersList && answersList && answersList.length === 0) {
+  if (
+    (!isLoadingAnswersList && answersList && answersList.length === 0) ||
+    !account
+  ) {
     return (
       <Flex w="100%" h="500px" align="center" justify="center">
         <Text fontSize="xl" color="white">
