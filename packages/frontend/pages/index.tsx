@@ -1,19 +1,11 @@
-import {
-  Box,
-  Button,
-  Center,
-  Grid,
-  GridItem,
-  Heading,
-  Image,
-} from "@chakra-ui/react";
+import { Box, Button, Center, Grid, GridItem, Heading } from "@chakra-ui/react";
+import Image from "next/image";
 import NextLink from "next/link";
-import { ReactElement } from "react";
 import Layout from "../layouts/default";
 
-const Root = (page: ReactElement) => {
+const Root = () => {
   return (
-    <Layout>
+    <Layout walletNotRequired>
       <Box w={"full"} mb={32}>
         <Grid templateColumns="repeat(12, 1fr)" gap={4}>
           <GridItem colSpan={{ base: 12, md: 6 }}>
@@ -34,13 +26,8 @@ const Root = (page: ReactElement) => {
             </Box>
           </GridItem>
           <GridItem colSpan={{ base: 12, md: 6 }}>
-            <Center mt={16}>
-              <Image
-                borderRadius={8}
-                objectFit="cover"
-                src="/lp.jpg"
-                alt="LP"
-              />
+            <Center mt={16} w="100%" h="100%" minH={40} position="relative">
+              <Image objectFit="contain" src="/lp.jpg" alt="LP" layout="fill" />
             </Center>
           </GridItem>
         </Grid>
