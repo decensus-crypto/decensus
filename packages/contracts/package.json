@@ -13,6 +13,7 @@
     "deploy:goerli": "hardhat clean && hardhat run --network goerli scripts/deploy-factory.ts",
     "submitAnswers:goerli": "hardhat clean && hardhat run --network goerli scripts/submitAnswers.ts",
     "verify:goerli": "npx hardhat verify --network goerli",
+    "verify:mumbai": "npx hardhat verify --network mumbai",
     "genTestMerkleTree": "hardhat clean && hardhat run scripts/generateTestMerkleTree.ts",
     "accounts": "hardhat accounts",
     "balance": "hardhat balance",

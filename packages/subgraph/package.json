@@ -5,7 +5,8 @@
     "codegen": "graph codegen",
     "build": "graph build",
     "deploy": "graph deploy --node https://api.studio.thegraph.com/deploy/ decensus-form-collection",
-    "deploy:goerli": "graph deploy --node https://api.studio.thegraph.com/deploy/ form-collection-goerli",
+    "deploy:goerli": "mustache config/goerli.json subgraph-template.mustache > subgraph.yaml && graph deploy --node https://api.studio.thegraph.com/deploy/ form-collection-goerli",
+    "deploy:mumbai": "mustache config/mumbai.json subgraph-template.mustache > subgraph.yaml && graph deploy --product hosted-service nakaakist/form-collection-mumbai",
     "create-local": "graph create --node http://localhost:8020/ decensus-form-collection",
     "remove-local": "graph remove --node http://localhost:8020/ decensus-form-collection",
     "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 decensus-form-collection",
@@ -14,7 +15,8 @@
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "0.33.0",
-    "@graphprotocol/graph-ts": "0.27.0"
+    "@graphprotocol/graph-ts": "0.27.0",
+    "mustache": "^4.2.0"
   },
   "devDependencies": {
     "matchstick-as": "0.5.0"

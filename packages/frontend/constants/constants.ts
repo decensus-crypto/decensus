@@ -1,10 +1,10 @@
 export const FORM_COLLECTION_FACTORY_CONTRACT_ADDRESS =
-  "0x7FF1EfB5E9F61C519E4192eA5cc7c93266a27fE9";
+  "0xEBed7538E8cc636F3FbaCEE289Aacb2Ef959AbA2";
 
 export const TEST_NFT_CONTRACT_ADDRESS =
   "0xF37B2387a370Abf0d968F36134C77eb3D880D4E4";
 
-export const CHAIN_NAME = "goerli";
+export const CHAIN_NAME = "mumbai";
 
 export const LIT_CERAMIC_INTEGRATION_PARAMS = [
   "https://ceramic-clay.3boxlabs.com",
@@ -13,7 +13,7 @@ export const LIT_CERAMIC_INTEGRATION_PARAMS = [
 
 // TODO: use API Key
 export const SUBGRAPH_URL =
-  "https://api.studio.thegraph.com/query/28717/form-collection-goerli/0.0.5";
+  "https://api.thegraph.com/subgraphs/name/nakaakist/form-collection-mumbai";
 
 export const AGE_QUESTION = {
   id: "2f633cdd1181d42a9c7ae9a889362ff7",
