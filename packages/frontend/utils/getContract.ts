@@ -6,10 +6,15 @@ import FORM_COLLECTION_FACTORY_ABI from "../constants/formCollectionFactoryAbi.j
 import { createToast } from "./createToast";
 import { getSigner } from "./getSigner";
 
-export const getFormCollectionFactoryContract = (): ethers.Contract | null => {
+export const getFormCollectionFactoryContract = (params: {
+  readonly?: boolean;
+}): ethers.Contract | null => {
   try {
-    const signer = getSigner();
-    if (!signer) throw new Error();
+    let signer: ethers.Signer | undefined = undefined;
+    if (!params.readonly) {
+      signer = getSigner() || undefined;
+      if (!signer) throw new Error();
+    }
 
     const contract = new ethers.Contract(
       FORM_COLLECTION_FACTORY_CONTRACT_ADDRESS,
@@ -30,14 +35,22 @@ export const getFormCollectionFactoryContract = (): ethers.Contract | null => {
   return null;
 };
 
-export const getFormCollectionContract = (
-  address: string
-): ethers.Contract | null => {
+export const getFormCollectionContract = (params: {
+  address: string;
+  readonly?: boolean;
+}): ethers.Contract | null => {
   try {
-    const signer = getSigner();
-    if (!signer) throw new Error();
+    let signer: ethers.Signer | undefined = undefined;
+    if (!params.readonly) {
+      signer = getSigner() || undefined;
+      if (!signer) throw new Error();
+    }
 
-    const contract = new ethers.Contract(address, FORM_COLLECTION_ABI, signer);
+    const contract = new ethers.Contract(
+      params.address,
+      FORM_COLLECTION_ABI,
+      signer
+    );
 
     if (!contract) throw new Error();
 

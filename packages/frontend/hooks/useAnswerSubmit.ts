@@ -30,9 +30,9 @@ export const useAnswerSubmit = () => {
         throw new Error("Cannot submit answer");
       }
 
-      const formCollectionContract = getFormCollectionContract(
-        formCollectionAddress
-      );
+      const formCollectionContract = getFormCollectionContract({
+        address: formCollectionAddress,
+      });
       if (!formCollectionContract) return;
 
       setIsSubmitting(true);

@@ -60,9 +60,10 @@ export const useResult = () => {
     )
       return;
 
-    const formCollectionContract = getFormCollectionContract(
-      formCollectionAddress
-    );
+    const formCollectionContract = getFormCollectionContract({
+      address: formCollectionAddress,
+      readonly: true,
+    });
     if (!formCollectionContract) return;
 
     try {
