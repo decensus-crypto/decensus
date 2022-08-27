@@ -1,11 +1,19 @@
 import { atom, useAtom } from "jotai";
-import { useRouter } from "next/router";
 import { useCallback } from "react";
-import { Answer } from "../constants/constants";
+import {
+  Answer,
+  CHAIN_NAME,
+  SUBGRAPH_URL,
+  ZORA_DEMO_NFT_ADDRESS,
+} from "../constants/constants";
 import { createToast } from "../utils/createToast";
-import { getSubmissionMarkContract } from "../utils/getContract";
+import { decrypt } from "../utils/crypto";
+import { getFormCollectionContract } from "../utils/getContract";
+import { decompressFromBase64 } from "../utils/stringCompression";
+import { useCeramic } from "./litCeramic/useCeramic";
+import { useLit } from "./litCeramic/useLit";
 import { useAccount } from "./useAccount";
-import { useLitCeramic } from "./useLitCeramic";
+import { useFormCollectionAddress } from "./useFormCollectionAddress";
 
 const answersListAtom = atom<{ answers: Answer[] }[] | null>(null);
 const isLoadingAnswersListAtom = atom<boolean>(true);
@@ -28,8 +36,6 @@ const areAnswersValid = (data: any) => {
 };
 
 export const useResult = () => {
-  const router = useRouter();
-  const { litCeramicIntegration } = useLitCeramic();
   const { account } = useAccount();
   const [answersList, setAnswersList] = useAtom(answersListAtom);
   const [isLoadingAnswersList, setIsLoadingAnswersList] = useAtom(
@@ -40,29 +46,97 @@ export const useResult = () => {
     isLoadingNftAddressAtom
   );
 
-  const surveyId = router.query?.id?.toString() || null;
+  const { formCollectionAddress } = useFormCollectionAddress();
+  const { loadDocument, isCeramicReady } = useCeramic();
+  const { decryptWithLit, isLitClientReady, litAuthSig } = useLit();
 
   const fetchResults = useCallback(async () => {
-    if (!litCeramicIntegration) return;
+    if (
+      !formCollectionAddress ||
+      !isLitClientReady ||
+      !litAuthSig ||
+      !isCeramicReady ||
+      !account
+    )
+      return;
+
+    const formCollectionContract = getFormCollectionContract({
+      address: formCollectionAddress,
+    });
+    if (!formCollectionContract) return;
 
     try {
       setIsLoadingAnswersList(true);
-      const answerIdsRes = await fetch(`/api/survey/${surveyId}/answerIds`, {
-        method: "GET",
-      });
-      const answerIds: string[] = await answerIdsRes.json();
 
-      const rawAnswersList = await Promise.all(
-        answerIds.map(async (answerId) => {
-          const str = await litCeramicIntegration.readAndDecrypt(answerId);
-          try {
-            const data = JSON.parse(str);
-            return data;
-          } catch {
-            return null;
-          }
-        })
-      );
+      const keyUri = await formCollectionContract.answerDecryptionKeyURI();
+
+      if (keyUri.slice(0, 10) !== "ceramic://")
+        throw new Error(
+          "answer decryption key storage other than Ceramic is not supported"
+        );
+
+      const keyStreamId = keyUri.split("//").slice(-1)[0];
+
+      const keyDataInCeramic = await loadDocument(keyStreamId);
+
+      let rawAnswersList: any[];
+      try {
+        const { encryptedKey, addressesToAllowRead } = JSON.parse(
+          decompressFromBase64(keyDataInCeramic)
+        );
+
+        const keyStr = await decryptWithLit({
+          encryptedZipBase64: encryptedKey.encryptedZipBase64,
+          encryptedSymmKeyBase64: encryptedKey.encryptedSymmKeyBase64,
+          addressesToAllowRead,
+          chain: CHAIN_NAME,
+        });
+
+        const query = `
+          query GetAnswers($contractAddress: String!) {
+            answers(
+              where: {contractAddress: $contractAddress}
+            ) {
+              encryptedAnswer
+              respondentAddress
+              mintedTokenId
+            }
+          }`;
+
+        const graphqlQuery = {
+          query,
+          variables: {
+            contractAddress: formCollectionAddress.toLowerCase(),
+          },
+        };
+
+        const res = await fetch(SUBGRAPH_URL, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(graphqlQuery),
+        });
+
+        const data = await res.json();
+
+        rawAnswersList = await Promise.all(
+          data.data.answers.map(async (row: any) => {
+            try {
+              const str = await decrypt({
+                encrypted: decompressFromBase64(row.encryptedAnswer),
+                key: keyStr,
+              });
+              const data = JSON.parse(str);
+              return data;
+            } catch (error: any) {
+              console.error(error);
+              return null;
+            }
+          })
+        );
+      } catch (error) {
+        console.error(error);
+        throw new Error("Invalid answer data");
+      }
 
       const validAnswersList = rawAnswersList.filter((a) => areAnswersValid(a));
 
@@ -70,38 +144,29 @@ export const useResult = () => {
     } catch (error: any) {
       console.error(error);
       createToast({
-        title: "Failed to fetch answers",
+        title: `Failed to fetch answers: ${error.message}`,
         status: "error",
       });
     } finally {
       setIsLoadingAnswersList(false);
     }
   }, [
-    litCeramicIntegration,
+    formCollectionAddress,
+    isLitClientReady,
+    litAuthSig,
+    isCeramicReady,
+    account,
     setIsLoadingAnswersList,
-    surveyId,
+    loadDocument,
     setAnswersList,
+    decryptWithLit,
   ]);
 
+  // TODO: use real NFT address
   const fetchNftAddress = useCallback(async () => {
-    const submissionMarkContract = getSubmissionMarkContract();
-
-    if (!submissionMarkContract || !surveyId || !account) return;
-
-    try {
-      setIsLoadingNftAddress(true);
-      const nftAddress: string = await submissionMarkContract.surveys(surveyId);
-      setNftAddress(nftAddress);
-    } catch (error: any) {
-      console.error(error);
-      createToast({
-        title: "Failed to fetch NFT contract address",
-        status: "error",
-      });
-    } finally {
-      setIsLoadingNftAddress(false);
-    }
-  }, [account, setIsLoadingNftAddress, setNftAddress, surveyId]);
+    setNftAddress(ZORA_DEMO_NFT_ADDRESS);
+    setIsLoadingNftAddress(false);
+  }, [setIsLoadingNftAddress, setNftAddress]);
 
   return {
     answersList,

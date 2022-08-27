@@ -16,16 +16,12 @@ import {
   Stack,
   useControllableState,
 } from "@chakra-ui/react";
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Answer, FormTemplate } from "../constants/constants";
 import { useCeramic } from "../hooks/litCeramic/useCeramic";
 import { useLit } from "../hooks/litCeramic/useLit";
 import { useAnswerSubmit } from "../hooks/useAnswerSubmit";
 import { useFormData } from "../hooks/useFormData";
-import { useLitCeramic } from "../hooks/useLitCeramic";
-import { useSurveyIdInQuery } from "../hooks/useSurveyIdInQuery";
-import { createToast } from "../utils/createToast";
 
 type AnswerInForm = Omit<Answer, "question_id">;
 
@@ -126,15 +122,13 @@ const FormInput = ({
 };
 
 const AnswerForm = () => {
-  const { surveyId } = useSurveyIdInQuery();
   const { isSubmitting, submitAnswer } = useAnswerSubmit();
   const {
     formData,
     isLoadingFormData: isLoading,
     fetchFormData,
   } = useFormData();
-  const { initLitCeramic } = useLitCeramic();
-  const router = useRouter();
+
   const [currentQuestionIndex, setCurrentQuestionIndex] = useControllableState({
     defaultValue: 0,
   });
@@ -144,10 +138,6 @@ const AnswerForm = () => {
 
   const { initLitClient, getLitAuthSig } = useLit();
   const { initCeramic } = useCeramic();
-
-  useEffect(() => {
-    initLitCeramic();
-  }, [initLitCeramic]);
 
   useEffect(() => {
     fetchFormData();
@@ -182,18 +172,9 @@ const AnswerForm = () => {
       ...params,
     }));
 
-    try {
-      await submitAnswer({
-        submissionStrToEncrypt: JSON.stringify({ answers: answerArr }),
-      });
-      router.push(`/result?id=${surveyId}`);
-    } catch (error: any) {
-      createToast({
-        title: "Failed to submit answer",
-        description: error.message,
-        status: "error",
-      });
-    }
+    await submitAnswer({
+      submissionStrToEncrypt: JSON.stringify({ answers: answerArr }),
+    });
   };
 
   if (!formData || !question || isLoading) {

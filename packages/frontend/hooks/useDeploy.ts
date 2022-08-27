@@ -4,141 +4,35 @@ import { useCallback } from "react";
 import { CHAIN_NAME, FormTemplate } from "../constants/constants";
 import { createToast } from "../utils/createToast";
 import { genKeyPair } from "../utils/crypto";
-import {
-  getFormCollectionFactoryContract,
-  getSubmissionMarkContract,
-} from "../utils/getContract";
+import { getFormCollectionFactoryContract } from "../utils/getContract";
 import { getMerkleTree, getMerkleTreeRootHash } from "../utils/merkleTree";
 import { compressToBase64 } from "../utils/stringCompression";
 import { getFormUrl } from "../utils/urls";
 import { useCeramic } from "./litCeramic/useCeramic";
 import { useLit } from "./litCeramic/useLit";
 import { useAccount } from "./useAccount";
-import { useLitCeramic } from "./useLitCeramic";
-import { usePhormsMode } from "./usePhormsMode";
 
 const isDeployingAtom = atom<boolean>(false);
-
-const litAccessControlConditions = (nftAddress: string) => [
-  {
-    contractAddress: nftAddress,
-    standardContractType: "ERC721",
-    chain: CHAIN_NAME,
-    method: "balanceOf",
-    parameters: [":userAddress"],
-    returnValueTest: {
-      comparator: ">",
-      value: "0",
-    },
-  },
-];
 
 export const useDeploy = () => {
   const [isDeploying, setIsDeploying] = useAtom(isDeployingAtom);
 
-  const { litCeramicIntegration } = useLitCeramic();
   const { authenticateCeramic, createDocument } = useCeramic();
-  const { getLitAuthSig, encryptWithLit } = useLit();
+  const { getLitAuthSig, encryptWithLit, isLitClientReady } = useLit();
 
   const { account } = useAccount();
 
-  // TODO: remove test mode
-  const { isPhormsMode } = usePhormsMode();
-
-  const deployOld = useCallback(
+  const deploy = useCallback(
     async ({
-      nftAddress,
       formParams,
     }: {
-      nftAddress: string;
       formParams: FormTemplate;
     }): Promise<{ formUrl: string } | null> => {
-      console.log("DEPLOYING OLD!");
-
-      try {
-        const submissionMarkContract = getSubmissionMarkContract();
-
-        if (!account || !litCeramicIntegration || !submissionMarkContract) {
-          throw new Error("Cannot deploy form. Make sure you connect wallet");
-        }
-
-        setIsDeploying(true);
-
-        createToast({
-          title: "Form deploy initiated",
-          description: "Please wait...",
-          status: "success",
-        });
-
-        // deploy form to Ceramic.
-        // the stream ID of Ceramic becomes the survey ID.
-        let surveyId: string;
-        try {
-          surveyId = await litCeramicIntegration.encryptAndWrite(
-            JSON.stringify(formParams),
-            litAccessControlConditions(nftAddress)
-          );
-        } catch (error) {
-          console.error(error);
-          throw new Error("Upload form to Ceramic failed");
-        }
-
-        const tx = await submissionMarkContract.addSurvey(
-          surveyId,
-          nftAddress,
-          {
-            gasLimit: 200000,
-          }
-        );
-
-        try {
-          await tx.wait();
-        } catch (error) {
-          console.error(error);
-          throw new Error(
-            "Couldn't deploy form. Make sure the NFT address is ERC721 and you holds at least one token in it"
-          );
-        }
-
-        createToast({
-          title: "Form successfully deployed!",
-          status: "success",
-        });
-
-        return { formUrl: getFormUrl(location.origin, surveyId) };
-      } catch (error: any) {
-        createToast({
-          title: "Failed to deploy form",
-          description: error.message,
-          status: "error",
-        });
-        return null;
-      } finally {
-        setIsDeploying(false);
-      }
-    },
-    [account, litCeramicIntegration, setIsDeploying]
-  );
-
-  const deployPhorms = useCallback(
-    async ({
-      nftAddress,
-      formParams,
-    }: {
-      nftAddress: string;
-      formParams: FormTemplate;
-    }): Promise<{ formUrl: string } | null> => {
-      console.log("DEPLOYING PHORMS!");
-
       try {
         const formCollectionFactoryContract =
           getFormCollectionFactoryContract();
 
-        if (
-          !account ||
-          !litCeramicIntegration ||
-          !formCollectionFactoryContract
-        ) {
+        if (!account || !isLitClientReady || !formCollectionFactoryContract) {
           throw new Error("Cannot deploy form. Make sure you connect wallet");
         }
 
@@ -150,9 +44,8 @@ export const useDeploy = () => {
           status: "success",
         });
 
-        // TODO: this should be more flexible
-        const formViewerAddresses = [...Array(100)].map((_) => account); // FIXME: test for large number of addresses
-        const resultViewerAddresses = [account];
+        const formViewerAddresses = [account]; // FIXME: this should be NFT owners
+        const resultViewerAddresses = [account]; // FIXME: this should be more flexible
 
         // generate key pair for encryption of answers
         const keyPair = await genKeyPair();
@@ -194,7 +87,7 @@ export const useDeploy = () => {
           const keyStreamId = await createDocument(
             compressToBase64(
               JSON.stringify({
-                encryptedFormData: encryptedKey,
+                encryptedKey,
                 addressesToAllowRead: resultViewerAddresses,
               })
             )
@@ -254,21 +147,9 @@ export const useDeploy = () => {
       createDocument,
       encryptWithLit,
       getLitAuthSig,
-      litCeramicIntegration,
+      isLitClientReady,
       setIsDeploying,
     ]
-  );
-
-  // switch the deploy function depending on the query string
-  const deploy = useCallback(
-    async (params: { nftAddress: string; formParams: FormTemplate }) => {
-      if (isPhormsMode) {
-        return await deployPhorms(params);
-      } else {
-        return await deployOld(params);
-      }
-    },
-    [deployOld, deployPhorms, isPhormsMode]
   );
 
   return {

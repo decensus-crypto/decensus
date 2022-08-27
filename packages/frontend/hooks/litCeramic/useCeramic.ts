@@ -6,13 +6,14 @@ import { DID } from "dids";
 import { atom, useAtom } from "jotai";
 import { getResolver as getKeyResolver } from "key-did-resolver";
 import { useCallback } from "react";
-import { getProvider } from "./wallet";
+import { useAccount } from "../useAccount";
 
 const CERAMIC_URL = "https://ceramic-clay.3boxlabs.com";
 
 const ceramicAtom = atom<CeramicClient | null>(null);
 
 export const useCeramic = () => {
+  const { getDidProvider } = useAccount();
   const [ceramic, setCeramic] = useAtom(ceramicAtom);
 
   const initCeramic = useCallback(async () => {
@@ -28,9 +29,8 @@ export const useCeramic = () => {
   const authenticateCeramic = useCallback(async () => {
     if (!ceramic) return;
 
-    const provider = await getProvider();
+    const provider = await getDidProvider();
     const resolverRegistry: ResolverRegistry = {
-      // @ts-expect-error
       ...get3IDResolver(ceramic),
       ...getKeyResolver(),
     };
@@ -41,7 +41,7 @@ export const useCeramic = () => {
 
     await did.authenticate();
     await ceramic.setDID(did);
-  }, [ceramic]);
+  }, [ceramic, getDidProvider]);
 
   const createDocument = useCallback(
     async (content: string) => {

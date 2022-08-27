@@ -1,5 +1,6 @@
 import FormList from "../../components/FormList";
 
+import { AddIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -11,12 +12,13 @@ import {
   Spacer,
   useDisclosure,
 } from "@chakra-ui/react";
-import { AddIcon } from '@chakra-ui/icons'
 import { useState } from "react";
 import FormCreationModal from "../../components/FormCreationModal";
+import { useAccount } from "../../hooks/useAccount";
 import Layout from "../../layouts/default";
 
 const AppRoot = () => {
+  const { account } = useAccount();
   // modal control
   const { isOpen, onOpen, onClose } = useDisclosure();
   // key of the modal component. By changing this key, force the modal component to be refreshed.
@@ -35,9 +37,10 @@ const AppRoot = () => {
               size="sm"
               variant="outline"
               color="#FC8CC9"
-              colorScheme='magenta'
-              leftIcon={<AddIcon />} 
+              colorScheme="magenta"
+              leftIcon={<AddIcon />}
               onClick={onOpen}
+              disabled={!account}
             >
               Create New Form
             </Button>
