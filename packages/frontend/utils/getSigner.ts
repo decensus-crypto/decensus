@@ -1,13 +1,13 @@
 import { ethers } from "ethers";
 import { createToast } from "./createToast";
 
-export const getSigner = (): ethers.Signer | null => {
+export const getSigner = (account: string): ethers.Signer | null => {
   try {
     const { ethereum } = window;
     if (!ethereum) return null;
 
     const provider = new ethers.providers.Web3Provider(ethereum);
-    const signer = provider.getSigner();
+    const signer = provider.getSigner(account);
 
     return signer;
   } catch (error) {

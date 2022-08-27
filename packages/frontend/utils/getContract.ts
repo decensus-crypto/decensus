@@ -6,9 +6,11 @@ import FORM_COLLECTION_FACTORY_ABI from "../constants/formCollectionFactoryAbi.j
 import { createToast } from "./createToast";
 import { getSigner } from "./getSigner";
 
-export const getFormCollectionFactoryContract = (): ethers.Contract | null => {
+export const getFormCollectionFactoryContract = (
+  account: string
+): ethers.Contract | null => {
   try {
-    const signer = getSigner();
+    const signer = getSigner(account);
     if (!signer) throw new Error("no signer");
 
     const contract = new ethers.Contract(
@@ -31,10 +33,11 @@ export const getFormCollectionFactoryContract = (): ethers.Contract | null => {
 };
 
 export const getFormCollectionContract = (params: {
+  account: string;
   address: string;
 }): ethers.Contract | null => {
   try {
-    const signer = getSigner();
+    const signer = getSigner(params.account);
     if (!signer) throw new Error("no signer");
 
     const contract = new ethers.Contract(

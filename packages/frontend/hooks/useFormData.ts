@@ -39,6 +39,7 @@ export const useFormData = () => {
 
     const formCollectionContract = getFormCollectionContract({
       address: formCollectionAddress,
+      account,
     });
     if (!formCollectionContract) return;
 

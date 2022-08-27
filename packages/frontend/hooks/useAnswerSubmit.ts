@@ -32,6 +32,7 @@ export const useAnswerSubmit = () => {
 
       const formCollectionContract = getFormCollectionContract({
         address: formCollectionAddress,
+        account,
       });
       if (!formCollectionContract) return;
 

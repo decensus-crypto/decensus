@@ -29,11 +29,15 @@ export const useDeploy = () => {
       formParams: FormTemplate;
     }): Promise<{ formUrl: string } | null> => {
       try {
-        const formCollectionFactoryContract =
-          getFormCollectionFactoryContract();
-
-        if (!account || !isLitClientReady || !formCollectionFactoryContract) {
+        if (!account) {
           throw new Error("Cannot deploy form. Make sure you connect wallet");
+        }
+
+        const formCollectionFactoryContract =
+          getFormCollectionFactoryContract(account);
+
+        if (!isLitClientReady || !formCollectionFactoryContract) {
+          throw new Error("Cannot deploy form.");
         }
 
         setIsDeploying(true);
