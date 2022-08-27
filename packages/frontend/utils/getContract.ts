@@ -6,15 +6,10 @@ import FORM_COLLECTION_FACTORY_ABI from "../constants/formCollectionFactoryAbi.j
 import { createToast } from "./createToast";
 import { getSigner } from "./getSigner";
 
-export const getFormCollectionFactoryContract = (params: {
-  readonly?: boolean;
-}): ethers.Contract | null => {
+export const getFormCollectionFactoryContract = (): ethers.Contract | null => {
   try {
-    let signer: ethers.Signer | undefined = undefined;
-    if (!params.readonly) {
-      signer = getSigner() || undefined;
-      if (!signer) throw new Error();
-    }
+    const signer = getSigner();
+    if (!signer) throw new Error("no signer");
 
     const contract = new ethers.Contract(
       FORM_COLLECTION_FACTORY_CONTRACT_ADDRESS,
@@ -37,14 +32,10 @@ export const getFormCollectionFactoryContract = (params: {
 
 export const getFormCollectionContract = (params: {
   address: string;
-  readonly?: boolean;
 }): ethers.Contract | null => {
   try {
-    let signer: ethers.Signer | undefined = undefined;
-    if (!params.readonly) {
-      signer = getSigner() || undefined;
-      if (!signer) throw new Error();
-    }
+    const signer = getSigner();
+    if (!signer) throw new Error("no signer");
 
     const contract = new ethers.Contract(
       params.address,

@@ -39,7 +39,6 @@ export const useFormData = () => {
 
     const formCollectionContract = getFormCollectionContract({
       address: formCollectionAddress,
-      readonly: true,
     });
     if (!formCollectionContract) return;
 

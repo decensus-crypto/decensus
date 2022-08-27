@@ -16,9 +16,9 @@ import { useAccount } from "./useAccount";
 import { useFormCollectionAddress } from "./useFormCollectionAddress";
 
 const answersListAtom = atom<{ answers: Answer[] }[] | null>(null);
-const isLoadingAnswersListAtom = atom<boolean>(false);
+const isLoadingAnswersListAtom = atom<boolean>(true);
 const nftAddressAtom = atom<string | null>(null);
-const isLoadingNftAddressAtom = atom<boolean>(false);
+const isLoadingNftAddressAtom = atom<boolean>(true);
 
 const areAnswersValid = (data: any) => {
   if (typeof data !== "object" || !data) return false;
@@ -62,7 +62,6 @@ export const useResult = () => {
 
     const formCollectionContract = getFormCollectionContract({
       address: formCollectionAddress,
-      readonly: true,
     });
     if (!formCollectionContract) return;
 
