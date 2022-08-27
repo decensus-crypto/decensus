@@ -9,11 +9,11 @@ type Props = {
 };
 
 const Layout = ({ children }: Props) => {
-  const { account, connectWallet, checkWallet } = useAccount();
+  const { account, connectWallet } = useAccount();
 
   useEffect(() => {
-    checkWallet();
-  }, [checkWallet]);
+    connectWallet();
+  }, [connectWallet]);
 
   return (
     <Box h="calc(100vh)" background={"black"}>

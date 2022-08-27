@@ -1,75 +1,29 @@
+import { EthereumAuthProvider, ThreeIdConnect } from "@3id/connect";
 import { atom, useAtom } from "jotai";
-import { createToast } from "../utils/createToast";
+// @ts-expect-error
+import LitJsSdk from "lit-js-sdk";
+import { useCallback } from "react";
 
 const accountAtom = atom<string | null>(null);
-const isLoadingAtom = atom<boolean>(true);
+const web3Atom = atom<any | null>(null);
 
 export const useAccount = () => {
   const [account, setAccount] = useAtom(accountAtom);
-  const [isLoading, setIsLoading] = useAtom(isLoadingAtom);
+  const [web3, setWeb3] = useAtom(web3Atom);
 
-  const checkWallet = async () => {
-    try {
-      if (account) return;
+  const connectWallet = useCallback(async () => {
+    const { web3, account } = await LitJsSdk.connectWeb3();
+    setAccount(account);
+    setWeb3(web3);
+  }, [setAccount, setWeb3]);
 
-      setIsLoading(true);
-      const { ethereum } = window;
-      if (!ethereum || !ethereum.request) return;
+  const getDidProvider = useCallback(async () => {
+    if (!account || !web3) return;
 
-      const accounts = await ethereum.request({ method: "eth_accounts" });
+    const threeId = new ThreeIdConnect();
+    await threeId.connect(new EthereumAuthProvider(web3.provider, account));
+    return threeId.getDidProvider();
+  }, [account, web3]);
 
-      if (!accounts || accounts.length === 0) {
-        return;
-      }
-
-      const address = accounts[0];
-      if (!address) throw new Error();
-
-      setAccount(address);
-    } catch (error) {
-      createToast({
-        title: "Failed to check account in MetaMask.",
-        status: "error",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const connectWallet = async () => {
-    try {
-      setIsLoading(true);
-      const { ethereum } = window;
-      if (!ethereum || !ethereum.request) return;
-
-      const accounts = await ethereum.request({
-        method: "eth_requestAccounts",
-      });
-
-      if (!accounts || accounts.length === 0) {
-        createToast({
-          title: "No account found in MetaMask.",
-          description: "Please add account",
-          status: "error",
-        });
-        return;
-      }
-
-      setAccount(accounts[0]);
-    } catch (error) {
-      createToast({
-        title: "Failed to connect wallet",
-        status: "error",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  return {
-    account,
-    isLoadingAccount: isLoading,
-    connectWallet,
-    checkWallet,
-  };
+  return { getDidProvider, connectWallet, account, web3 };
 };
