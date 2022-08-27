@@ -197,6 +197,10 @@ const FormCreationModal = (props: {
                   nftName={nftName}
                   isLoadingNftName={isLoadingNftName}
                 />
+                <Text>
+                  Warning: Currently, only form owner can answer and see
+                  results. This contract address does not work.
+                </Text>
               </FormControl>
             </ModalBody>
             <ModalFooter>

@@ -44,9 +44,8 @@ export const useDeploy = () => {
           status: "success",
         });
 
-        // TODO: this should be more flexible
-        const formViewerAddresses = [...Array(100)].map((_) => account); // FIXME: test for large number of addresses
-        const resultViewerAddresses = [account];
+        const formViewerAddresses = [account]; // FIXME: this should be NFT owners
+        const resultViewerAddresses = [account]; // FIXME: this should be more flexible
 
         // generate key pair for encryption of answers
         const keyPair = await genKeyPair();
