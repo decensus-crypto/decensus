@@ -2,10 +2,13 @@ name: "Upload SARIF"
 
 # Run workflow each time code is pushed to your repository and on a schedule.
 # The scheduled workflow runs every at 00:00 on Sunday UTC time.
+
+# FIXME: This workflow does not work now. So, disable regular triggers and only enable manual trigger
 on:
-  push:
-  schedule:
-  - cron: '0 0 * * 0'
+  workflow_dispatch
+#  push:
+#  schedule:
+#  - cron: '0 0 * * 0'
 
 jobs:
   build:
