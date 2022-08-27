@@ -9,6 +9,7 @@ import {
   encodeb64,
   uint8ArrayToString,
 } from "../../utils/dataConverters";
+import { useAccount } from "../useAccount";
 
 const litClientAtom = atom<any | null>(null);
 const litAuthSigAtom = atom<any | null>(null);
@@ -35,6 +36,7 @@ const accFromAddresses = (params: {
 export const useLit = () => {
   const [client, setClient] = useAtom(litClientAtom);
   const [authSig, setAuthSig] = useAtom(litAuthSigAtom);
+  const { account } = useAccount();
 
   const initLitClient = useCallback(async () => {
     if (client) return;
@@ -45,13 +47,17 @@ export const useLit = () => {
   }, [client, setClient]);
 
   const getLitAuthSig = useCallback(async () => {
-    if (authSig) return;
+    if (authSig || !account) return;
 
-    const _authSig = await LitJsSdk.checkAndSignAuthMessage({
-      chain: CHAIN_NAME,
-    });
-    setAuthSig(_authSig);
-  }, [authSig, setAuthSig]);
+    try {
+      const _authSig = await LitJsSdk.checkAndSignAuthMessage({
+        chain: CHAIN_NAME,
+      });
+      setAuthSig(_authSig);
+    } catch (error) {
+      console.error(error);
+    }
+  }, [account, authSig, setAuthSig]);
 
   const encryptWithLit = useCallback(
     async (params: {
