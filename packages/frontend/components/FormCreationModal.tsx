@@ -251,7 +251,7 @@ const FormCreationModal = (props: {
                     borderColor="gray.500"
                     variant="outline"
                   >
-                    Input test address
+                    Input sample address
                   </Button>
                 </FormLabel>
                 <Input
