@@ -19,10 +19,11 @@ export const getFormCollectionFactoryContract = (
       signer
     );
 
-    if (!contract) throw new Error();
+    if (!contract) throw new Error("no contract found");
 
     return contract;
   } catch (error) {
+    console.error(error);
     createToast({
       title: "Failed to get contract info",
       status: "error",
@@ -46,10 +47,11 @@ export const getFormCollectionContract = (params: {
       signer
     );
 
-    if (!contract) throw new Error();
+    if (!contract) throw new Error("no contract found");
 
     return contract;
   } catch (error) {
+    console.error(error);
     createToast({
       title: "Failed to get contract info",
       status: "error",
