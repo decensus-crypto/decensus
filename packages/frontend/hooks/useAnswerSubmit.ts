@@ -1,5 +1,4 @@
 import { atom, useAtom } from "jotai";
-import { useRouter } from "next/router";
 import { useCallback } from "react";
 import { createToast } from "../utils/createToast";
 import { encrypt } from "../utils/crypto";
@@ -17,7 +16,6 @@ export const useAnswerSubmit = () => {
   const { formCollectionAddress } = useFormCollectionAddress();
   const { formViewerAddresses } = useFormData();
   const { getFormCollectionContract } = useContracts();
-  const router = useRouter();
 
   const [isSubmitting, setIsSubmitting] = useAtom(isSubmittingAtom);
 
@@ -74,8 +72,6 @@ export const useAnswerSubmit = () => {
           title: "Answer successfully submitted!",
           status: "success",
         });
-
-        router.push(`/result?id=${formCollectionAddress}`);
       } catch (error: any) {
         createToast({
           title: "Failed to submit answer",
@@ -91,7 +87,6 @@ export const useAnswerSubmit = () => {
       formCollectionAddress,
       formViewerAddresses,
       getFormCollectionContract,
-      router,
       setIsSubmitting,
     ]
   );
