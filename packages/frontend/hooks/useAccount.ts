@@ -14,7 +14,7 @@ export const useAccount = () => {
   const connectWallet = useCallback(async () => {
     try {
       const { web3: provider, account } = await LitJsSdk.connectWeb3();
-      setAccount(account);
+      setAccount(account.toLowerCase());
       setProvider(provider);
     } catch (error) {
       console.error(error);

@@ -7,7 +7,12 @@ import { useDeploy } from "../hooks/useDeploy";
 import { useFormList } from "../hooks/useFormList";
 import { wait } from "../utils/wait";
 
-import { CheckIcon, CopyIcon, WarningTwoIcon } from "@chakra-ui/icons";
+import {
+  CheckIcon,
+  CopyIcon,
+  InfoIcon,
+  WarningTwoIcon,
+} from "@chakra-ui/icons";
 import {
   Box,
   Checkbox,
@@ -32,11 +37,13 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { QUESTIONS, TEST_NFT_CONTRACT_ADDRESS } from "../constants/constants";
+import { useAccount } from "../hooks/useAccount";
 import { useTokenHolders } from "../hooks/useTokenHolders";
 import { createToast } from "../utils/createToast";
 import { fetchNftBaseInfo } from "../utils/zdk";
 
 const NftInfo = (props: {
+  account: string | null;
   nftName: string | null;
   tokenHolders: string[];
   isLoadingNftName: boolean;
@@ -54,12 +61,23 @@ const NftInfo = (props: {
       </Text>
     );
   } else {
+    const isOwnerIncluded = props.tokenHolders.some((a) => a === props.account);
+    const shouldWarn = props.tokenHolders.length === 0 || !isOwnerIncluded;
+
     return (
       <>
         <Text display="flex" alignItems="center">
           <CheckIcon mr={1} fontWeight="100" color="green.500" />
-          Project found: {props.nftName} ({props.tokenHolders.length} token
-          holders)
+          Project found: {props.nftName}
+        </Text>
+        <Text display="flex" alignItems="center">
+          {shouldWarn ? (
+            <WarningTwoIcon mr={1} />
+          ) : (
+            <InfoIcon mr={1} fontWeight="100" color="gray.500" />
+          )}
+          Total token holders: {props.tokenHolders.length} (
+          {isOwnerIncluded ? "including you!" : "you have no tokens"})
         </Text>
       </>
     );
@@ -71,6 +89,7 @@ const FormCreationModal = (props: {
   onOpen: () => void;
   onClose: () => void;
 }) => {
+  const { account } = useAccount();
   const { deploy, isDeploying } = useDeploy();
   const { fetchFormList } = useFormList();
   const { initLitClient, isLitClientReady } = useLit();
@@ -243,6 +262,7 @@ const FormCreationModal = (props: {
                   mb={1}
                 />
                 <NftInfo
+                  account={account}
                   nftName={nftName}
                   tokenHolders={tokenHolders}
                   isLoadingNftName={isLoadingNftName}
