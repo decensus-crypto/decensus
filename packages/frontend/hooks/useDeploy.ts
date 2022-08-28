@@ -4,23 +4,23 @@ import { useCallback } from "react";
 import { CHAIN_NAME, FormTemplate } from "../constants/constants";
 import { createToast } from "../utils/createToast";
 import { genKeyPair } from "../utils/crypto";
-import { getFormCollectionFactoryContract } from "../utils/getContract";
 import { getMerkleTree, getMerkleTreeRootHash } from "../utils/merkleTree";
 import { compressToBase64 } from "../utils/stringCompression";
 import { getFormUrl } from "../utils/urls";
 import { useCeramic } from "./litCeramic/useCeramic";
 import { useLit } from "./litCeramic/useLit";
 import { useAccount } from "./useAccount";
+import { useContracts } from "./useContracts";
 
 const isDeployingAtom = atom<boolean>(false);
 
 export const useDeploy = () => {
-  const [isDeploying, setIsDeploying] = useAtom(isDeployingAtom);
-
   const { authenticateCeramic, createDocument } = useCeramic();
   const { getLitAuthSig, encryptWithLit, isLitClientReady } = useLit();
-
   const { account } = useAccount();
+  const { getFormCollectionFactoryContract } = useContracts();
+
+  const [isDeploying, setIsDeploying] = useAtom(isDeployingAtom);
 
   const deploy = useCallback(
     async ({
@@ -34,7 +34,7 @@ export const useDeploy = () => {
         }
 
         const formCollectionFactoryContract =
-          getFormCollectionFactoryContract(account);
+          getFormCollectionFactoryContract();
 
         if (!isLitClientReady || !formCollectionFactoryContract) {
           throw new Error("Cannot deploy form.");
@@ -154,6 +154,7 @@ export const useDeploy = () => {
       authenticateCeramic,
       createDocument,
       encryptWithLit,
+      getFormCollectionFactoryContract,
       getLitAuthSig,
       isLitClientReady,
       setIsDeploying,

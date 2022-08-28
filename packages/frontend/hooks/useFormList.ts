@@ -16,6 +16,7 @@ const isLoadingAtom = atom<boolean>(false);
 export const useFormList = () => {
   const { account } = useAccount();
   const [formList, setFormList] = useAtom(formListAtom);
+
   const [isLoading, setIsLoading] = useAtom(isLoadingAtom);
 
   const fetchFormList = useCallback(async () => {

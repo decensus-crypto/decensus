@@ -5,29 +5,29 @@ import LitJsSdk from "lit-js-sdk";
 import { useCallback } from "react";
 
 const accountAtom = atom<string | null>(null);
-const web3Atom = atom<any | null>(null);
+const providerAtom = atom<any | null>(null);
 
 export const useAccount = () => {
   const [account, setAccount] = useAtom(accountAtom);
-  const [web3, setWeb3] = useAtom(web3Atom);
+  const [provider, setProvider] = useAtom(providerAtom);
 
   const connectWallet = useCallback(async () => {
     try {
-      const { web3, account } = await LitJsSdk.connectWeb3();
+      const { web3: provider, account } = await LitJsSdk.connectWeb3();
       setAccount(account);
-      setWeb3(web3);
+      setProvider(provider);
     } catch (error) {
       console.error(error);
     }
-  }, [setAccount, setWeb3]);
+  }, [setAccount, setProvider]);
 
   const getDidProvider = useCallback(async () => {
-    if (!account || !web3) return;
+    if (!account || !provider) return;
 
     const threeId = new ThreeIdConnect();
-    await threeId.connect(new EthereumAuthProvider(web3.provider, account));
+    await threeId.connect(new EthereumAuthProvider(provider.provider, account));
     return threeId.getDidProvider();
-  }, [account, web3]);
+  }, [account, provider]);
 
-  return { getDidProvider, connectWallet, account, web3 };
+  return { getDidProvider, connectWallet, account, provider };
 };

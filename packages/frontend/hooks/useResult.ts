@@ -8,11 +8,11 @@ import {
 } from "../constants/constants";
 import { createToast } from "../utils/createToast";
 import { decrypt } from "../utils/crypto";
-import { getFormCollectionContract } from "../utils/getContract";
 import { decompressFromBase64 } from "../utils/stringCompression";
 import { useCeramic } from "./litCeramic/useCeramic";
 import { useLit } from "./litCeramic/useLit";
 import { useAccount } from "./useAccount";
+import { useContracts } from "./useContracts";
 import { useFormCollectionAddress } from "./useFormCollectionAddress";
 
 const answersListAtom = atom<{ answers: Answer[] }[] | null>(null);
@@ -38,6 +38,11 @@ const areAnswersValid = (data: any) => {
 export const useResult = () => {
   const { account } = useAccount();
   const [answersList, setAnswersList] = useAtom(answersListAtom);
+  const { formCollectionAddress } = useFormCollectionAddress();
+  const { loadDocument, isCeramicReady } = useCeramic();
+  const { decryptWithLit, isLitClientReady, litAuthSig } = useLit();
+  const { getFormCollectionContract } = useContracts();
+
   const [isLoadingAnswersList, setIsLoadingAnswersList] = useAtom(
     isLoadingAnswersListAtom
   );
@@ -45,10 +50,6 @@ export const useResult = () => {
   const [isLoadingNftAddress, setIsLoadingNftAddress] = useAtom(
     isLoadingNftAddressAtom
   );
-
-  const { formCollectionAddress } = useFormCollectionAddress();
-  const { loadDocument, isCeramicReady } = useCeramic();
-  const { decryptWithLit, isLitClientReady, litAuthSig } = useLit();
 
   const fetchResults = useCallback(async () => {
     if (
@@ -60,10 +61,9 @@ export const useResult = () => {
     )
       return;
 
-    const formCollectionContract = getFormCollectionContract({
-      address: formCollectionAddress,
-      account,
-    });
+    const formCollectionContract = getFormCollectionContract(
+      formCollectionAddress
+    );
     if (!formCollectionContract) return;
 
     try {
@@ -157,6 +157,7 @@ export const useResult = () => {
     litAuthSig,
     isCeramicReady,
     account,
+    getFormCollectionContract,
     setIsLoadingAnswersList,
     loadDocument,
     setAnswersList,

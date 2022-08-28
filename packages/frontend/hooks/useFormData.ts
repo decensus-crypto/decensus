@@ -2,11 +2,11 @@ import { atom, useAtom } from "jotai";
 import { useCallback } from "react";
 import { CHAIN_NAME, FormTemplate } from "../constants/constants";
 import { createToast } from "../utils/createToast";
-import { getFormCollectionContract } from "../utils/getContract";
 import { decompressFromBase64 } from "../utils/stringCompression";
 import { useCeramic } from "./litCeramic/useCeramic";
 import { useLit } from "./litCeramic/useLit";
 import { useAccount } from "./useAccount";
+import { useContracts } from "./useContracts";
 import { useFormCollectionAddress } from "./useFormCollectionAddress";
 
 const formDataAtom = atom<FormTemplate | null>(null);
@@ -15,11 +15,10 @@ const formViewerAddressesAtom = atom<string[] | null>(null);
 
 export const useFormData = () => {
   const { formCollectionAddress } = useFormCollectionAddress();
-
   const { loadDocument, isCeramicReady } = useCeramic();
   const { decryptWithLit, isLitClientReady, litAuthSig } = useLit();
-
   const { account } = useAccount();
+  const { getFormCollectionContract } = useContracts();
 
   const [formData, setFormData] = useAtom(formDataAtom);
   const [isLoading, setIsLoading] = useAtom(isLoadingAtom);
@@ -37,10 +36,9 @@ export const useFormData = () => {
     )
       return;
 
-    const formCollectionContract = getFormCollectionContract({
-      address: formCollectionAddress,
-      account,
-    });
+    const formCollectionContract = getFormCollectionContract(
+      formCollectionAddress
+    );
     if (!formCollectionContract) return;
 
     try {
@@ -89,6 +87,7 @@ export const useFormData = () => {
     account,
     decryptWithLit,
     formCollectionAddress,
+    getFormCollectionContract,
     isCeramicReady,
     isLitClientReady,
     litAuthSig,

@@ -3,10 +3,10 @@ import { useRouter } from "next/router";
 import { useCallback } from "react";
 import { createToast } from "../utils/createToast";
 import { encrypt } from "../utils/crypto";
-import { getFormCollectionContract } from "../utils/getContract";
 import { getMerkleTree, getProofForAddress } from "../utils/merkleTree";
 import { compressToBase64 } from "../utils/stringCompression";
 import { useAccount } from "./useAccount";
+import { useContracts } from "./useContracts";
 import { useFormCollectionAddress } from "./useFormCollectionAddress";
 import { useFormData } from "./useFormData";
 
@@ -16,6 +16,7 @@ export const useAnswerSubmit = () => {
   const { account } = useAccount();
   const { formCollectionAddress } = useFormCollectionAddress();
   const { formViewerAddresses } = useFormData();
+  const { getFormCollectionContract } = useContracts();
   const router = useRouter();
 
   const [isSubmitting, setIsSubmitting] = useAtom(isSubmittingAtom);
@@ -30,10 +31,9 @@ export const useAnswerSubmit = () => {
         throw new Error("Cannot submit answer");
       }
 
-      const formCollectionContract = getFormCollectionContract({
-        address: formCollectionAddress,
-        account,
-      });
+      const formCollectionContract = getFormCollectionContract(
+        formCollectionAddress
+      );
       if (!formCollectionContract) return;
 
       setIsSubmitting(true);
@@ -90,6 +90,7 @@ export const useAnswerSubmit = () => {
       account,
       formCollectionAddress,
       formViewerAddresses,
+      getFormCollectionContract,
       router,
       setIsSubmitting,
     ]
