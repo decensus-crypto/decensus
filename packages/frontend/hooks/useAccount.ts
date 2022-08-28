@@ -3,6 +3,7 @@ import { atom, useAtom } from "jotai";
 // @ts-expect-error
 import LitJsSdk from "lit-js-sdk";
 import { useCallback } from "react";
+import { CHAIN_ID } from "../constants/constants";
 
 const accountAtom = atom<string | null>(null);
 const providerAtom = atom<any | null>(null);
@@ -13,7 +14,9 @@ export const useAccount = () => {
 
   const connectWallet = useCallback(async () => {
     try {
-      const { web3: provider, account } = await LitJsSdk.connectWeb3();
+      const { web3: provider, account } = await LitJsSdk.connectWeb3({
+        chainId: CHAIN_ID,
+      });
       setAccount(account.toLowerCase());
       setProvider(provider);
     } catch (error) {

@@ -6,6 +6,8 @@ export const TEST_NFT_CONTRACT_ADDRESS =
 
 export const CHAIN_NAME = "mumbai";
 
+export const CHAIN_ID = 80001;
+
 export const LIT_CHAIN = "ethereum";
 
 // TODO: use API Key
