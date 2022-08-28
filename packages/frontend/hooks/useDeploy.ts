@@ -25,8 +25,12 @@ export const useDeploy = () => {
   const deploy = useCallback(
     async ({
       formParams,
+      formViewerAddresses,
+      nftAddress,
     }: {
       formParams: FormTemplate;
+      formViewerAddresses: string[];
+      nftAddress: string;
     }): Promise<{ formUrl: string } | null> => {
       try {
         if (!account) {
@@ -36,7 +40,11 @@ export const useDeploy = () => {
         const formCollectionFactoryContract =
           getFormCollectionFactoryContract();
 
-        if (!isLitClientReady || !formCollectionFactoryContract) {
+        if (
+          !isLitClientReady ||
+          !formCollectionFactoryContract ||
+          formViewerAddresses.length === 0
+        ) {
           throw new Error("Cannot deploy form.");
         }
 
@@ -48,7 +56,6 @@ export const useDeploy = () => {
           status: "success",
         });
 
-        const formViewerAddresses = [account]; // FIXME: this should be NFT owners
         const resultViewerAddresses = [account]; // FIXME: this should be more flexible
 
         // generate key pair for encryption of answers
@@ -68,7 +75,7 @@ export const useDeploy = () => {
 
           const encryptedFormData = await encryptWithLit({
             strToEncrypt: JSON.stringify(formParams),
-            addressesToAllowRead: formViewerAddresses,
+            nftAddressToAllowRead: nftAddress,
             chain: CHAIN_NAME,
             authSig,
           });
@@ -87,6 +94,7 @@ export const useDeploy = () => {
               JSON.stringify({
                 encryptedFormData: encryptedFormData,
                 addressesToAllowRead: formViewerAddresses,
+                nftAddress,
               })
             )
           );
@@ -97,6 +105,7 @@ export const useDeploy = () => {
               JSON.stringify({
                 encryptedKey,
                 addressesToAllowRead: resultViewerAddresses,
+                nftAddress,
               })
             )
           );
@@ -139,6 +148,7 @@ export const useDeploy = () => {
 
         return { formUrl: getFormUrl(location.origin, formCollectionAddress) };
       } catch (error: any) {
+        console.error(error);
         createToast({
           title: "Failed to deploy form",
           description: error.message,

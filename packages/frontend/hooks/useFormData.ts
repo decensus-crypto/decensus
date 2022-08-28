@@ -10,6 +10,7 @@ import { useContracts } from "./useContracts";
 import { useFormCollectionAddress } from "./useFormCollectionAddress";
 
 const formDataAtom = atom<FormTemplate | null>(null);
+const nftAddressAtom = atom<string | null>(null);
 const isLoadingAtom = atom<boolean>(false);
 const formViewerAddressesAtom = atom<string[] | null>(null);
 
@@ -21,6 +22,7 @@ export const useFormData = () => {
   const { getFormCollectionContract } = useContracts();
 
   const [formData, setFormData] = useAtom(formDataAtom);
+  const [nftAddress, setNftAddress] = useAtom(nftAddressAtom);
   const [isLoading, setIsLoading] = useAtom(isLoadingAtom);
   const [formViewerAddresses, setFormViewerAddresses] = useAtom(
     formViewerAddressesAtom
@@ -55,19 +57,19 @@ export const useFormData = () => {
 
       const formDataInCeramic = await loadDocument(formDataStreamId);
       try {
-        const { encryptedFormData, addressesToAllowRead } = JSON.parse(
-          decompressFromBase64(formDataInCeramic)
-        );
+        const { encryptedFormData, addressesToAllowRead, nftAddress } =
+          JSON.parse(decompressFromBase64(formDataInCeramic));
 
         const formDataStr = await decryptWithLit({
           encryptedZipBase64: encryptedFormData.encryptedZipBase64,
           encryptedSymmKeyBase64: encryptedFormData.encryptedSymmKeyBase64,
-          addressesToAllowRead,
+          nftAddressToAllowRead: nftAddress,
           chain: CHAIN_NAME,
         });
 
         const formData = JSON.parse(formDataStr);
 
+        setNftAddress(nftAddress);
         setFormData(formData);
         setFormViewerAddresses(addressesToAllowRead);
       } catch (error) {
@@ -93,12 +95,14 @@ export const useFormData = () => {
     litAuthSig,
     loadDocument,
     setFormData,
+    setNftAddress,
     setFormViewerAddresses,
     setIsLoading,
   ]);
 
   return {
     formData,
+    nftAddress,
     isLoadingFormData: isLoading,
     formCollectionAddress,
     formViewerAddresses,

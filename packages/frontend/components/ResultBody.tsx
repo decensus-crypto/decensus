@@ -42,7 +42,7 @@ const NftSummary = () => {
     floorPrice: number | null;
   } | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const { nftAddress } = useResult();
+  const { nftAddress } = useFormData();
 
   const getNft = useCallback(async () => {
     if (!nftAddress) return;
@@ -268,8 +268,7 @@ const ResultBody = () => {
   const { initLitClient, getLitAuthSig } = useLit();
   const { initCeramic } = useCeramic();
   const { formData, isLoadingFormData, fetchFormData } = useFormData();
-  const { isLoadingAnswersList, answersList, fetchResults, fetchNftAddress } =
-    useResult();
+  const { isLoadingAnswersList, answersList, fetchResults } = useResult();
   const { account } = useAccount();
 
   useEffect(() => {
@@ -291,10 +290,6 @@ const ResultBody = () => {
   useEffect(() => {
     fetchResults();
   }, [fetchResults]);
-
-  useEffect(() => {
-    fetchNftAddress();
-  }, [fetchNftAddress]);
 
   const questions = formData?.questions;
 

@@ -1,11 +1,6 @@
 import { atom, useAtom } from "jotai";
 import { useCallback } from "react";
-import {
-  Answer,
-  CHAIN_NAME,
-  SUBGRAPH_URL,
-  ZORA_DEMO_NFT_ADDRESS,
-} from "../constants/constants";
+import { Answer, CHAIN_NAME, SUBGRAPH_URL } from "../constants/constants";
 import { createToast } from "../utils/createToast";
 import { decrypt } from "../utils/crypto";
 import { decompressFromBase64 } from "../utils/stringCompression";
@@ -17,7 +12,6 @@ import { useFormCollectionAddress } from "./useFormCollectionAddress";
 
 const answersListAtom = atom<{ answers: Answer[] }[] | null>(null);
 const isLoadingAnswersListAtom = atom<boolean>(true);
-const nftAddressAtom = atom<string | null>(null);
 const isLoadingNftAddressAtom = atom<boolean>(true);
 
 const areAnswersValid = (data: any) => {
@@ -45,10 +39,6 @@ export const useResult = () => {
 
   const [isLoadingAnswersList, setIsLoadingAnswersList] = useAtom(
     isLoadingAnswersListAtom
-  );
-  const [nftAddress, setNftAddress] = useAtom(nftAddressAtom);
-  const [isLoadingNftAddress, setIsLoadingNftAddress] = useAtom(
-    isLoadingNftAddressAtom
   );
 
   const fetchResults = useCallback(async () => {
@@ -164,18 +154,9 @@ export const useResult = () => {
     decryptWithLit,
   ]);
 
-  // TODO: use real NFT address
-  const fetchNftAddress = useCallback(async () => {
-    setNftAddress(ZORA_DEMO_NFT_ADDRESS);
-    setIsLoadingNftAddress(false);
-  }, [setIsLoadingNftAddress, setNftAddress]);
-
   return {
     answersList,
-    nftAddress,
     isLoadingAnswersList,
-    isLoadingNftAddress,
     fetchResults,
-    fetchNftAddress,
   };
 };

@@ -2,7 +2,7 @@ import { atom, useAtom } from "jotai";
 // @ts-expect-error
 import LitJsSdk from "lit-js-sdk";
 import { useCallback } from "react";
-import { CHAIN_NAME } from "../../constants/constants";
+import { CHAIN_NAME, LIT_CHAIN } from "../../constants/constants";
 import {
   blobToBase64,
   decodeb64,
@@ -14,16 +14,13 @@ import { useAccount } from "../useAccount";
 const litClientAtom = atom<any | null>(null);
 const litAuthSigAtom = atom<any | null>(null);
 
-const accFromAddresses = (params: {
-  addressesToAllowRead: string[];
-  chain: string;
-}) =>
+const accFromAddresses = (params: { addressesToAllowRead: string[] }) =>
   params.addressesToAllowRead.flatMap((a, i) => [
     ...(i === 0 ? [] : [{ operator: "or" }]),
     {
       contractAddress: "",
       standardContractType: "",
-      chain: params.chain,
+      chain: LIT_CHAIN,
       method: "",
       parameters: [":userAddress"],
       returnValueTest: {
@@ -32,6 +29,20 @@ const accFromAddresses = (params: {
       },
     },
   ]);
+
+const accFromNftAddress = (params: { nftAddress: string }) => [
+  {
+    contractAddress: params.nftAddress,
+    standardContractType: "ERC721",
+    chain: LIT_CHAIN,
+    method: "balanceOf",
+    parameters: [":userAddress"],
+    returnValueTest: {
+      comparator: ">",
+      value: "0",
+    },
+  },
+];
 
 export const useLit = () => {
   const [client, setClient] = useAtom(litClientAtom);
@@ -63,7 +74,8 @@ export const useLit = () => {
   const encryptWithLit = useCallback(
     async (params: {
       strToEncrypt: string;
-      addressesToAllowRead: string[];
+      addressesToAllowRead?: string[];
+      nftAddressToAllowRead?: string;
       chain: string;
       authSig?: any; // input auth sig explicitly in case the stored auth sig is null due to rendering behavior
     }): Promise<{
@@ -73,12 +85,23 @@ export const useLit = () => {
       if ((!authSig && !params.authSig) || !client)
         throw new Error("Lit initialization incomplete");
 
+      if (!params.addressesToAllowRead && !params.nftAddressToAllowRead)
+        throw new Error(
+          "Allowed wallet addresses or NFT address is not specified in Lit encyrption"
+        );
+
       const { encryptedZip, symmetricKey } = await LitJsSdk.zipAndEncryptString(
         params.strToEncrypt
       );
 
+      const acc = params.nftAddressToAllowRead
+        ? accFromNftAddress({ nftAddress: params.nftAddressToAllowRead || "" })
+        : accFromAddresses({
+            addressesToAllowRead: params.addressesToAllowRead || [],
+          });
+
       const encryptedSymmKey = await client.saveEncryptionKey({
-        accessControlConditions: accFromAddresses(params),
+        accessControlConditions: acc,
         symmetricKey,
         authSig: authSig || params.authSig,
         chain: params.chain,
@@ -100,18 +123,30 @@ export const useLit = () => {
     async (params: {
       encryptedZipBase64: string;
       encryptedSymmKeyBase64: string;
-      addressesToAllowRead: string[];
+      addressesToAllowRead?: string[];
+      nftAddressToAllowRead?: string;
       chain: string;
     }): Promise<string> => {
       if (!authSig || !client) throw new Error("Lit initialization incomplete");
+
+      if (!params.addressesToAllowRead && !params.nftAddressToAllowRead)
+        throw new Error(
+          "Allowed wallet addresses or NFT address is not specified in Lit encyrption"
+        );
 
       const toDecrypt = uint8ArrayToString(
         decodeb64(params.encryptedSymmKeyBase64),
         "base16"
       );
 
+      const acc = params.nftAddressToAllowRead
+        ? accFromNftAddress({ nftAddress: params.nftAddressToAllowRead || "" })
+        : accFromAddresses({
+            addressesToAllowRead: params.addressesToAllowRead || [],
+          });
+
       const decryptedSymmKey = await client.getEncryptionKey({
-        accessControlConditions: accFromAddresses(params),
+        accessControlConditions: acc,
         toDecrypt,
         chain: CHAIN_NAME,
         authSig,

@@ -1,9 +1,15 @@
-import FormDeployButoton from "../components/FormDeployButton";
+import { Button } from "@chakra-ui/react";
+import { useEffect } from "react";
+import { FORM_TEMPLATE, QuestionId } from "../constants/constants";
+import { useCeramic } from "../hooks/litCeramic/useCeramic";
+import { useLit } from "../hooks/litCeramic/useLit";
+import { useDeploy } from "../hooks/useDeploy";
+import { useFormList } from "../hooks/useFormList";
+import { wait } from "../utils/wait";
 
 import { CheckIcon, CopyIcon, WarningTwoIcon } from "@chakra-ui/icons";
 import {
   Box,
-  Button,
   Checkbox,
   Flex,
   FormControl,
@@ -24,20 +30,19 @@ import {
   Textarea,
   useClipboard,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import {
-  QuestionId,
-  QUESTIONS,
-  TEST_NFT_CONTRACT_ADDRESS,
-} from "../constants/constants";
+import { useState } from "react";
+import { QUESTIONS, TEST_NFT_CONTRACT_ADDRESS } from "../constants/constants";
+import { useTokenHolders } from "../hooks/useTokenHolders";
 import { createToast } from "../utils/createToast";
 import { fetchNftBaseInfo } from "../utils/zdk";
 
-const NftName = (props: {
+const NftInfo = (props: {
   nftName: string | null;
+  tokenHolders: string[];
   isLoadingNftName: boolean;
+  isLoadingTokenHolders: boolean;
 }) => {
-  if (props.isLoadingNftName) {
+  if (props.isLoadingNftName || props.isLoadingTokenHolders) {
     return <Spinner size="sm" />;
   } else if (props.nftName == null) {
     return <></>;
@@ -50,10 +55,13 @@ const NftName = (props: {
     );
   } else {
     return (
-      <Text display="flex" alignItems="center">
-        <CheckIcon mr={1} fontWeight="100" color="green.500" />
-        Project found: {props.nftName}
-      </Text>
+      <>
+        <Text display="flex" alignItems="center">
+          <CheckIcon mr={1} fontWeight="100" color="green.500" />
+          Project found: {props.nftName} ({props.tokenHolders.length} token
+          holders)
+        </Text>
+      </>
     );
   }
 };
@@ -63,6 +71,13 @@ const FormCreationModal = (props: {
   onOpen: () => void;
   onClose: () => void;
 }) => {
+  const { deploy, isDeploying } = useDeploy();
+  const { fetchFormList } = useFormList();
+  const { initLitClient, isLitClientReady } = useLit();
+  const { initCeramic } = useCeramic();
+  const { tokenHolders, isLoadingTokenHolders, fetchHolders } =
+    useTokenHolders();
+
   // form title and contract address
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -84,8 +99,21 @@ const FormCreationModal = (props: {
   const isContractAddressFormatValid =
     contractAddress.startsWith("0x") && contractAddress.length === 42;
 
-  const isFirstStepValid = title.length > 0 && isContractAddressFormatValid;
+  const isFirstStepValid =
+    title.length > 0 &&
+    isContractAddressFormatValid &&
+    tokenHolders.length > 0 &&
+    !isLoadingNftName &&
+    !isLoadingTokenHolders;
   const isSecondStepValid = questionIds.length > 0;
+
+  useEffect(() => {
+    initLitClient();
+  }, [initLitClient]);
+
+  useEffect(() => {
+    initCeramic();
+  }, [initCeramic]);
 
   useEffect(() => {
     (async () => {
@@ -105,7 +133,10 @@ const FormCreationModal = (props: {
 
       try {
         setIsLoadingNftName(true);
-        const baseInfo = await fetchNftBaseInfo(contractAddress);
+        const [baseInfo] = await Promise.all([
+          fetchNftBaseInfo(contractAddress),
+          fetchHolders(contractAddress),
+        ]);
         if (!baseInfo || !baseInfo.name) {
           setNftName("");
           return;
@@ -122,16 +153,34 @@ const FormCreationModal = (props: {
     })();
   }, [
     contractAddress,
+    fetchHolders,
     isContractAddressFormatValid,
     isLoadingNftName,
     loadedNftName,
     nftName,
   ]);
 
-  const onDeployComplete = (params: { formUrl: string } | null) => {
+  const onClickDeploy = async () => {
+    const res = await deploy({
+      formParams: FORM_TEMPLATE({
+        title,
+        description,
+        questionIds,
+      }),
+      formViewerAddresses: tokenHolders,
+      nftAddress: contractAddress,
+    });
+
+    // null response means form creation failed
+    if (!res) {
+      return;
+    }
+
     setFormStep("form_created");
-    if (!params) return;
-    setFormUrl(params.formUrl);
+    if (!res) return;
+    setFormUrl(res.formUrl);
+    await wait(3000); // wait for a few seconds for the graph to index the tx. TODO: more robust method
+    await fetchFormList();
   };
 
   const onClickFormUrlCopy = () => {
@@ -193,14 +242,12 @@ const FormCreationModal = (props: {
                   onChange={(e) => setContractAddress(e.target.value)}
                   mb={1}
                 />
-                <NftName
+                <NftInfo
                   nftName={nftName}
+                  tokenHolders={tokenHolders}
                   isLoadingNftName={isLoadingNftName}
+                  isLoadingTokenHolders={isLoadingTokenHolders}
                 />
-                <Text>
-                  Warning: Currently, only form owner can answer and see
-                  results. This contract address does not work.
-                </Text>
               </FormControl>
             </ModalBody>
             <ModalFooter>
@@ -258,14 +305,22 @@ const FormCreationModal = (props: {
                 >
                   Back
                 </Button>
-                <FormDeployButoton
-                  canDeploy={isFirstStepValid && isSecondStepValid}
-                  nftAddress={contractAddress}
-                  title={title}
-                  description={description}
-                  questionIds={questionIds}
-                  onDeployComplete={onDeployComplete}
-                />
+                <Button
+                  ml={4}
+                  size="md"
+                  variant="outline"
+                  color="#FC8CC9"
+                  onClick={onClickDeploy}
+                  isLoading={isDeploying}
+                  disabled={
+                    isDeploying ||
+                    !isLitClientReady ||
+                    !isFirstStepValid ||
+                    !isSecondStepValid
+                  }
+                >
+                  Create
+                </Button>
               </Flex>
             </ModalFooter>
           </>

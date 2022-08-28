@@ -2,14 +2,11 @@ export const FORM_COLLECTION_FACTORY_CONTRACT_ADDRESS =
   "0xEBed7538E8cc636F3FbaCEE289Aacb2Ef959AbA2";
 
 export const TEST_NFT_CONTRACT_ADDRESS =
-  "0xF37B2387a370Abf0d968F36134C77eb3D880D4E4";
+  "0xe5b4d6b5f37cae9dc4c7384cd97038cd0573d7d2"; // Strxngers
 
 export const CHAIN_NAME = "mumbai";
 
-export const LIT_CERAMIC_INTEGRATION_PARAMS = [
-  "https://ceramic-clay.3boxlabs.com",
-  CHAIN_NAME,
-];
+export const LIT_CHAIN = "ethereum";
 
 // TODO: use API Key
 export const SUBGRAPH_URL =
@@ -315,6 +312,3 @@ export type Answer = {
   question_type: string;
   answer: string | string[];
 };
-
-export const ZORA_DEMO_NFT_ADDRESS =
-  "0x8d04a8c79cEB0889Bdd12acdF3Fa9D207eD3Ff63";
