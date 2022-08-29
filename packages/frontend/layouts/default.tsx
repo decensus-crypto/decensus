@@ -114,8 +114,12 @@ const Layout = (props: {
         <ModalContent color="white">
           <ModalHeader>Unsupported network</ModalHeader>
           <ModalBody mb={6}>
-            Please switch to <strong>{CHAIN_NAME}</strong> in your wallet app
-            and reload the page.
+            Please switch to{" "}
+            <strong>
+              {CHAIN_NAME.slice(0, 1).toUpperCase() +
+                CHAIN_NAME.slice(1).toLowerCase()}
+            </strong>{" "}
+            in your wallet app and reload the page.
           </ModalBody>
         </ModalContent>
       </Modal>
