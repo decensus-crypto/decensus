@@ -38,15 +38,15 @@ const Layout = (props: {
   return (
     <Box h="calc(100vh)" background={"black"}>
       <Container maxWidth={"6xl"}>
-        <Flex>
+        <Flex align="center">
           <NextLink href={"/app"}>
-            <Box minW={240} maxW={320} py={4} cursor="pointer">
+            <Box minW={200} maxW={320} py={4} cursor="pointer">
               <Logo height={12} />
             </Box>
           </NextLink>
           <Spacer />
           {!props.walletNotRequired && (
-            <Box mt={6}>
+            <Box>
               {account ? (
                 <Text
                   color="white"
