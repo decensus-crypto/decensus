@@ -47,7 +47,7 @@ const accFromNftAddress = (params: { nftAddress: string }) => [
 export const useLit = () => {
   const [client, setClient] = useAtom(litClientAtom);
   const [authSig, setAuthSig] = useAtom(litAuthSigAtom);
-  const { account } = useAccount();
+  const { account, isWrongChain } = useAccount();
 
   const initLitClient = useCallback(async () => {
     if (client) return;
@@ -58,7 +58,7 @@ export const useLit = () => {
   }, [client, setClient]);
 
   const getLitAuthSig = useCallback(async () => {
-    if (authSig || !account) return;
+    if (authSig || !account || isWrongChain) return;
 
     try {
       const _authSig = await LitJsSdk.checkAndSignAuthMessage({
@@ -69,7 +69,7 @@ export const useLit = () => {
     } catch (error) {
       console.error(error);
     }
-  }, [account, authSig, setAuthSig]);
+  }, [account, authSig, isWrongChain, setAuthSig]);
 
   const encryptWithLit = useCallback(
     async (params: {
@@ -82,7 +82,7 @@ export const useLit = () => {
       encryptedZipBase64: string;
       encryptedSymmKeyBase64: string;
     }> => {
-      if ((!authSig && !params.authSig) || !client)
+      if ((!authSig && !params.authSig) || !client || isWrongChain)
         throw new Error("Lit initialization incomplete");
 
       if (!params.addressesToAllowRead && !params.nftAddressToAllowRead)
@@ -116,7 +116,7 @@ export const useLit = () => {
         encryptedSymmKeyBase64,
       };
     },
-    [authSig, client]
+    [authSig, client, isWrongChain]
   );
 
   const decryptWithLit = useCallback(
@@ -127,7 +127,8 @@ export const useLit = () => {
       nftAddressToAllowRead?: string;
       chain: string;
     }): Promise<string> => {
-      if (!authSig || !client) throw new Error("Lit initialization incomplete");
+      if (!authSig || !client || isWrongChain)
+        throw new Error("Lit initialization incomplete");
 
       if (!params.addressesToAllowRead && !params.nftAddressToAllowRead)
         throw new Error(
@@ -161,7 +162,7 @@ export const useLit = () => {
 
       return decryptedString;
     },
-    [authSig, client]
+    [authSig, client, isWrongChain]
   );
 
   return {
