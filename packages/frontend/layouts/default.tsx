@@ -1,14 +1,20 @@
+import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
   Container,
   Flex,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Modal,
   ModalBody,
   ModalContent,
   ModalHeader,
   ModalOverlay,
   Spacer,
+  Spinner,
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
@@ -22,7 +28,13 @@ const Layout = (props: {
   children: ReactNode;
   walletNotRequired?: boolean;
 }) => {
-  const { account, isWrongChain, connectWallet } = useAccount();
+  const {
+    account,
+    isLoadingAccount,
+    isWrongChain,
+    connectWallet,
+    disconnectWallet,
+  } = useAccount();
   const wrongNetworkModal = useDisclosure();
 
   useEffect(() => {
@@ -34,6 +46,11 @@ const Layout = (props: {
   useEffect(() => {
     if (isWrongChain) wrongNetworkModal.onOpen();
   }, [isWrongChain, wrongNetworkModal]);
+
+  const onLogout = async () => {
+    await disconnectWallet();
+    window.location.reload();
+  };
 
   return (
     <Box h="calc(100vh)" background={"black"}>
@@ -48,23 +65,39 @@ const Layout = (props: {
           {!props.walletNotRequired && (
             <Box>
               {account ? (
-                <Text
-                  color="white"
-                  maxW="150px"
-                  overflowX="hidden"
-                  whiteSpace="nowrap"
-                  textOverflow="ellipsis"
-                >
-                  {account}
-                </Text>
+                <Menu>
+                  <MenuButton
+                    as={Button}
+                    w="160px"
+                    size="sm"
+                    variant="outline"
+                    color="white"
+                    rightIcon={<ChevronDownIcon />}
+                  >
+                    <Text
+                      as="span"
+                      w="120px"
+                      overflowX="hidden"
+                      whiteSpace="nowrap"
+                      textOverflow="ellipsis"
+                    >
+                      {account.slice(0, 12)}...
+                    </Text>
+                  </MenuButton>
+                  <MenuList background="black" color="white" maxW="150px">
+                    <MenuItem onClick={onLogout}>Log Out</MenuItem>
+                  </MenuList>
+                </Menu>
               ) : (
                 <Button
                   size="sm"
+                  w="160px"
                   variant="outline"
                   color="white"
                   onClick={connectWallet}
+                  disabled={isLoadingAccount}
                 >
-                  Connect Wallet
+                  {isLoadingAccount ? <Spinner size="sm" /> : "Connect Wallet"}
                 </Button>
               )}
             </Box>
