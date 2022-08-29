@@ -19,9 +19,7 @@ const Root = () => {
             </Box>
             <Box mt={8}>
               <NextLink href="/app">
-                <Button size="lg" variant="outline" color="white">
-                  Launch App
-                </Button>
+                <Button size="lg">Launch App</Button>
               </NextLink>
             </Box>
           </GridItem>

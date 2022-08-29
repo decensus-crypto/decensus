@@ -69,9 +69,6 @@ const Layout = (props: {
                   <MenuButton
                     as={Button}
                     w="160px"
-                    size="sm"
-                    variant="outline"
-                    color="white"
                     rightIcon={<ChevronDownIcon />}
                   >
                     <Text
@@ -114,7 +111,7 @@ const Layout = (props: {
         closeOnEsc={false}
       >
         <ModalOverlay />
-        <ModalContent color="white" background="gray.700">
+        <ModalContent color="white">
           <ModalHeader>Unsupported network</ModalHeader>
           <ModalBody mb={6}>
             Please switch to <strong>{CHAIN_NAME}</strong> in your wallet app

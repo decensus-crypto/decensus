@@ -34,10 +34,8 @@ const AppRoot = () => {
             </Heading>
             <Spacer />
             <Button
-              size="sm"
-              variant="outline"
-              color="#FC8CC9"
-              colorScheme="magenta"
+              color="brand"
+              borderColor="brand"
               leftIcon={<AddIcon />}
               onClick={onOpen}
               disabled={!account}

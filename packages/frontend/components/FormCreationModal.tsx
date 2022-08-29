@@ -213,7 +213,7 @@ const FormCreationModal = (props: {
   return (
     <Modal isOpen={props.isOpen} onClose={props.onClose} isCentered>
       <ModalOverlay />
-      <ModalContent color="white" background="gray.700">
+      <ModalContent>
         <ModalHeader>Create new form with our template</ModalHeader>
         <ModalCloseButton />
 
@@ -248,8 +248,6 @@ const FormCreationModal = (props: {
                       setContractAddress(TEST_NFT_CONTRACT_ADDRESS)
                     }
                     color="gray.500"
-                    borderColor="gray.500"
-                    variant="outline"
                   >
                     Input sample address
                   </Button>
@@ -272,14 +270,13 @@ const FormCreationModal = (props: {
             </ModalBody>
             <ModalFooter>
               <Flex>
-                <Button size="md" variant="outline" onClick={props.onClose}>
+                <Button size="md" onClick={props.onClose}>
                   Cancel
                 </Button>
                 <Button
                   ml={4}
                   size="md"
-                  variant="outline"
-                  color="#FC8CC9"
+                  color="brand"
                   onClick={() => setFormStep("select_questions")}
                   disabled={!isFirstStepValid}
                 >
@@ -318,18 +315,13 @@ const FormCreationModal = (props: {
             </ModalBody>
             <ModalFooter>
               <Flex>
-                <Button
-                  size="md"
-                  variant="outline"
-                  onClick={() => setFormStep("start")}
-                >
+                <Button size="md" onClick={() => setFormStep("start")}>
                   Back
                 </Button>
                 <Button
                   ml={4}
                   size="md"
-                  variant="outline"
-                  color="#FC8CC9"
+                  color="brand"
                   onClick={onClickDeploy}
                   isLoading={isDeploying}
                   disabled={
@@ -354,19 +346,14 @@ const FormCreationModal = (props: {
               </Heading>
               <Text>Let&lsquo;s share the form to your community members</Text>
 
-              <Button
-                mt={6}
-                variant="outline"
-                color="#FC8CC9"
-                onClick={onClickFormUrlCopy}
-              >
+              <Button mt={6} color="brand" onClick={onClickFormUrlCopy}>
                 <CopyIcon mr={1} />
                 Copy form URL
               </Button>
             </ModalBody>
             <ModalFooter>
               <Flex>
-                <Button size="md" variant="outline" onClick={props.onClose}>
+                <Button size="md" onClick={props.onClose}>
                   Close
                 </Button>
               </Flex>

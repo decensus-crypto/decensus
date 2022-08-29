@@ -214,7 +214,6 @@ const AnswerForm = () => {
                     size="lg"
                     mr={8}
                     variant="text"
-                    color="white"
                     disabled={currentQuestionIndex === 0}
                     onClick={() =>
                       setCurrentQuestionIndex(currentQuestionIndex - 1)
@@ -226,8 +225,6 @@ const AnswerForm = () => {
                     <Button
                       size="lg"
                       ml={8}
-                      variant="outline"
-                      color="white"
                       onClick={() =>
                         setCurrentQuestionIndex(currentQuestionIndex + 1)
                       }
@@ -237,8 +234,6 @@ const AnswerForm = () => {
                   ) : (
                     <Button
                       size="lg"
-                      variant="outline"
-                      color="white"
                       onClick={onSubmit}
                       disabled={!canSubmit || isSubmitting}
                       isLoading={isSubmitting}

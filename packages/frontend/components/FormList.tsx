@@ -39,38 +39,18 @@ const FormRow = (props: Form) => {
       <Td w={32}>
         <Flex>
           <Box>
-            <Button
-              size="sm"
-              variant="outline"
-              color="white"
-              leftIcon={<CopyIcon />}
-              onClick={onClickCopy}
-            >
+            <Button leftIcon={<CopyIcon />} onClick={onClickCopy}>
               Copy URL
             </Button>
           </Box>
           <Box ml={2}>
             <a href={props.formUrl} target="_blank" rel="noreferrer">
-              <Button
-                size="sm"
-                variant="outline"
-                color="white"
-                leftIcon={<EditIcon />}
-              >
-                Go to Form
-              </Button>
+              <Button leftIcon={<EditIcon />}>Go to Form</Button>
             </a>
           </Box>
           <Box ml={2}>
             <a href={props.resultUrl} target="_blank" rel="noreferrer">
-              <Button
-                size="sm"
-                variant="outline"
-                color="white"
-                leftIcon={<LinkIcon />}
-              >
-                Survey Results
-              </Button>
+              <Button leftIcon={<LinkIcon />}>Survey Results</Button>
             </a>
           </Box>
         </Flex>
