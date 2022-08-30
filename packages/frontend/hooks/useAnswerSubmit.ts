@@ -73,6 +73,7 @@ export const useAnswerSubmit = () => {
           status: "success",
         });
       } catch (error: any) {
+        console.error(error);
         createToast({
           title: "Failed to submit answer",
           description: error.message,

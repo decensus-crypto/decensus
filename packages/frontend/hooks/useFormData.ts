@@ -77,6 +77,7 @@ export const useFormData = () => {
         throw new Error("invalid form data");
       }
     } catch (error: any) {
+      console.error(error);
       createToast({
         title: "Failed to get form data",
         description: error.message,
