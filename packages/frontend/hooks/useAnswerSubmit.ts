@@ -48,7 +48,9 @@ export const useAnswerSubmit = () => {
         const merkleProof = getProofForAddress(account, merkleTree);
 
         // get encryption key
-        const publicKey = await formCollectionContract.answerEncryptionKey();
+        const publicKey = atob(
+          await formCollectionContract.answerEncryptionKey()
+        );
 
         // encrypt answer
         const encryptedAnswer = await encrypt({

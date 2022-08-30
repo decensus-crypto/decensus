@@ -120,7 +120,7 @@ export const useDeploy = () => {
           formParams.description,
           merkleRoot,
           formDataUri,
-          keyPair.publicKey,
+          btoa(keyPair.publicKey),
           answerDecryptionKeyUri,
           {
             gasLimit: 2000000,
