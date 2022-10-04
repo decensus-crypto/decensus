@@ -19,8 +19,7 @@ import {
   Spinner, Text,
   Textarea
 } from "@chakra-ui/react";
-import Router from 'next/router'
-import next from "next";
+import Router from 'next/router';
 import { useEffect, useState } from "react";
 import { TEST_NFT_CONTRACT_ADDRESS } from "../constants/constants";
 import { useAccount } from "../hooks/useAccount";

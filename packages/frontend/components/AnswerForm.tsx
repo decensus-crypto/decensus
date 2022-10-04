@@ -156,8 +156,8 @@ const AnswerForm = () => {
   }, [initCeramic]);
 
   const question = formData
-    ? formData["questions"].filter((q, i) => i === currentQuestionIndex)[0] ||
-      null
+    ? formData["questions"].filter((_, i) => i === currentQuestionIndex)[0] ||
+    null
     : null;
 
   const canSubmit =

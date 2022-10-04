@@ -1,5 +1,3 @@
-import FormList from "../../components/FormList";
-
 import { AddIcon } from "@chakra-ui/icons";
 import {
   Box,
@@ -10,10 +8,11 @@ import {
   GridItem,
   Heading,
   Spacer,
-  useDisclosure,
+  useDisclosure
 } from "@chakra-ui/react";
 import { useState } from "react";
 import FormCreationModal from "../../components/FormCreationModal";
+import FormList from "../../components/FormList";
 import { useAccount } from "../../hooks/useAccount";
 import Layout from "../../layouts/default";
 

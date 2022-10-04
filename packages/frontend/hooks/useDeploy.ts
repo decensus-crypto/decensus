@@ -1,7 +1,7 @@
 import { ContractReceipt } from "ethers";
 import { atom, useAtom } from "jotai";
 import { useCallback } from "react";
-import { CHAIN_NAME, Question } from "../constants/constants";
+import { CHAIN_NAME, FormTemplate, Question } from "../constants/constants";
 import { createToast } from "../utils/createToast";
 import { genKeyPair } from "../utils/crypto";
 import { getMerkleTree, getMerkleTreeRootHash } from "../utils/merkleTree";
@@ -22,7 +22,7 @@ export const useDeploy = () => {
 
   const [isDeploying, setIsDeploying] = useAtom(isDeployingAtom);
 
-  const deploy = useCallback(async ({ questions, formViewerAddresses, nftAddress, }: { questions: Question[]; formViewerAddresses: string[]; nftAddress: string; }): Promise<{ formUrl: string } | null> => {
+  const deploy = useCallback(async ({ formTemplate, formViewerAddresses, nftAddress, }: { formTemplate: FormTemplate; formViewerAddresses: string[]; nftAddress: string; }): Promise<{ formUrl: string } | null> => {
     try {
       if (!account) {
         throw new Error("Cannot deploy form. Make sure you connect wallet");
@@ -65,7 +65,7 @@ export const useDeploy = () => {
         const authSig = await getLitAuthSig();
 
         const encryptedFormData = await encryptWithLit({
-          strToEncrypt: JSON.stringify(questions),
+          strToEncrypt: JSON.stringify(formTemplate),
           nftAddressToAllowRead: nftAddress,
           chain: CHAIN_NAME,
           authSig,
@@ -107,8 +107,8 @@ export const useDeploy = () => {
       }
 
       const tx = await formCollectionFactoryContract.createFormCollection(
-        formParams.title,
-        formParams.description,
+        formTemplate.title,
+        formTemplate.description,
         merkleRoot,
         formDataUri,
         btoa(keyPair.publicKey),

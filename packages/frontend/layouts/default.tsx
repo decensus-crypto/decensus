@@ -16,7 +16,7 @@ import {
   Spacer,
   Spinner,
   Text,
-  useDisclosure,
+  useDisclosure
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { ReactNode, useEffect } from "react";
@@ -111,7 +111,7 @@ const Layout = (props: {
         closeOnEsc={false}
       >
         <ModalOverlay />
-        <ModalContent color="white">
+        <ModalContent>
           <ModalHeader>Unsupported network</ModalHeader>
           <ModalBody mb={6}>
             Please switch to{" "}
