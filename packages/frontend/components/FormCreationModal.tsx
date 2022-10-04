@@ -1,26 +1,13 @@
-import { Button } from "@chakra-ui/react";
-import { useEffect } from "react";
-import { FORM_TEMPLATE, QuestionId } from "../constants/constants";
-import { useCeramic } from "../hooks/litCeramic/useCeramic";
-import { useLit } from "../hooks/litCeramic/useLit";
-import { useDeploy } from "../hooks/useDeploy";
-import { useFormList } from "../hooks/useFormList";
-import { wait } from "../utils/wait";
-
 import {
   CheckIcon,
-  CopyIcon,
   InfoIcon,
-  WarningTwoIcon,
+  WarningTwoIcon
 } from "@chakra-ui/icons";
 import {
-  Box,
-  Checkbox,
+  Button,
   Flex,
   FormControl,
-  FormLabel,
-  Heading,
-  Input,
+  FormLabel, Input,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -29,17 +16,15 @@ import {
   ModalHeader,
   ModalOverlay,
   Spacer,
-  Spinner,
-  Stack,
-  Text,
-  Textarea,
-  useClipboard,
+  Spinner, Text,
+  Textarea
 } from "@chakra-ui/react";
-import { useState } from "react";
-import { QUESTIONS, TEST_NFT_CONTRACT_ADDRESS } from "../constants/constants";
+import Router from 'next/router'
+import next from "next";
+import { useEffect, useState } from "react";
+import { TEST_NFT_CONTRACT_ADDRESS } from "../constants/constants";
 import { useAccount } from "../hooks/useAccount";
 import { useTokenHolders } from "../hooks/useTokenHolders";
-import { createToast } from "../utils/createToast";
 import { fetchNftBaseInfo } from "../utils/zdk";
 
 const NftInfo = (props: {
@@ -90,10 +75,6 @@ const FormCreationModal = (props: {
   onClose: () => void;
 }) => {
   const { account } = useAccount();
-  const { deploy, isDeploying } = useDeploy();
-  const { fetchFormList } = useFormList();
-  const { initLitClient, isLitClientReady } = useLit();
-  const { initCeramic } = useCeramic();
   const { tokenHolders, isLoadingTokenHolders, fetchHolders } =
     useTokenHolders();
 
@@ -105,16 +86,7 @@ const FormCreationModal = (props: {
   const [loadedNftName, setLoadedNftName] = useState(false);
   const [nftName, setNftName] = useState<string | null>(null);
 
-  // question IDs to include in form
-  const [questionIds, setQuestionIds] = useState<QuestionId[]>([]);
-
   // after form creation
-  const [formStep, setFormStep] = useState<
-    "start" | "select_questions" | "form_created"
-  >("start");
-  const [formUrl, setFormUrl] = useState<string>("");
-  const copyFormUrl = useClipboard(formUrl);
-
   const isContractAddressFormatValid =
     contractAddress.startsWith("0x") && contractAddress.length === 42;
 
@@ -124,15 +96,6 @@ const FormCreationModal = (props: {
     tokenHolders.length > 0 &&
     !isLoadingNftName &&
     !isLoadingTokenHolders;
-  const isSecondStepValid = questionIds.length > 0;
-
-  useEffect(() => {
-    initLitClient();
-  }, [initLitClient]);
-
-  useEffect(() => {
-    initCeramic();
-  }, [initCeramic]);
 
   useEffect(() => {
     (async () => {
@@ -179,36 +142,12 @@ const FormCreationModal = (props: {
     nftName,
   ]);
 
-  const onClickDeploy = async () => {
-    const res = await deploy({
-      formParams: FORM_TEMPLATE({
-        title,
-        description,
-        questionIds,
-      }),
-      formViewerAddresses: tokenHolders,
-      nftAddress: contractAddress,
-    });
-
-    // null response means form creation failed
-    if (!res) {
-      return;
-    }
-
-    setFormStep("form_created");
-    if (!res) return;
-    setFormUrl(res.formUrl);
-    await wait(3000); // wait for a few seconds for the graph to index the tx. TODO: more robust method
-    await fetchFormList();
-  };
-
-  const onClickFormUrlCopy = () => {
-    copyFormUrl.onCopy();
-    createToast({
-      title: "Form URL copied!",
-      status: "success",
-    });
-  };
+  const questionsFrm = () => {
+    Router.push({
+      pathname: '/app/forms/new',
+      query: { title: title, description: description, nftaddress: contractAddress },
+    })
+  }
 
   return (
     <Modal isOpen={props.isOpen} onClose={props.onClose} isCentered>
@@ -216,150 +155,70 @@ const FormCreationModal = (props: {
       <ModalContent>
         <ModalHeader>Create new form with our template</ModalHeader>
         <ModalCloseButton />
-
-        {formStep === "start" && (
-          <>
-            <ModalBody pb={6}>
-              <FormControl>
-                <FormLabel>Form Title</FormLabel>
-                <Input
-                  required
-                  placeholder="My best form ever"
-                  value={title}
-                  onChange={(evt) => setTitle(evt.target.value)}
-                />
-              </FormControl>
-              <FormControl mt={4}>
-                <FormLabel>Form Description</FormLabel>
-                <Textarea
-                  required
-                  placeholder="A survey to analyze the demography of NFT holders"
-                  value={description}
-                  onChange={(evt) => setDescription(evt.target.value)}
-                />
-              </FormControl>
-              <FormControl mt={4}>
-                <FormLabel display="flex" justifyContent="stretch" mr="0">
-                  NFT Contract Address
-                  <Spacer />
-                  <Button
-                    size="xs"
-                    onClick={() =>
-                      setContractAddress(TEST_NFT_CONTRACT_ADDRESS)
-                    }
-                    color="gray.500"
-                  >
-                    Input sample address
-                  </Button>
-                </FormLabel>
-                <Input
-                  required
-                  placeholder="0xabcd..."
-                  value={contractAddress}
-                  onChange={(e) => setContractAddress(e.target.value)}
-                  mb={1}
-                />
-                <NftInfo
-                  account={account}
-                  nftName={nftName}
-                  tokenHolders={tokenHolders}
-                  isLoadingNftName={isLoadingNftName}
-                  isLoadingTokenHolders={isLoadingTokenHolders}
-                />
-              </FormControl>
-            </ModalBody>
-            <ModalFooter>
-              <Flex>
-                <Button size="md" onClick={props.onClose}>
-                  Cancel
-                </Button>
-                <Button
-                  ml={4}
-                  size="md"
-                  color="brand"
-                  onClick={() => setFormStep("select_questions")}
-                  disabled={!isFirstStepValid}
-                >
-                  Next
-                </Button>
-              </Flex>
-            </ModalFooter>
-          </>
-        )}
-
-        {formStep === "select_questions" && (
-          <>
-            <ModalBody pb={6}>
-              <FormControl>
-                <FormLabel>What do you want to ask in your form?</FormLabel>
-                <Stack mt={2}>
-                  {QUESTIONS.map((q) => (
-                    <Checkbox
-                      isChecked={questionIds.includes(q.id)}
-                      onChange={(e) => {
-                        const checked = e.target.checked;
-                        if (checked) {
-                          setQuestionIds([...questionIds, q.id]);
-                        } else {
-                          setQuestionIds(questionIds.filter((i) => i !== q.id));
-                        }
-                      }}
-                      size="lg"
-                      key={q.id}
-                    >
-                      <Box color="white">{q.question_title || ""}</Box>
-                    </Checkbox>
-                  ))}
-                </Stack>
-              </FormControl>
-            </ModalBody>
-            <ModalFooter>
-              <Flex>
-                <Button size="md" onClick={() => setFormStep("start")}>
-                  Back
-                </Button>
-                <Button
-                  ml={4}
-                  size="md"
-                  color="brand"
-                  onClick={onClickDeploy}
-                  isLoading={isDeploying}
-                  disabled={
-                    isDeploying ||
-                    !isLitClientReady ||
-                    !isFirstStepValid ||
-                    !isSecondStepValid
-                  }
-                >
-                  Create
-                </Button>
-              </Flex>
-            </ModalFooter>
-          </>
-        )}
-
-        {formStep === "form_created" && (
-          <>
-            <ModalBody pb={6}>
-              <Heading size="md" mt={6} mb={2}>
-                Form &quot;{title}&quot; has been created! 🎉
-              </Heading>
-              <Text>Let&lsquo;s share the form to your community members</Text>
-
-              <Button mt={6} color="brand" onClick={onClickFormUrlCopy}>
-                <CopyIcon mr={1} />
-                Copy form URL
+        <ModalBody pb={6}>
+          <FormControl>
+            <FormLabel>Form Title</FormLabel>
+            <Input
+              required
+              placeholder="My best form ever"
+              value={title}
+              onChange={(evt) => setTitle(evt.target.value)}
+            />
+          </FormControl>
+          <FormControl mt={4}>
+            <FormLabel>Form Description</FormLabel>
+            <Textarea
+              required
+              placeholder="A survey to analyze the demography of NFT holders"
+              value={description}
+              onChange={(evt) => setDescription(evt.target.value)}
+            />
+          </FormControl>
+          <FormControl mt={4}>
+            <FormLabel display="flex" justifyContent="stretch" mr="0">
+              NFT Contract Address
+              <Spacer />
+              <Button
+                size="xs"
+                onClick={() =>
+                  setContractAddress(TEST_NFT_CONTRACT_ADDRESS)
+                }
+                color="gray.500"
+              >
+                Input sample address
               </Button>
-            </ModalBody>
-            <ModalFooter>
-              <Flex>
-                <Button size="md" onClick={props.onClose}>
-                  Close
-                </Button>
-              </Flex>
-            </ModalFooter>
-          </>
-        )}
+            </FormLabel>
+            <Input
+              required
+              placeholder="0xabcd..."
+              value={contractAddress}
+              onChange={(e) => setContractAddress(e.target.value)}
+              mb={1}
+            />
+            <NftInfo
+              account={account}
+              nftName={nftName}
+              tokenHolders={tokenHolders}
+              isLoadingNftName={isLoadingNftName}
+              isLoadingTokenHolders={isLoadingTokenHolders}
+            />
+          </FormControl>
+        </ModalBody>
+        <ModalFooter>
+          <Flex>
+            <Button size="md" onClick={props.onClose} color='grey' borderColor='grey'>
+              Cancel
+            </Button>
+            <Button
+              color='brand' borderColor='brand'
+              ml={4}
+              size="md"
+              onClick={() => questionsFrm()}
+              disabled={!isFirstStepValid} >
+              Next
+            </Button>
+          </Flex>
+        </ModalFooter>
       </ModalContent>
     </Modal>
   );

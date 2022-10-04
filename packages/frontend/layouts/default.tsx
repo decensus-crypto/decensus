@@ -54,7 +54,7 @@ const Layout = (props: {
 
   return (
     <Box h="calc(100vh)" background={"black"}>
-      <Container maxWidth={"6xl"}>
+      <Container maxWidth="6xl">
         <Flex align="center">
           <NextLink href={"/app"}>
             <Box minW={200} maxW={320} py={4} cursor="pointer">

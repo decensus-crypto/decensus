@@ -29,6 +29,7 @@
     "lit-js-sdk": "^1.1.207",
     "merkletreejs": "^0.2.32",
     "next": "12.2.4",
+    "nuka-carousel": "^5.4.0",
     "pako": "^2.0.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
