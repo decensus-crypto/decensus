@@ -11,13 +11,6 @@ export const getMerkleTree = (addresses: string[], hashLeaves = true) => {
   return merkleTree;
 };
 
-// export const createDecentralizedMerkleTree = async (addresses: string[]) => {
-//   const merkleTree = getMerkleTree(addresses);
-//   const leaves = merkleTree.getLeaves();
-//   const jsonStr = MerkleTree.marshalLeaves(leaves);
-//   return await storeJsonInIPFS(jsonStr);
-// };
-
 export const getProofForAddress = (address: string, merkleTree: MerkleTree) => {
   const leaf = ethers.utils.keccak256(address);
   const proof = merkleTree.getHexProof(leaf);

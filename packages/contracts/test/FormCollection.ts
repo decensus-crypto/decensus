@@ -2,12 +2,12 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 import { MerkleTree } from "merkletreejs";
+import { FormCollection, FormCollectionFactory } from "../typechain-types";
 import {
   getMerkleTree,
   getMerkleTreeRootHash,
   getProofForAddress,
-} from "../scripts/utils/cryptography";
-import { FormCollection, FormCollectionFactory } from "../typechain-types";
+} from "./utils/cryptography";
 
 const deployFactory = async () => {
   const Contract = await ethers.getContractFactory("FormCollectionFactory");
