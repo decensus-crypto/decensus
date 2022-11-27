@@ -14,6 +14,7 @@ import {
   Select,
   Spinner,
   Stack,
+  Text,
   useControllableState,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
@@ -181,6 +182,14 @@ const AnswerForm = () => {
     return (
       <Flex w="100%" h="500px" align="center" justify="center">
         <Spinner size="lg" color="white" />
+      </Flex>
+    );
+  }
+
+  if (formData.closed) {
+    return (
+      <Flex w="100%" h="500px" align="center" justify="center">
+        <Text>Survey closed</Text>
       </Flex>
     );
   }

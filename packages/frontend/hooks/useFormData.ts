@@ -9,7 +9,7 @@ import { useAccount } from "./useAccount";
 import { useContracts } from "./useContracts";
 import { useFormCollectionAddress } from "./useFormCollectionAddress";
 
-const formDataAtom = atom<FormTemplate | null>(null);
+const formDataAtom = atom<(FormTemplate & { closed: boolean }) | null>(null);
 const nftAddressAtom = atom<string | null>(null);
 const isLoadingAtom = atom<boolean>(false);
 const formViewerAddressesAtom = atom<string[] | null>(null);
@@ -46,7 +46,10 @@ export const useFormData = () => {
     try {
       setIsLoading(true);
 
-      const formDataUri = await formCollectionContract.formDataURI();
+      const [formDataUri, closed] = await Promise.all([
+        formCollectionContract.formDataURI(),
+        formCollectionContract.closed(),
+      ]);
 
       if (formDataUri.slice(0, 10) !== "ceramic://")
         throw new Error(
@@ -67,7 +70,7 @@ export const useFormData = () => {
           chain: CHAIN_NAME,
         });
 
-        const formData = JSON.parse(formDataStr);
+        const formData = { ...JSON.parse(formDataStr), closed };
 
         setNftAddress(nftAddress);
         setFormData(formData);

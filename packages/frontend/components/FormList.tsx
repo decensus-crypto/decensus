@@ -13,13 +13,16 @@ import {
   Thead,
   Tr,
   useClipboard,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { Form, useFormList } from "../hooks/useFormList";
 import { createToast } from "../utils/createToast";
+import { CloseSurveyModal } from "./CloseSurveyModal";
 
 const FormRow = (props: Form) => {
   const { onCopy } = useClipboard(props.formUrl);
+  const closeSurveyModal = useDisclosure();
 
   const onClickCopy = () => {
     onCopy();
@@ -30,32 +33,44 @@ const FormRow = (props: Form) => {
   };
 
   return (
-    <Tr>
-      <Td>
-        <Text fontSize="md" color="white">
-          {props.title}
-        </Text>
-      </Td>
-      <Td w={32}>
-        <Flex>
-          <Box>
-            <Button leftIcon={<CopyIcon />} onClick={onClickCopy}>
-              Copy URL
-            </Button>
-          </Box>
-          <Box ml={2}>
-            <a href={props.formUrl} target="_blank" rel="noreferrer">
-              <Button leftIcon={<EditIcon />}>Go to Form</Button>
-            </a>
-          </Box>
-          <Box ml={2}>
-            <a href={props.resultUrl} target="_blank" rel="noreferrer">
-              <Button leftIcon={<LinkIcon />}>Survey Results</Button>
-            </a>
-          </Box>
-        </Flex>
-      </Td>
-    </Tr>
+    <>
+      <Tr>
+        <Td>
+          <Text fontSize="md" color="white">
+            {props.title}
+          </Text>
+        </Td>
+        <Td w={32}>
+          <Flex>
+            <Box>
+              <Button leftIcon={<CopyIcon />} onClick={onClickCopy}>
+                Copy URL
+              </Button>
+            </Box>
+            <Box ml={2}>
+              <a href={props.formUrl} target="_blank" rel="noreferrer">
+                <Button leftIcon={<EditIcon />}>Go to Form</Button>
+              </a>
+            </Box>
+            <Box ml={2}>
+              <a href={props.resultUrl} target="_blank" rel="noreferrer">
+                <Button leftIcon={<LinkIcon />}>Survey Results</Button>
+              </a>
+            </Box>
+            <Box ml={2}>
+              <Button onClick={closeSurveyModal.onOpen} disabled={props.closed}>
+                {props.closed ? "Survey closed" : "Close Survey"}
+              </Button>
+            </Box>
+          </Flex>
+        </Td>
+      </Tr>
+      <CloseSurveyModal
+        onClose={closeSurveyModal.onClose}
+        isOpen={closeSurveyModal.isOpen}
+        formCollectionAddress={props.contractAddress}
+      />
+    </>
   );
 };
 
@@ -85,12 +100,7 @@ const FormList = () => {
               {(formList || [])
                 .filter((f) => !!f.title && !!f.formUrl)
                 .map((form, index) => (
-                  <FormRow
-                    key={`form_row_${index}`}
-                    title={form.title}
-                    formUrl={form.formUrl}
-                    resultUrl={form.resultUrl}
-                  />
+                  <FormRow key={`form_row_${index}`} {...form} />
                 ))}
             </Tbody>
           </Table>

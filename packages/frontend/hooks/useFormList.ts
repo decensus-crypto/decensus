@@ -8,6 +8,8 @@ export type Form = {
   title: string;
   formUrl: string;
   resultUrl: string;
+  contractAddress: string;
+  closed: boolean;
 };
 
 const formListAtom = atom<Form[] | null>(null);
@@ -38,6 +40,8 @@ export const useFormList = () => {
             id
             owner
             name
+            contractAddress
+            closed
           }
         }`;
 
@@ -60,6 +64,8 @@ export const useFormList = () => {
         formUrl: getFormUrl(location.origin, f.contractAddress),
         resultUrl: getResultUrl(location.origin, f.contractAddress),
         title: f.name,
+        contractAddress: f.contractAddress,
+        closed: f.closed,
       }));
 
       setFormList(_formList);
