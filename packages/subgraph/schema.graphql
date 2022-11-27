@@ -12,5 +12,6 @@ type FormCollection @entity {
   owner: Bytes!
   name: String!
   description: String!
+  closed: Boolean!
   createdAt: BigInt!
 }

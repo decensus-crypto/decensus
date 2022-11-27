@@ -27,6 +27,8 @@ contract FormCollection is
         uint256 tokenId
     );
 
+    event Closed();
+
     function initialize(
         string memory _name,
         string memory _description,
@@ -49,7 +51,7 @@ contract FormCollection is
         bytes32[] calldata _merkleProof,
         string calldata _encryptedAnswer
     ) external {
-        require(!closed, "Submission closed");
+        require(!closed, "Survey closed");
         require(
             bytes(encryptedAnswers[msg.sender]).length == 0,
             "Forms can only be filled in once per address."
@@ -74,6 +76,7 @@ contract FormCollection is
 
     function close() external onlyOwner {
         closed = true;
+        emit Closed();
     }
 
     function contractURI() external view returns (string memory) {

@@ -99,14 +99,17 @@ describe("form collection", function () {
   });
 
   it("Should reject answers if submission is closed", async () => {
-    await formContract
+    const res = await formContract
       .connect(owner)
       .close()
       .then((tx) => tx.wait());
 
+    const closedEvent = res.events?.find((e) => e.event === "Closed");
+
+    await expect(closedEvent).to.not.be.undefined;
     await expect(
       formContract.connect(randomPerson).submitAnswers(proof, encryptedAnswer)
-    ).to.rejectedWith("Submission closed");
+    ).to.rejectedWith("Survey closed");
   });
 
   it("Should reject token transfer", async () => {

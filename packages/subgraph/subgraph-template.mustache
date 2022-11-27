@@ -14,12 +14,15 @@ dataSources:
       language: wasm/assemblyscript
       entities:
         - Answer
+        - FormCollection
       abis:
         - name: FormCollection
           file: ./abis/FormCollection.json
       eventHandlers:
         - event: AnswerSubmitted(address,string,uint256)
           handler: handleAnswerSubmitted
+        - event: Closed()
+          handler: handleClosed
       file: ./src/formCollection.ts
   - kind: ethereum
     name: FormCollectionFactory

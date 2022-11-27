@@ -76,6 +76,12 @@
   },
   {
     "anonymous": false,
+    "inputs": [],
+    "name": "Closed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
     "inputs": [
       {
         "indexed": false,

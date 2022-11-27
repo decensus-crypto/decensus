@@ -88,6 +88,20 @@ export class ApprovalForAll__Params {
   }
 }
 
+export class Closed extends ethereum.Event {
+  get params(): Closed__Params {
+    return new Closed__Params(this);
+  }
+}
+
+export class Closed__Params {
+  _event: Closed;
+
+  constructor(event: Closed) {
+    this._event = event;
+  }
+}
+
 export class Initialized extends ethereum.Event {
   get params(): Initialized__Params {
     return new Initialized__Params(this);

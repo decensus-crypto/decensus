@@ -148,6 +148,15 @@ export class FormCollection extends Entity {
     this.set("description", Value.fromString(value));
   }
 
+  get closed(): boolean {
+    let value = this.get("closed");
+    return value!.toBoolean();
+  }
+
+  set closed(value: boolean) {
+    this.set("closed", Value.fromBoolean(value));
+  }
+
   get createdAt(): BigInt {
     let value = this.get("createdAt");
     return value!.toBigInt();
