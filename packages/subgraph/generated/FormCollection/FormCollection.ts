@@ -224,6 +224,21 @@ export class FormCollection extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
+  closed(): boolean {
+    let result = super.call("closed", "closed():(bool)", []);
+
+    return result[0].toBoolean();
+  }
+
+  try_closed(): ethereum.CallResult<boolean> {
+    let result = super.tryCall("closed", "closed():(bool)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBoolean());
+  }
+
   contractURI(): string {
     let result = super.call("contractURI", "contractURI():(string)", []);
 
@@ -514,6 +529,32 @@ export class ApproveCall__Outputs {
   _call: ApproveCall;
 
   constructor(call: ApproveCall) {
+    this._call = call;
+  }
+}
+
+export class CloseCall extends ethereum.Call {
+  get inputs(): CloseCall__Inputs {
+    return new CloseCall__Inputs(this);
+  }
+
+  get outputs(): CloseCall__Outputs {
+    return new CloseCall__Outputs(this);
+  }
+}
+
+export class CloseCall__Inputs {
+  _call: CloseCall;
+
+  constructor(call: CloseCall) {
+    this._call = call;
+  }
+}
+
+export class CloseCall__Outputs {
+  _call: CloseCall;
+
+  constructor(call: CloseCall) {
     this._call = call;
   }
 }
