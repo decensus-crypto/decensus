@@ -99,6 +99,23 @@ describe("form collection", function () {
     ).to.rejectedWith();
   });
 
+  it("Should reject token transfer", async () => {
+    const proof = getProofForAddress(randomPerson.address, merkleTree);
+
+    const encryptedAnswer = "encrypted!!!";
+
+    await formContract
+      .connect(randomPerson)
+      .submitAnswers(proof, encryptedAnswer)
+      .then((tx) => tx.wait());
+
+    await expect(
+      formContract
+        .connect(randomPerson)
+        .transferFrom(randomPerson.address, owner.address, 0)
+    ).to.rejectedWith("ERC721: token transfer disabled");
+  });
+
   it("Should generate contractURI", async () => {
     const uri = await formContract.contractURI();
     const [prefix, encoded] = uri.split(",");
