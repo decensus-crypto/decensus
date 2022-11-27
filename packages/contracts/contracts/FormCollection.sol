@@ -77,20 +77,20 @@ contract FormCollection is
                     abi.encodePacked(
                         '{"name": "',
                         name(),
-                        ' - by phorms.xyz", "description": "',
+                        '", "description": "',
                         description,
-                        '", "image": "https://raw.githubusercontent.com/eherrerosj/baskelo-tercko-420/main/assets/logo.png?token=GHSAT0AAAAAABOQL73VPNCSX2JT75W3YWUYYVWWOBA", ',
-                        '"external_link": "https://phorms.xyz"}'
+                        // TODO: fix domain
+                        '", "external_link": "https://phorms.xyz"}'
                     )
                 )
             )
         );
 
-        string memory finalTokenUri = string(
+        string memory finalContractUri = string(
             abi.encodePacked("data:application/json;base64,", json)
         );
 
-        return finalTokenUri;
+        return finalContractUri;
     }
 
     function tokenURI(uint256 tokenId)
@@ -100,15 +100,14 @@ contract FormCollection is
         returns (string memory)
     {
         require(_exists(tokenId), "Token does not exist.");
-        // return string(abi.encodePacked(baseURI, Strings.toString(tokenId)));
 
         string memory newSvg = string(
             abi.encodePacked(
-                '<svg viewBox="0 0 360 360"><path d="M20 10v310M10 40h310M10 80" style="stroke:gray"/><text x="30" y="30" style="font-family:Avenir,Helvetica,sans-serif;font-size:15px;font-weight:700;text-transform:uppercase">',
+                '<svg viewBox="0 0 180 180" style="font-family:monospace"><rect width="100%" height="100%"/><path d="M20 0v180M0 20h180" style="stroke:gray"/><text x="23" y="15" style="font-size:6px" fill="#fff">',
                 name(),
-                '</text><foreignObject x="20" y="60" width="300" height="360"><p xmlns="http://www.w3.org/1999/xhtml" style="font-family:Avenir,Helvetica,sans-serif;font-size:8px">',
-                Base64.decode(encryptedAnswers[ownerOf(tokenId)]),
-                '</p></foreignObject><linearGradient id="a" x1="0" y1="0" x2="100%" y2="100%"><stop stop-color="hsl(245.6, 85.78%, 44.12%)" offset="10%"/><stop stop-color="hsl(125.64, 86.32%, 54.12%)" offset="90%"/></linearGradient><text text-anchor="middle" x="50%" y="80%" dy=".35em" class="text" fill="url(#a)">phorms.xyz</text></svg>'
+                '</text><text text-anchor="middle" x="50%" y="40%" fill="#fff" style="font-size:10px">Answer #',
+                Strings.toString(tokenId),
+                '</text><text text-anchor="middle" x="50%" y="60%" fill="#fff" style="font-size:16px"><tspan fill="#FC8CC9">de</tspan>census</text></svg>'
             )
         );
 
@@ -118,7 +117,7 @@ contract FormCollection is
                     abi.encodePacked(
                         '{"name": "',
                         name(),
-                        ' - by phorms.xyz", "description": "',
+                        '", "description": "',
                         description,
                         '", "image": "data:image/svg+xml;base64,',
                         Base64.encode(bytes(newSvg)),

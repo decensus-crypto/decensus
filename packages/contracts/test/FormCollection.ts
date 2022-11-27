@@ -98,4 +98,47 @@ describe("form collection", function () {
       formContract.connect(owner).submitAnswers(proof, encryptedAnswer)
     ).to.rejectedWith();
   });
+
+  it("Should generate contractURI", async () => {
+    const uri = await formContract.contractURI();
+    const [prefix, encoded] = uri.split(",");
+
+    const decoded = JSON.parse(Buffer.from(encoded, "base64").toString());
+
+    expect(prefix).to.eql("data:application/json;base64");
+    expect(decoded).to.eql({
+      name,
+      description,
+      external_link: "https://phorms.xyz",
+    });
+  });
+
+  it("Should generate tokenURI", async () => {
+    const proof = getProofForAddress(randomPerson.address, merkleTree);
+
+    const encryptedAnswer = "encrypted!!!";
+
+    await formContract
+      .connect(randomPerson)
+      .submitAnswers(proof, encryptedAnswer)
+      .then((tx) => tx.wait());
+
+    const uri = await formContract.tokenURI(0);
+    const [prefix, encoded] = uri.split(",");
+
+    const decoded = JSON.parse(Buffer.from(encoded, "base64").toString());
+
+    const [imagePrefix, encodedImage] = decoded.image.split(",");
+    const decodedImage = Buffer.from(encodedImage, "base64").toString();
+
+    expect(prefix).to.eql("data:application/json;base64");
+    expect(decoded).to.contain({
+      name,
+      description,
+    });
+    expect(imagePrefix).to.eql("data:image/svg+xml;base64");
+    expect(decodedImage).to.eql(
+      `<svg viewBox="0 0 180 180" style="font-family:monospace"><rect width="100%" height="100%"/><path d="M20 0v180M0 20h180" style="stroke:gray"/><text x="23" y="15" style="font-size:6px" fill="#fff">${name}</text><text text-anchor="middle" x="50%" y="40%" fill="#fff" style="font-size:10px">Answer #0</text><text text-anchor="middle" x="50%" y="60%" fill="#fff" style="font-size:16px"><tspan fill="#FC8CC9">de</tspan>census</text></svg>`
+    );
+  });
 });
