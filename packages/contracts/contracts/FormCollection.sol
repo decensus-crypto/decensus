@@ -16,6 +16,7 @@ contract FormCollection is
     string public formDataURI;
     string public answerEncryptionKey;
     string public answerDecryptionKeyURI;
+    bool public closed;
 
     mapping(address => string) public encryptedAnswers;
     uint256 public numberOfAnswers;
@@ -34,7 +35,7 @@ contract FormCollection is
         string memory _answerEncryptionKey,
         string memory _answerDecryptionKeyURI,
         address _owner
-    ) public initializer {
+    ) external initializer {
         __ERC721_init(_name, "DCS");
         _transferOwnership(_owner);
         description = _description;
@@ -47,7 +48,8 @@ contract FormCollection is
     function submitAnswers(
         bytes32[] calldata _merkleProof,
         string calldata _encryptedAnswer
-    ) public {
+    ) external {
+        require(!closed, "Submission closed");
         require(
             bytes(encryptedAnswers[msg.sender]).length == 0,
             "Forms can only be filled in once per address."
@@ -70,7 +72,11 @@ contract FormCollection is
         numberOfAnswers++;
     }
 
-    function contractURI() public view returns (string memory) {
+    function close() external onlyOwner {
+        closed = true;
+    }
+
+    function contractURI() external view returns (string memory) {
         string memory json = Base64.encode(
             bytes(
                 string(

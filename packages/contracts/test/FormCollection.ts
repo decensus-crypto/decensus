@@ -22,11 +22,13 @@ let randomPerson2: SignerWithAddress;
 let factoryContract: FormCollectionFactory;
 let formContract: FormCollection;
 let merkleTree: MerkleTree;
+let proof: string[];
 const name = "form name";
 const description = "this is a test form";
 const formDataURI = "f-uri";
 const answerEncryptionKey = "key";
 const answerDecryptionKeyURI = "key-uri";
+const encryptedAnswer = "encrypted!!";
 
 describe("form collection", function () {
   beforeEach(async () => {
@@ -38,6 +40,7 @@ describe("form collection", function () {
 
     merkleTree = getMerkleTree([randomPerson.address, randomPerson2.address]);
     const merkleRoot = getMerkleTreeRootHash(merkleTree);
+    proof = getProofForAddress(randomPerson.address, merkleTree);
     const res = await factoryContract
       .createFormCollection(
         name,
@@ -70,10 +73,6 @@ describe("form collection", function () {
   });
 
   it("Should succeed in submitting answer", async () => {
-    const proof = getProofForAddress(randomPerson.address, merkleTree);
-
-    const encryptedAnswer = "encrypted!!!";
-
     const res2 = await formContract
       .connect(randomPerson)
       .submitAnswers(proof, encryptedAnswer)
@@ -90,20 +89,27 @@ describe("form collection", function () {
   });
 
   it("Should reject answers from non-whitelisted wallet", async () => {
-    const proof = getProofForAddress(owner.address, merkleTree);
-
-    const encryptedAnswer = "encrypted!!!";
-
     await expect(
       formContract.connect(owner).submitAnswers(proof, encryptedAnswer)
     ).to.rejectedWith();
   });
 
+  it("Non-owner cannot close submission", async () => {
+    await expect(formContract.connect(randomPerson).close()).to.rejectedWith();
+  });
+
+  it("Should reject answers if submission is closed", async () => {
+    await formContract
+      .connect(owner)
+      .close()
+      .then((tx) => tx.wait());
+
+    await expect(
+      formContract.connect(randomPerson).submitAnswers(proof, encryptedAnswer)
+    ).to.rejectedWith("Submission closed");
+  });
+
   it("Should reject token transfer", async () => {
-    const proof = getProofForAddress(randomPerson.address, merkleTree);
-
-    const encryptedAnswer = "encrypted!!!";
-
     await formContract
       .connect(randomPerson)
       .submitAnswers(proof, encryptedAnswer)
@@ -131,10 +137,6 @@ describe("form collection", function () {
   });
 
   it("Should generate tokenURI", async () => {
-    const proof = getProofForAddress(randomPerson.address, merkleTree);
-
-    const encryptedAnswer = "encrypted!!!";
-
     await formContract
       .connect(randomPerson)
       .submitAnswers(proof, encryptedAnswer)
