@@ -67,7 +67,7 @@ export const useAnswerSubmit = () => {
           await tx.wait();
         } catch (error: any) {
           console.error(error);
-          throw new Error(error.reason || "unknown reason");
+          throw new Error("Error occurred during transaction");
         }
 
         createToast({

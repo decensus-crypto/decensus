@@ -5,7 +5,6 @@ import { useCeramic } from "../hooks/litCeramic/useCeramic";
 import { useLit } from "../hooks/litCeramic/useLit";
 import { useDeploy } from "../hooks/useDeploy";
 import { useFormList } from "../hooks/useFormList";
-import { wait } from "../utils/wait";
 
 import {
   CheckIcon,
@@ -197,9 +196,21 @@ const FormCreationModal = (props: {
 
     setFormStep("form_created");
     if (!res) return;
-    setFormUrl(res.formUrl);
-    await wait(3000); // wait for a few seconds for the graph to index the tx. TODO: more robust method
-    await fetchFormList();
+
+    const { formCollectionAddress, formUrl, resultUrl } = res;
+
+    setFormUrl(formUrl);
+    await fetchFormList({
+      overrides: [
+        {
+          contractAddress: formCollectionAddress,
+          title,
+          formUrl,
+          resultUrl,
+          closed: false,
+        },
+      ],
+    });
   };
 
   const onClickFormUrlCopy = () => {

@@ -11,20 +11,31 @@ import {
 } from "@chakra-ui/react";
 import { useCallback } from "react";
 import { useCloseSurvey } from "../hooks/useCloseSurvey";
-import { useFormList } from "../hooks/useFormList";
+import { Form, useFormList } from "../hooks/useFormList";
 
 export const CloseSurveyModal = (props: {
   onClose: () => void;
   isOpen: boolean;
-  formCollectionAddress: string;
+  formData: Form;
 }) => {
   const { isClosing, close } = useCloseSurvey();
   const { fetchFormList } = useFormList();
 
   const onClickCloseSurvey = useCallback(async () => {
-    await close({ formCollectionAddress: props.formCollectionAddress });
+    const res = await close({
+      formCollectionAddress: props.formData.contractAddress,
+    });
+    if (!res) return;
+
     props.onClose();
-    await fetchFormList();
+    await fetchFormList({
+      overrides: [
+        {
+          ...props.formData,
+          closed: true,
+        },
+      ],
+    });
   }, [close, fetchFormList, props]);
 
   return (

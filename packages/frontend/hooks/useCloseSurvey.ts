@@ -1,7 +1,6 @@
 import { atom, useAtom } from "jotai";
 import { useCallback } from "react";
 import { createToast } from "../utils/createToast";
-import { wait } from "../utils/wait";
 import { useAccount } from "./useAccount";
 import { useContracts } from "./useContracts";
 
@@ -17,7 +16,7 @@ export const useCloseSurvey = () => {
       formCollectionAddress,
     }: {
       formCollectionAddress: string;
-    }): Promise<void> => {
+    }): Promise<{ success: boolean } | null> => {
       if (!account) {
         throw new Error("Cannot close survey");
       }
@@ -25,7 +24,7 @@ export const useCloseSurvey = () => {
       const formCollectionContract = getFormCollectionContract(
         formCollectionAddress
       );
-      if (!formCollectionContract) return;
+      if (!formCollectionContract) return null;
 
       setIsClosing(true);
 
@@ -39,25 +38,30 @@ export const useCloseSurvey = () => {
         const closed = await formCollectionContract.closed();
         if (closed) throw new Error("Survey already closed");
 
-        const tx = await formCollectionContract.close();
-        await tx.wait();
-
-        await wait(3000); // wait for a few seconds for the graph to index the tx. TODO: more robust method
+        try {
+          const tx = await formCollectionContract.close();
+          await tx.wait();
+        } catch (error) {
+          console.error(error);
+          throw new Error("Error occurred during transaction");
+        }
 
         createToast({
           title: "Survey successfully closed",
           status: "success",
         });
+        setIsClosing(false);
+
+        return { success: true };
       } catch (error: any) {
         console.error(error);
         createToast({
-          title: "Failed to submit answer",
-          description:
-            error.message || error.reason?.message || "unknown reason",
+          title: "Failed to close survey",
+          description: error.message,
           status: "error",
         });
-      } finally {
         setIsClosing(false);
+        return null;
       }
     },
     [account, getFormCollectionContract, setIsClosing]

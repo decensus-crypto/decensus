@@ -6,7 +6,7 @@ import { createToast } from "../utils/createToast";
 import { genKeyPair } from "../utils/crypto";
 import { getMerkleTree, getMerkleTreeRootHash } from "../utils/merkleTree";
 import { compressToBase64 } from "../utils/stringCompression";
-import { getFormUrl } from "../utils/urls";
+import { getFormUrl, getResultUrl } from "../utils/urls";
 import { useCeramic } from "./litCeramic/useCeramic";
 import { useLit } from "./litCeramic/useLit";
 import { useAccount } from "./useAccount";
@@ -31,7 +31,11 @@ export const useDeploy = () => {
       formParams: FormTemplate;
       formViewerAddresses: string[];
       nftAddress: string;
-    }): Promise<{ formUrl: string } | null> => {
+    }): Promise<{
+      formCollectionAddress: string;
+      formUrl: string;
+      resultUrl: string;
+    } | null> => {
       try {
         if (!account) {
           throw new Error("Cannot deploy form. Make sure you connect wallet");
@@ -115,20 +119,20 @@ export const useDeploy = () => {
           throw new Error("Upload form to Ceramic failed");
         }
 
-        const tx = await formCollectionFactoryContract.createFormCollection(
-          formParams.title,
-          formParams.description,
-          merkleRoot,
-          formDataUri,
-          btoa(keyPair.publicKey),
-          answerDecryptionKeyUri,
-          {
-            gasLimit: 2000000,
-          }
-        );
-
         let formCollectionAddress: string;
         try {
+          const tx = await formCollectionFactoryContract.createFormCollection(
+            formParams.title,
+            formParams.description,
+            merkleRoot,
+            formDataUri,
+            btoa(keyPair.publicKey),
+            answerDecryptionKeyUri,
+            {
+              gasLimit: 2000000,
+            }
+          );
+
           const res: ContractReceipt = await tx.wait();
           const createdEvent = res.events?.find(
             (e) => e.event === "FormCollectionCreated"
@@ -138,7 +142,7 @@ export const useDeploy = () => {
             : "";
         } catch (error) {
           console.error(error);
-          throw new Error("Couldn't deploy form");
+          throw new Error("Error occurred during transaction");
         }
 
         createToast({
@@ -146,7 +150,11 @@ export const useDeploy = () => {
           status: "success",
         });
 
-        return { formUrl: getFormUrl(location.origin, formCollectionAddress) };
+        return {
+          formCollectionAddress,
+          formUrl: getFormUrl(location.origin, formCollectionAddress),
+          resultUrl: getResultUrl(location.origin, formCollectionAddress),
+        };
       } catch (error: any) {
         console.error(error);
         createToast({

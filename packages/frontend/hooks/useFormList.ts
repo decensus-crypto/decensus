@@ -21,13 +21,15 @@ export const useFormList = () => {
 
   const [isLoading, setIsLoading] = useAtom(isLoadingAtom);
 
-  const fetchFormList = useCallback(async () => {
-    if (!account) return;
+  const fetchFormList = useCallback(
+    // specify overrides if there are specific form data you want to overwrite the fetched data
+    async (params: { overrides?: Form[] }) => {
+      if (!account) return;
 
-    try {
-      setIsLoading(true);
+      try {
+        setIsLoading(true);
 
-      const query = `
+        const query = `
         query GetOwnedFormCollections($owner: String!) {
           formCollections(
             where: {owner: $owner}
@@ -45,36 +47,47 @@ export const useFormList = () => {
           }
         }`;
 
-      const graphqlQuery = {
-        query,
-        variables: {
-          owner: account.toLowerCase(),
-        },
-      };
+        const graphqlQuery = {
+          query,
+          variables: {
+            owner: account.toLowerCase(),
+          },
+        };
 
-      const res = await fetch(SUBGRAPH_URL, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(graphqlQuery),
-      });
+        const res = await fetch(SUBGRAPH_URL, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(graphqlQuery),
+        });
 
-      const data = await res.json();
+        const data = await res.json();
 
-      const _formList = data.data.formCollections.map((f: any) => ({
-        formUrl: getFormUrl(location.origin, f.contractAddress),
-        resultUrl: getResultUrl(location.origin, f.contractAddress),
-        title: f.name,
-        contractAddress: f.contractAddress,
-        closed: f.closed,
-      }));
+        const _formList = data.data.formCollections.map((f: any) => ({
+          formUrl: getFormUrl(location.origin, f.contractAddress),
+          resultUrl: getResultUrl(location.origin, f.contractAddress),
+          title: f.name,
+          contractAddress: f.contractAddress,
+          closed: f.closed,
+        })) as Form[];
 
-      setFormList(_formList);
-    } catch {
-      setFormList([]);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [account, setFormList, setIsLoading]);
+        const overWrittenFormMap: Record<string, Form> = Object.fromEntries(
+          _formList.map((f) => [f.contractAddress, f])
+        );
+        if (params.overrides) {
+          params.overrides.forEach((o) => {
+            overWrittenFormMap[o.contractAddress] = o;
+          });
+        }
+
+        setFormList(Object.values(overWrittenFormMap));
+      } catch {
+        setFormList([]);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [account, setFormList, setIsLoading]
+  );
 
   return {
     isLoadingFormList: isLoading,

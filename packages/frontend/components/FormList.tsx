@@ -68,7 +68,7 @@ const FormRow = (props: Form) => {
       <CloseSurveyModal
         onClose={closeSurveyModal.onClose}
         isOpen={closeSurveyModal.isOpen}
-        formCollectionAddress={props.contractAddress}
+        formData={props}
       />
     </>
   );
@@ -78,7 +78,7 @@ const FormList = () => {
   const { formList, isLoadingFormList, fetchFormList } = useFormList();
 
   useEffect(() => {
-    fetchFormList();
+    fetchFormList({});
   }, [fetchFormList]);
 
   return (
