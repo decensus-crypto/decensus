@@ -3,10 +3,9 @@ import type { CeramicClient } from "@ceramicnetwork/http-client";
 import { TileDocument } from "@ceramicnetwork/stream-tile";
 import { ResolverRegistry } from "did-resolver";
 import { DID } from "dids";
-import { Contract, ContractReceipt, ethers } from "ethers";
+import { Contract, ContractReceipt } from "ethers";
 import { atom, useAtom } from "jotai";
 import { getResolver as getKeyResolver } from "key-did-resolver";
-import { MerkleTree } from "merkletreejs";
 import { useCallback } from "react";
 import { toString as uint8ArrayToString } from "uint8arrays/to-string";
 // @ts-expect-error
@@ -21,6 +20,11 @@ import {
   encodeb64,
 } from "../utils/converters";
 import { encrypt, genKeyPair } from "../utils/crypto";
+import {
+  getMerkleTree,
+  getMerkleTreeRootHash,
+  getProofForAddress,
+} from "../utils/merkleTree";
 
 const CERAMIC_URL = "https://ceramic-clay.3boxlabs.com";
 const LIT_CHAIN = "ethereum";
@@ -75,27 +79,6 @@ export const useLitCeramic = () => {
   const [submitAnswerErrorMessage, setSubmitAnswerErrorMessage] = useAtom(
     submitAnswerErrorMessageAtom
   );
-
-  const getMerkleTree = (addresses: string[], hashLeaves = true) => {
-    const leaves = hashLeaves
-      ? addresses.map(ethers.utils.keccak256)
-      : addresses;
-    const merkleTree = new MerkleTree(leaves, ethers.utils.keccak256, {
-      sortLeaves: true,
-      sortPairs: true,
-    });
-    return merkleTree;
-  };
-  const getMerkleTreeRootHash = (merkleTree: MerkleTree) => {
-    return "0x" + merkleTree.getRoot().toString("hex");
-  };
-
-  const getProofForAddress = (address: string, merkleTree: MerkleTree) => {
-    const leaf = ethers.utils.keccak256(address);
-    const proof = merkleTree.getHexProof(leaf);
-    return proof;
-  };
-
   const accFromNftAddress = (address: string) => {
     return [
       {
