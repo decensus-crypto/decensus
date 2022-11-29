@@ -3,12 +3,10 @@ import type { AppProps } from "next/app";
 import "../styles/globals.css";
 import { theme } from "../theme";
 
-const MyApp = ({ Component, pageProps }: AppProps) => {
+export default function App({ Component, pageProps }: AppProps) {
   return (
     <ChakraProvider theme={theme}>
       <Component {...pageProps} />
     </ChakraProvider>
   );
-};
-
-export default MyApp;
+}

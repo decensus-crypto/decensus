@@ -1,3 +1,4 @@
+import pako from "pako";
 import { toString as uint8ArrayToString } from "uint8arrays/to-string";
 
 export const encodeb64 = (uintarray: Uint8Array) => {
@@ -33,6 +34,14 @@ export const str2ab = (str: string) => {
     bufView[i] = str.charCodeAt(i);
   }
   return buf;
+};
+
+export const compressToBase64 = (str: string) => {
+  return encodeb64(pako.deflate(str));
+};
+
+export const decompressFromBase64 = (str: string) => {
+  return pako.inflate(decodeb64(str), { to: "string" });
 };
 
 export { uint8ArrayToString };

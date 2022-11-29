@@ -1,6 +1,6 @@
 // ref: https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API
 
-import { ab2str, str2ab } from "./dataConverters";
+import { ab2str, str2ab } from "./converters";
 
 const ALGORITHM = {
   name: "RSA-OAEP",
