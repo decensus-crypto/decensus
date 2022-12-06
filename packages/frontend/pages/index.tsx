@@ -3,7 +3,7 @@ import Image from "next/image";
 import NextLink from "next/link";
 import Layout from "../layouts/default";
 
-const Root = () => {
+const Home = () => {
   return (
     <Layout>
       <Box w="full" mb={32}>
@@ -41,4 +41,4 @@ const Root = () => {
   );
 };
 
-export default Root;
+export default Home;
