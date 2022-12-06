@@ -1,5 +1,3 @@
-import FormList from "../../components/FormList";
-
 import { AddIcon } from "@chakra-ui/icons";
 import {
   Box,
@@ -13,9 +11,10 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import FormCreationModal from "../../components/FormCreationModal";
-import { useAccount } from "../../hooks/useAccount";
-import Layout from "../../layouts/default";
+import FormCreationModal from "../components/FormCreationModal";
+import FormList from "../components/FormList";
+import { useAccount } from "../hooks/useAccount";
+import Layout from "../layouts/default";
 
 const AppRoot = () => {
   const { account } = useAccount();
