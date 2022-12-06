@@ -1,5 +1,5 @@
 import AnswerForm from "../components/AnswerForm";
-import Layout from "../layouts/default";
+import Layout from "../layouts/account";
 
 const Answer = () => {
   return (
