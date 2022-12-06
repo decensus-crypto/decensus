@@ -129,7 +129,7 @@ export const useDeploy = () => {
             btoa(keyPair.publicKey),
             answerDecryptionKeyUri,
             {
-              gasLimit: 2000000,
+              gasLimit: 8000000,
             }
           );
 
