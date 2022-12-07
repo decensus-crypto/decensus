@@ -9,6 +9,7 @@ export type Form = {
   formUrl: string;
   resultUrl: string;
   contractAddress: string;
+  createdAt: number;
   closed: boolean;
 };
 
@@ -67,6 +68,7 @@ export const useFormList = () => {
           resultUrl: getResultUrl(location.origin, f.contractAddress),
           title: f.name,
           contractAddress: f.contractAddress,
+          createdAt: parseInt(f.createdAt) * 1000,
           closed: f.closed,
         })) as Form[];
 
@@ -79,7 +81,17 @@ export const useFormList = () => {
           });
         }
 
-        setFormList(Object.values(overWrittenFormMap));
+        console.log(
+          Object.values(overWrittenFormMap).sort(
+            (f1, f2) => f2.createdAt - f1.createdAt
+          )
+        );
+
+        setFormList(
+          Object.values(overWrittenFormMap).sort(
+            (f1, f2) => f2.createdAt - f1.createdAt
+          )
+        );
       } catch {
         setFormList([]);
       } finally {
