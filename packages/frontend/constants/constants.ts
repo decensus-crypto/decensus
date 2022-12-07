@@ -14,7 +14,7 @@ export const LIT_CHAIN = "ethereum";
 export const SUBGRAPH_URL =
   "https://api.thegraph.com/subgraphs/name/nakaakist/form-collection-mumbai";
 
-export const AGE_QUESTION = {
+export const AGE_QUESTION: Question = {
   id: "2f633cdd1181d42a9c7ae9a889362ff7",
   question_title: "Age",
   question_body: "What's your age range?",
@@ -27,9 +27,9 @@ export const AGE_QUESTION = {
     { text: "Over 50" },
     { text: "Prefer not to respond" },
   ],
-} as const;
+};
 
-export const GENDER_QUESTION = {
+export const GENDER_QUESTION: Question = {
   id: "c31248e78aced0c36320b2f13a8a7891",
   question_title: "Gender",
   question_body: "What's your gender?",
@@ -43,9 +43,9 @@ export const GENDER_QUESTION = {
     { text: "Other" },
     { text: "Prefer not to say" },
   ],
-} as const;
+};
 
-export const COUNTRY_QUESTION = {
+export const COUNTRY_QUESTION: Question = {
   id: "5ca2aa845c8cd5ace6b016841f100d82",
   question_title: "Country",
   question_body: "In what country are you based?",
@@ -248,9 +248,9 @@ export const COUNTRY_QUESTION = {
     { text: "Zambia" },
     { text: "Zimbabwe" },
   ],
-} as const;
+};
 
-export const ETHNICITY_QUESTION = {
+export const ETHNICITY_QUESTION: Question = {
   id: "8e9c7a86c8295244c2f50e1049023b1b",
   question_title: "Ethnicity",
   question_body: "What's your ethnicity?",
@@ -269,9 +269,9 @@ export const ETHNICITY_QUESTION = {
     { text: "Prefer not to say" },
     { text: "Other" },
   ],
-} as const;
+};
 
-export const INDUSTRY_QUESTION = {
+export const INDUSTRY_QUESTION: Question = {
   id: "c570503c6bd0a44eb7ab38365ca83ced",
   question_title: "Occupation industry",
   question_body: "What's your occupation's industry?",
@@ -284,9 +284,9 @@ export const INDUSTRY_QUESTION = {
     { text: "Science and technology" },
     { text: "Others" },
   ],
-} as const;
+};
 
-export const QUESTIONS = [
+export const QUESTIONS: Question[] = [
   AGE_QUESTION,
   GENDER_QUESTION,
   ETHNICITY_QUESTION,
@@ -296,11 +296,11 @@ export const QUESTIONS = [
 
 export type QuestionId = typeof QUESTIONS[number]["id"];
 
-export const FORM_TEMPLATE = (params: {
+export const createFormTemplate = (params: {
   title: string;
   description: string;
   questionIds: QuestionId[];
-}) => ({
+}): FormTemplate => ({
   title: params.title,
   description: params.description,
   questions: QUESTIONS.flatMap((q) =>
@@ -308,9 +308,27 @@ export const FORM_TEMPLATE = (params: {
   ),
 });
 
-export type FormTemplate = ReturnType<typeof FORM_TEMPLATE>;
+export type QuestionType =
+  | "single_choice"
+  | "single_choice_dropdown"
+  | "multi_choice"
+  | "text";
+
+export type FormTemplate = {
+  title: string;
+  description: string;
+  questions: Question[];
+};
+export type Question = {
+  id: string;
+  question_title: string;
+  question_body: string;
+  question_type: QuestionType;
+  options: { text: string }[];
+};
+
 export type Answer = {
   question_id: string;
-  question_type: string;
+  question_type: QuestionType;
   answer: string | string[];
 };
