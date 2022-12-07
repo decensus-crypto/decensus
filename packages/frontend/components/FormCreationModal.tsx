@@ -1,6 +1,6 @@
 import { Button } from "@chakra-ui/react";
 import { useEffect } from "react";
-import { FORM_TEMPLATE, QuestionId } from "../constants/constants";
+import { createFormTemplate, QuestionId } from "../constants/constants";
 import { useCeramic } from "../hooks/litCeramic/useCeramic";
 import { useLit } from "../hooks/litCeramic/useLit";
 import { useDeploy } from "../hooks/useDeploy";
@@ -180,7 +180,7 @@ const FormCreationModal = (props: {
 
   const onClickDeploy = async () => {
     const res = await deploy({
-      formParams: FORM_TEMPLATE({
+      formParams: createFormTemplate({
         title,
         description,
         questionIds,
