@@ -207,6 +207,7 @@ const FormCreationModal = (props: {
           title,
           formUrl,
           resultUrl,
+          createdAt: Date.now(),
           closed: false,
         },
       ],
