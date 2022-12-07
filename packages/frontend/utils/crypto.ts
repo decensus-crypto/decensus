@@ -9,6 +9,9 @@ const ALGORITHM = {
   hash: "SHA-256",
 };
 
+// Maximum message length is limited to ~446 bytes by the algorithm.
+const ENCRYPTION_TEXT_CHUNK_SIZE = 400;
+
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
@@ -30,14 +33,32 @@ export const genKeyPair = async () => {
 };
 
 export const encrypt = async ({ text, key }: { text: string; key: string }) => {
-  const _key = await strToPublicKey(key);
-  const encrypted = await window.crypto.subtle.encrypt(
-    ALGORITHM,
-    _key,
-    encoder.encode(text)
+  const encoded = encoder.encode(text);
+  const numChunks = Math.ceil(encoded.length / ENCRYPTION_TEXT_CHUNK_SIZE);
+
+  const _encrypt = async (chunk: Uint8Array) => {
+    const _key = await strToPublicKey(key);
+    const encrypted = await window.crypto.subtle.encrypt(
+      ALGORITHM,
+      _key,
+      chunk
+    );
+
+    return btoa(ab2str(encrypted));
+  };
+
+  const encryptedChunks = await Promise.all(
+    [...Array(numChunks)].map((_, i) => {
+      const chunk = encoded.slice(
+        i * ENCRYPTION_TEXT_CHUNK_SIZE,
+        (i + 1) * ENCRYPTION_TEXT_CHUNK_SIZE
+      );
+
+      return _encrypt(chunk);
+    })
   );
 
-  return ab2str(encrypted);
+  return encryptedChunks.join(".");
 };
 
 export const decrypt = async ({
@@ -48,11 +69,24 @@ export const decrypt = async ({
   key: string;
 }) => {
   const _key = await strToPrivateKey(key);
-  const decrypted = await window.crypto.subtle.decrypt(
-    ALGORITHM,
-    _key,
-    str2ab(encrypted)
+
+  const chunks = encrypted.split(".").map((a) => str2ab(atob(a)));
+
+  const _decrypt = async (chunk: ArrayBuffer) => {
+    return await window.crypto.subtle.decrypt(ALGORITHM, _key, chunk);
+  };
+
+  const decryptedChunks = await Promise.all(chunks.map(_decrypt));
+  const totalLength = decryptedChunks.reduce(
+    (acc, chunk) => acc + chunk.byteLength,
+    0
   );
+  const decrypted = new Uint8Array(totalLength);
+  let offset = 0;
+  decryptedChunks.forEach((chunk) => {
+    decrypted.set(new Uint8Array(chunk), offset);
+    offset += chunk.byteLength;
+  });
 
   return decoder.decode(decrypted);
 };
