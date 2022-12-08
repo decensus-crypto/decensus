@@ -281,10 +281,6 @@ const App = () => {
   const [contractAddress, setContractAddress] = useState("");
   const [formUrl, setFormUrl] = useState("");
 
-  const clickNew = () => {
-    newFormInfoModal.onOpen();
-  };
-
   return (
     <>
       <Layout>
@@ -300,7 +296,7 @@ const App = () => {
                 leftIcon={<AddIcon />}
                 size="sm"
                 colorScheme="whiteAlpha"
-                onClick={clickNew}
+                onClick={newFormInfoModal.onOpen}
                 disabled={!account}
               >
                 Create New Form
@@ -316,7 +312,7 @@ const App = () => {
             </GridItem>
             <GridItem colSpan={{ base: 12 }}>
               {account ? (
-                <FormList onCreateFormClicked={clickNew} />
+                <FormList onCreateFormClicked={newFormInfoModal.onOpen} />
               ) : (
                 <Center mt={24}>
                   <Text size="sm" color="white">
@@ -348,8 +344,8 @@ const App = () => {
         onOpen={newFormQuestionsModal.onOpen}
         onClose={newFormQuestionsModal.onClose}
         onCreated={(formUrl) => {
-          newFormQuestionsModal.onClose();
           setFormUrl(formUrl);
+          newFormQuestionsModal.onClose();
           newFormCreatedModal.onOpen();
         }}
       />

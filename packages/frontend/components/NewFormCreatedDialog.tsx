@@ -2,8 +2,10 @@ import { Button } from "@chakra-ui/react";
 
 import { CopyIcon } from "@chakra-ui/icons";
 import {
-  Flex,
-  Heading,
+  Box,
+  Grid,
+  GridItem,
+  Link,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -33,30 +35,56 @@ const NewFormCreatedDialog = (props: {
   };
 
   return (
-    <Modal isOpen={props.isOpen} onClose={props.onClose} isCentered>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Create new form with our template</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody pb={6}>
-          <Heading size="md" mt={6} mb={2}>
-            Form &quot;{props.title}&quot; has been created! 🎉
-          </Heading>
-          <Text>Let&lsquo;s share the form to your community members</Text>
-          <Button mt={6} color="brand" onClick={onClickFormUrlCopy}>
-            <CopyIcon mr={1} />
-            Copy form URL
-          </Button>
-        </ModalBody>
-        <ModalFooter>
-          <Flex>
-            <Button size="md" onClick={props.onClose}>
-              Close
+    <>
+      <Modal isCentered isOpen={props.isOpen} onClose={props.onOpen}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader as="h2" fontWeight="light" color="gray">
+            {props.title} is Published!
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text>
+              Completed!
+              <br />
+              Let&lsquo;s share the form to your community members.
+            </Text>
+            <Box mt={2}>
+              <Text>Link:</Text>
+              <Text>
+                <Link isExternal href={props.formUrl}>
+                  {props.formUrl}
+                </Link>
+              </Text>
+            </Box>
+            <Button
+              mt={6}
+              size="sm"
+              colorScheme="pink"
+              variant="outline"
+              leftIcon={<CopyIcon />}
+              onClick={onClickFormUrlCopy}
+            >
+              Copy Link
             </Button>
-          </Flex>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+          </ModalBody>
+          <ModalFooter>
+            <Grid templateColumns="repeat(12, 1fr)" gap={4} w="100%" mt={4}>
+              <GridItem colSpan={{ base: 12 }}>
+                <Button
+                  size="sm"
+                  w="100%"
+                  colorScheme="pink"
+                  onClick={() => props.onClose()}
+                >
+                  Finish
+                </Button>
+              </GridItem>
+            </Grid>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
   );
 };
 

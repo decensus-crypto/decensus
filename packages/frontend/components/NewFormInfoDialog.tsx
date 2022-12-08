@@ -1,11 +1,15 @@
-import { Button } from "@chakra-ui/react";
+import { Button, Flex } from "@chakra-ui/react";
 import { useEffect, useMemo } from "react";
 
-import { CheckIcon, InfoIcon, WarningTwoIcon } from "@chakra-ui/icons";
+import { CheckIcon, NotAllowedIcon } from "@chakra-ui/icons";
 import {
-  Flex,
+  Box,
+  Card,
+  CardBody,
   FormControl,
   FormLabel,
+  Grid,
+  GridItem,
   Input,
   Modal,
   ModalBody,
@@ -14,8 +18,6 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Spacer,
-  Spinner,
   Text,
   Textarea,
 } from "@chakra-ui/react";
@@ -25,83 +27,29 @@ import { useAccount } from "../hooks/useAccount";
 import { useTokenHolders } from "../hooks/useTokenHolders";
 import { fetchNftBaseInfo } from "../utils/zdk";
 
-const NftInfo = (props: {
-  account: string | null;
-  nftName: string | null;
-  tokenHolders: string[];
-  isLoadingNftName: boolean;
-  isLoadingTokenHolders: boolean;
-}) => {
-  if (props.isLoadingNftName || props.isLoadingTokenHolders) {
-    return <Spinner size="sm" />;
-  } else if (props.nftName == null) {
-    return <></>;
-  } else if (props.nftName.length === 0) {
-    return (
-      <Text color="gray.500" display="flex" alignItems="center">
-        <WarningTwoIcon mr={1} />
-        No NFT project found for the address
-      </Text>
-    );
-  } else {
-    const isOwnerIncluded = props.tokenHolders.some((a) => a === props.account);
-    const shouldWarn = props.tokenHolders.length === 0 || !isOwnerIncluded;
-
-    return (
-      <>
-        <Text display="flex" alignItems="center">
-          <CheckIcon mr={1} fontWeight="100" color="green.500" />
-          Project found: {props.nftName}
-        </Text>
-        <Text display="flex" alignItems="center">
-          {shouldWarn ? (
-            <WarningTwoIcon mr={1} />
-          ) : (
-            <InfoIcon mr={1} fontWeight="100" color="gray.500" />
-          )}
-          Total token holders: {props.tokenHolders.length} (
-          {isOwnerIncluded ? "including you!" : "you have no tokens"})
-        </Text>
-      </>
-    );
-  }
-};
-
-const NewFormInfoDialog = (props: {
-  isOpen: boolean;
-  onOpen: () => void;
-  onClose: () => void;
-  onNext: (title: string, description: string, contractAddress: string) => void;
+const NftFormControl = (props: {
+  value: string;
+  onChange: (val: string, isValid: boolean) => void;
 }) => {
   const { account } = useAccount();
   const { tokenHolders, isLoadingTokenHolders, fetchHolders } =
     useTokenHolders();
-
-  // form title and contract address
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
   const [contractAddress, setContractAddress] = useState("");
   const [isLoadingNftName, setIsLoadingNftName] = useState(false);
   const [loadedNftName, setLoadedNftName] = useState(false);
   const [nftName, setNftName] = useState<string | null>(null);
-  const isContractAddressFormatValid =
-    contractAddress.startsWith("0x") && contractAddress.length === 42;
 
-  const isFirstStepValid = useMemo(() => {
-    return (
-      title.length > 0 &&
-      isContractAddressFormatValid &&
-      tokenHolders.length > 0 &&
-      !isLoadingNftName &&
-      !isLoadingTokenHolders
-    );
-  }, [
-    isContractAddressFormatValid,
-    isLoadingNftName,
-    isLoadingTokenHolders,
-    title.length,
-    tokenHolders.length,
-  ]);
+  const isContractAddressFormatValid = useMemo(() => {
+    return contractAddress.startsWith("0x") && contractAddress.length === 42;
+  }, [contractAddress]);
+
+  const isHoldersIncludeWallet = useMemo(() => {
+    return tokenHolders.some((a) => a === account);
+  }, [account, tokenHolders]);
+
+  const isValid = useMemo(() => {
+    return isContractAddressFormatValid && tokenHolders.length > 0;
+  }, [isContractAddressFormatValid, tokenHolders.length]);
 
   useEffect(() => {
     (async () => {
@@ -144,9 +92,117 @@ const NewFormInfoDialog = (props: {
     fetchHolders,
     isContractAddressFormatValid,
     isLoadingNftName,
+    isValid,
     loadedNftName,
-    nftName,
   ]);
+
+  useEffect(() => {
+    props.onChange(contractAddress, isValid);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contractAddress, isValid]);
+
+  return (
+    <>
+      <FormControl mt={4}>
+        <FormLabel size="sm">NFT Contract Address</FormLabel>
+        <Input
+          required
+          isInvalid={!isContractAddressFormatValid}
+          placeholder="0xabcd..."
+          value={contractAddress}
+          onChange={(evt) => setContractAddress(evt.target.value)}
+        />
+      </FormControl>
+      <Button
+        variant="ghost"
+        size="xs"
+        onClick={() => setContractAddress(TEST_NFT_CONTRACT_ADDRESS)}
+      >
+        User Sample Address
+      </Button>
+      {isContractAddressFormatValid && (
+        <Card bg="gray.100" p={1} mt={2}>
+          <CardBody p={1}>
+            <Flex align="center">
+              {isLoadingNftName && <Text fontSize="sm">Loading...</Text>}
+              {!isLoadingNftName && nftName && (
+                <>
+                  <CheckIcon />
+                  <Text ml={2} fontSize="sm">
+                    Project Found: {nftName}
+                  </Text>
+                </>
+              )}
+              {!isLoadingNftName && !nftName && (
+                <>
+                  <NotAllowedIcon />
+                  <Text ml={2} fontSize="sm">
+                    Project Not Found
+                  </Text>
+                </>
+              )}
+            </Flex>
+            <Flex align="center">
+              {isLoadingNftName && <Text fontSize="sm">Loading...</Text>}
+              {!isLoadingNftName && tokenHolders && (
+                <>
+                  <CheckIcon />
+                  <Text ml={2} fontSize="sm">
+                    Token Holders: {tokenHolders.length}
+                  </Text>
+                </>
+              )}
+              {!isLoadingNftName && !tokenHolders && (
+                <>
+                  <NotAllowedIcon />
+                  <Text ml={2} fontSize="sm">
+                    Token Holders Not Found
+                  </Text>
+                </>
+              )}
+            </Flex>
+            <Flex align="center">
+              <Text fontSize="sm">
+                {isLoadingNftName && "Loading..."}
+                {!isLoadingNftName &&
+                  isHoldersIncludeWallet &&
+                  "including you!"}
+                {!isLoadingNftName &&
+                  !isHoldersIncludeWallet &&
+                  "you have no tokens"}
+              </Text>
+            </Flex>
+          </CardBody>
+        </Card>
+      )}
+    </>
+  );
+};
+
+const NewFormInfoDialog = (props: {
+  isOpen: boolean;
+  onOpen: () => void;
+  onClose: () => void;
+  onNext: (title: string, description: string, contractAddress: string) => void;
+}) => {
+  // form title and contract address
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [contractAddress, setContractAddress] = useState("");
+  const [isContractAddressValid, setIsContractAddressValid] = useState(false);
+
+  const isTitleFormatValid = useMemo(() => {
+    return 0 < title.length;
+  }, [title]);
+  const isDescriptionFormatValid = useMemo(() => {
+    return 0 < description.length;
+  }, [description]);
+
+  const isFirstStepValid = useMemo(() => {
+    return (
+      isTitleFormatValid && isDescriptionFormatValid && isContractAddressValid
+    );
+  }, [isContractAddressValid, isDescriptionFormatValid, isTitleFormatValid]);
 
   const clickNext = () => {
     if (!isFirstStepValid) return;
@@ -154,77 +210,75 @@ const NewFormInfoDialog = (props: {
   };
 
   return (
-    <Modal isOpen={props.isOpen} onClose={props.onClose} isCentered>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Create new form with our template</ModalHeader>
-        <ModalCloseButton />
-
-        <ModalBody pb={6}>
-          <FormControl>
-            <FormLabel>Form Title</FormLabel>
-            <Input
-              required
-              placeholder="My best form ever"
-              value={title}
-              onChange={(evt) => setTitle(evt.target.value)}
-            />
-          </FormControl>
-          <FormControl mt={4}>
-            <FormLabel>Form Description</FormLabel>
-            <Textarea
-              required
-              placeholder="A survey to analyze the demography of NFT holders"
-              value={description}
-              onChange={(evt) => setDescription(evt.target.value)}
-            />
-          </FormControl>
-          <FormControl mt={4}>
-            <FormLabel display="flex" justifyContent="stretch" mr="0">
-              NFT Contract Address
-              <Spacer />
-              <Button
-                size="xs"
-                onClick={() => setContractAddress(TEST_NFT_CONTRACT_ADDRESS)}
-                color="gray.500"
-              >
-                Input sample address
-              </Button>
-            </FormLabel>
-            <Input
-              required
-              placeholder="0xabcd..."
-              value={contractAddress}
-              onChange={(e) => setContractAddress(e.target.value)}
-              mb={1}
-            />
-            <NftInfo
-              account={account}
-              nftName={nftName}
-              tokenHolders={tokenHolders}
-              isLoadingNftName={isLoadingNftName}
-              isLoadingTokenHolders={isLoadingTokenHolders}
-            />
-          </FormControl>
-        </ModalBody>
-        <ModalFooter>
-          <Flex>
-            <Button size="md" onClick={props.onClose}>
-              Cancel
-            </Button>
-            <Button
-              ml={4}
-              size="md"
-              color="brand"
-              onClick={clickNext}
-              disabled={!isFirstStepValid}
-            >
-              Next
-            </Button>
-          </Flex>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+    <>
+      <Modal isCentered isOpen={props.isOpen} onClose={props.onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader as="h2" fontWeight="light" color="gray">
+            Create New Form
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <FormControl>
+              <FormLabel size="sm">Form Title</FormLabel>
+              <Input
+                required
+                isInvalid={!isTitleFormatValid}
+                placeholder="My best form ever"
+                value={title}
+                onChange={(evt) => setTitle(evt.target.value)}
+              />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel size="sm">Form Description</FormLabel>
+              <Textarea
+                required
+                isInvalid={!isDescriptionFormatValid}
+                placeholder="A survey to analyze the demography of NFT holders"
+                value={description}
+                onChange={(evt) => setDescription(evt.target.value)}
+              />
+            </FormControl>
+            <Box mt={4}>
+              <NftFormControl
+                value={contractAddress}
+                onChange={(val, isValid) => {
+                  console.log(val);
+                  console.log(isValid);
+                  setContractAddress(val);
+                  setIsContractAddressValid(isValid);
+                }}
+              />
+            </Box>
+          </ModalBody>
+          <ModalFooter>
+            <Grid templateColumns="repeat(12, 1fr)" gap={4} w="100%" mt={4}>
+              <GridItem colSpan={{ base: 3 }}>
+                <Button
+                  size="sm"
+                  w="100%"
+                  variant="ghost"
+                  onClick={props.onClose}
+                >
+                  Cancel
+                </Button>
+              </GridItem>
+              <GridItem colSpan={{ base: 9 }}>
+                <Button
+                  size="sm"
+                  w="100%"
+                  onClick={clickNext}
+                  colorScheme="pink"
+                  disabled={!isFirstStepValid}
+                >
+                  Next
+                </Button>
+              </GridItem>
+            </Grid>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
   );
 };
 

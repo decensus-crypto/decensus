@@ -14,17 +14,23 @@ import {
   Flex,
   FormControl,
   FormLabel,
+  Grid,
+  GridItem,
   Heading,
   IconButton,
   Input,
   Modal,
+  ModalBody,
   ModalContent,
+  ModalFooter,
+  ModalHeader,
   ModalOverlay,
   Select,
   Spacer,
   Text,
   Textarea,
   Tooltip,
+  useDisclosure,
   VStack,
 } from "@chakra-ui/react";
 import Carousel from "nuka-carousel/lib/carousel";
@@ -253,10 +259,12 @@ const NewFormQuestionsDialog = (props: {
   onClose: () => void;
   onCreated: (formUrl: string) => void;
 }) => {
-  const { deploy, isDeploying } = useDeploy();
+  const { deploy, deployStatus, deployErrorMessage } = useDeploy();
   const { initLitClient, isLitClientReady } = useLit();
-  const { initCeramic } = useCeramic();
+  const { initCeramic, isCeramicReady } = useCeramic();
   const { tokenHolders, fetchHolders } = useTokenHolders();
+
+  const deployModal = useDisclosure();
 
   // form title and contract address
   const [isLoadingNftName, setIsLoadingNftName] = useState(false);
@@ -362,13 +370,15 @@ const NewFormQuestionsDialog = (props: {
     setActiveQuestionIdx(activeQuestionIdx + 1);
   };
   const onClickDeploy = () => {
-    if (isDeploying) return;
+    if (!(deployStatus === "pending" || deployStatus === "failed")) return;
+    if (!isCeramicReady) return;
     if (!isLitClientReady) return;
     if (!isSecondStepValid) return;
     onDeploy();
   };
 
   const onDeploy = async () => {
+    deployModal.onOpen();
     const res = await deploy({
       formParams: {
         title: props.title,
@@ -385,183 +395,225 @@ const NewFormQuestionsDialog = (props: {
       return;
     }
     props.onCreated(res.formUrl);
+    deployModal.onClose();
   };
 
   return (
-    <Modal size="full" isOpen={props.isOpen} onClose={props.onClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <Box h="64px" w="100%" overflowY="hidden" bg="black">
-          <Tooltip label={props.description}>
-            <Box mt={3}>
-              <Center>
-                <Heading as="h2" size="md" color="white">
-                  {props.title}
-                </Heading>
-              </Center>
-              <Center>
-                <Heading as="h4" size="xs" fontWeight="light" color="white">
-                  {props.contractAddress}
-                </Heading>
-              </Center>
-            </Box>
-          </Tooltip>
-          <Flex>
-            <Logo height={12} position="absolute" top={2} left={3} />
-            <Box height={12} position="absolute" top={4} right={3}>
-              <Button
-                size="sm"
-                colorScheme="pink"
-                onClick={onClickDeploy}
-                isLoading={isDeploying}
-                disabled={
-                  isDeploying || !isLitClientReady || !isSecondStepValid
-                }
-              >
-                Publish
-              </Button>
-              <IconButton
-                ml={4}
-                variant="ghost"
-                size="sm"
-                aria-label="Close"
-                icon={<CloseIcon />}
-                onClick={props.onClose}
-              />
-            </Box>
-          </Flex>
-        </Box>
-        <Box h="1px" w="100%" bg="gray.700" />
-        <Box h="calc(100vh - 64px - 1px)" w="100%" bg="black">
-          <Flex>
-            <Box h="calc(100vh - 64px - 1px)" w="320px">
-              <Box h="calc(100vh - 64px - 1px - 64px)" overflowY="scroll">
-                <Heading
-                  as="h3"
-                  size="sm"
-                  fontWeight="light"
-                  color="white"
-                  p={2}
-                >
-                  Questions
-                </Heading>
-                <DragDropContext onDragEnd={onDragEnd}>
-                  <Droppable droppableId="droppable">
-                    {(provided, snapshot) => (
-                      <Box {...provided.droppableProps} ref={provided.innerRef}>
-                        {questions.map((question, idx) => (
-                          <Draggable
-                            key={question.id}
-                            draggableId={"q-" + question.id}
-                            index={idx}
-                          >
-                            {(provided, snapshot) => (
-                              <Box
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
-                                bg={
-                                  snapshot.isDragging ? "ping.100" : "inherit"
-                                }
-                              >
-                                <QuestionRow
-                                  idx={idx}
-                                  question={question}
-                                  isActive={idx === activeQuestionIdx}
-                                  onQuestionChanged={onQuestionChanged}
-                                  onQuestionSelected={(idx) =>
-                                    setActiveQuestionIdx(idx)
-                                  }
-                                  onDuplicateQuestionClicked={
-                                    clickDuplicateQuestion
-                                  }
-                                  onRemoveQuestionClicked={clickRemoveQuestion}
-                                />
-                              </Box>
-                            )}
-                          </Draggable>
-                        ))}
-                        {provided.placeholder}
-                      </Box>
-                    )}
-                  </Droppable>
-                </DragDropContext>
+    <>
+      <Modal size="full" isOpen={props.isOpen} onClose={props.onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <Box h="64px" w="100%" overflowY="hidden" bg="black">
+            <Tooltip label={props.description}>
+              <Box mt={3}>
+                <Center>
+                  <Heading as="h2" size="md" color="white">
+                    {props.title}
+                  </Heading>
+                </Center>
+                <Center>
+                  <Heading as="h4" size="xs" fontWeight="light" color="white">
+                    {props.contractAddress}
+                  </Heading>
+                </Center>
               </Box>
-              <Box p={4}>
+            </Tooltip>
+            <Flex>
+              <Logo height={12} position="absolute" top={2} left={3} />
+              <Box height={12} position="absolute" top={4} right={3}>
                 <Button
-                  leftIcon={<AddIcon />}
                   size="sm"
-                  w="100%"
-                  colorScheme="gray"
-                  onClick={clickAddQuestion}
+                  colorScheme="pink"
+                  onClick={onClickDeploy}
+                  disabled={!isLitClientReady || !isSecondStepValid}
                 >
-                  Add Question
+                  Publish
                 </Button>
+                <IconButton
+                  ml={4}
+                  variant="ghost"
+                  size="sm"
+                  aria-label="Close"
+                  icon={<CloseIcon />}
+                  onClick={props.onClose}
+                />
               </Box>
-            </Box>
-            <Box h="calc(100vh - 64px - 1px)" w="1px" bg="gray.700"></Box>
-            <Box
-              h="calc(100vh - 64px - 1px)"
-              w="calc(100vw - 280px - 1px)"
-              overflowY="scroll"
-            >
-              <Box h="68px" w="100%">
-                <Flex>
-                  <Tooltip label="Previous">
-                    <IconButton
-                      m={4}
-                      size="md"
-                      aria-label="Previous"
-                      icon={<ChevronLeftIcon />}
-                      disabled={!prevSlidable}
-                      onClick={clickPrev}
-                    />
-                  </Tooltip>
-                  <Spacer />
-                  <Tooltip label="Next">
-                    <IconButton
-                      m={4}
-                      size="md"
-                      aria-label="Next"
-                      icon={<ChevronRightIcon />}
-                      disabled={!nextSlidable}
-                      onClick={clickNext}
-                    />
-                  </Tooltip>
-                </Flex>
+            </Flex>
+          </Box>
+          <Box h="1px" w="100%" bg="gray.700" />
+          <Box h="calc(100vh - 64px - 1px)" w="100%" bg="black">
+            <Flex>
+              <Box h="calc(100vh - 64px - 1px)" w="320px">
+                <Box h="calc(100vh - 64px - 1px - 64px)" overflowY="scroll">
+                  <Heading
+                    as="h3"
+                    size="sm"
+                    fontWeight="light"
+                    color="white"
+                    p={2}
+                  >
+                    Questions
+                  </Heading>
+                  <DragDropContext onDragEnd={onDragEnd}>
+                    <Droppable droppableId="droppable">
+                      {(provided, snapshot) => (
+                        <Box
+                          {...provided.droppableProps}
+                          ref={provided.innerRef}
+                        >
+                          {questions.map((question, idx) => (
+                            <Draggable
+                              key={question.id}
+                              draggableId={"q-" + question.id}
+                              index={idx}
+                            >
+                              {(provided, snapshot) => (
+                                <Box
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                  bg={
+                                    snapshot.isDragging ? "ping.100" : "inherit"
+                                  }
+                                >
+                                  <QuestionRow
+                                    idx={idx}
+                                    question={question}
+                                    isActive={idx === activeQuestionIdx}
+                                    onQuestionChanged={onQuestionChanged}
+                                    onQuestionSelected={(idx) =>
+                                      setActiveQuestionIdx(idx)
+                                    }
+                                    onDuplicateQuestionClicked={
+                                      clickDuplicateQuestion
+                                    }
+                                    onRemoveQuestionClicked={
+                                      clickRemoveQuestion
+                                    }
+                                  />
+                                </Box>
+                              )}
+                            </Draggable>
+                          ))}
+                          {provided.placeholder}
+                        </Box>
+                      )}
+                    </Droppable>
+                  </DragDropContext>
+                </Box>
+                <Box p={4}>
+                  <Button
+                    leftIcon={<AddIcon />}
+                    size="sm"
+                    w="100%"
+                    colorScheme="gray"
+                    onClick={clickAddQuestion}
+                  >
+                    Add Question
+                  </Button>
+                </Box>
               </Box>
-              <Box h="calc(100vh - 64px - 1px - 68px)" px={4} pb={16}>
-                <Carousel
-                  slidesToShow={1}
-                  withoutControls={true}
-                  dragging={false}
-                  slideIndex={activeQuestionIdx}
-                >
-                  {questions.map((question, idx) => {
-                    return (
-                      <Card
-                        key={`question_form_${question.id}`}
-                        bg="gray.800"
-                        w="100%"
-                        h="100%"
-                        overflowY="scroll"
-                        p={16}
-                      >
-                        <QuestionForm
-                          idx={activeQuestionIdx}
-                          question={question}
-                          onChanged={onQuestionChanged}
-                        />
-                      </Card>
-                    );
-                  })}
-                </Carousel>
+              <Box h="calc(100vh - 64px - 1px)" w="1px" bg="gray.700"></Box>
+              <Box
+                h="calc(100vh - 64px - 1px)"
+                w="calc(100vw - 280px - 1px)"
+                overflowY="scroll"
+              >
+                <Box h="68px" w="100%">
+                  <Flex>
+                    <Tooltip label="Previous">
+                      <IconButton
+                        m={4}
+                        size="md"
+                        aria-label="Previous"
+                        icon={<ChevronLeftIcon />}
+                        disabled={!prevSlidable}
+                        onClick={clickPrev}
+                      />
+                    </Tooltip>
+                    <Spacer />
+                    <Tooltip label="Next">
+                      <IconButton
+                        m={4}
+                        size="md"
+                        aria-label="Next"
+                        icon={<ChevronRightIcon />}
+                        disabled={!nextSlidable}
+                        onClick={clickNext}
+                      />
+                    </Tooltip>
+                  </Flex>
+                </Box>
+                <Box h="calc(100vh - 64px - 1px - 68px)" px={4} pb={16}>
+                  <Carousel
+                    slidesToShow={1}
+                    withoutControls={true}
+                    dragging={false}
+                    slideIndex={activeQuestionIdx}
+                  >
+                    {questions.map((question, idx) => {
+                      return (
+                        <Card
+                          key={`question_form_${question.id}`}
+                          bg="gray.800"
+                          w="100%"
+                          h="100%"
+                          overflowY="scroll"
+                          p={16}
+                        >
+                          <QuestionForm
+                            idx={activeQuestionIdx}
+                            question={question}
+                            onChanged={onQuestionChanged}
+                          />
+                        </Card>
+                      );
+                    })}
+                  </Carousel>
+                </Box>
               </Box>
-            </Box>
-          </Flex>
-        </Box>
-      </ModalContent>
-    </Modal>
+            </Flex>
+          </Box>
+        </ModalContent>
+      </Modal>
+      <Modal
+        isCentered
+        isOpen={deployModal.isOpen}
+        onClose={deployModal.onClose}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader as="h2" fontWeight="light" color="gray">
+            Publish {props.title} in progress...
+          </ModalHeader>
+          <ModalBody>
+            {deployStatus === "pending" && <Text>Nothing Happening</Text>}
+            {deployStatus === "encrypting" && (
+              <Text>Encrypting the form contents...</Text>
+            )}
+            {deployStatus === "uploading" && <Text>Decentralizing...</Text>}
+            {deployStatus === "failed" && (
+              <Text>
+                Failed :(
+                <br />
+                {deployErrorMessage}
+              </Text>
+            )}
+          </ModalBody>
+          <ModalFooter>
+            <Grid templateColumns="repeat(12, 1fr)" gap={4} w="100%" mt={4}>
+              {deployStatus === "failed" && (
+                <GridItem colSpan={{ base: 12 }}>
+                  <Button size="sm" w="100%" onClick={deployModal.onClose}>
+                    Close
+                  </Button>
+                </GridItem>
+              )}
+            </Grid>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
   );
 };
 

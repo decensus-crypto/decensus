@@ -2,7 +2,6 @@ import { ContractReceipt } from "ethers";
 import { atom, useAtom } from "jotai";
 import { useCallback } from "react";
 import { CHAIN_NAME, FormTemplate } from "../constants/constants";
-import { createToast } from "../utils/createToast";
 import { genKeyPair } from "../utils/crypto";
 import { getMerkleTree, getMerkleTreeRootHash } from "../utils/merkleTree";
 import { compressToBase64 } from "../utils/stringCompression";
@@ -12,15 +11,21 @@ import { useLit } from "./litCeramic/useLit";
 import { useAccount } from "./useAccount";
 import { useContracts } from "./useContracts";
 
-const isDeployingAtom = atom<boolean>(false);
+const deployStatusAtom = atom<
+  "pending" | "encrypting" | "uploading" | "completed" | "failed"
+>("pending");
+const deployErrorMessageAtom = atom<string | null>(null);
 
 export const useDeploy = () => {
-  const { authenticateCeramic, createDocument } = useCeramic();
+  const { authenticateCeramic, createDocument, isCeramicReady } = useCeramic();
   const { getLitAuthSig, encryptWithLit, isLitClientReady } = useLit();
   const { account } = useAccount();
   const { getFormCollectionFactoryContract } = useContracts();
 
-  const [isDeploying, setIsDeploying] = useAtom(isDeployingAtom);
+  const [deployStatus, setDeployStatus] = useAtom(deployStatusAtom);
+  const [deployErrorMessage, setDeployErrorMessage] = useAtom(
+    deployErrorMessageAtom
+  );
 
   const deploy = useCallback(
     async ({
@@ -40,29 +45,27 @@ export const useDeploy = () => {
         if (!account) {
           throw new Error("Cannot deploy form. Make sure you connect wallet");
         }
+        if (!(deployStatus === "pending" || deployStatus === "failed")) {
+          throw new Error("Another deploy process is in progress.");
+        }
+
         console.log("Start Deployment");
         console.log(formParams);
         console.log(formViewerAddresses);
         console.log(nftAddress);
 
+        setDeployStatus("encrypting");
         const formCollectionFactoryContract =
           getFormCollectionFactoryContract();
 
         if (
+          !isCeramicReady ||
           !isLitClientReady ||
           !formCollectionFactoryContract ||
           formViewerAddresses.length === 0
         ) {
           throw new Error("Cannot deploy form.");
         }
-
-        setIsDeploying(true);
-
-        createToast({
-          title: "Form deploy initiated",
-          description: "Please wait...",
-          status: "success",
-        });
 
         const resultViewerAddresses = [account]; // FIXME: this should be more flexible
 
@@ -123,6 +126,7 @@ export const useDeploy = () => {
           throw new Error("Upload form to Ceramic failed");
         }
 
+        setDeployStatus("uploading");
         let formCollectionAddress: string;
         try {
           const tx = await formCollectionFactoryContract.createFormCollection(
@@ -149,11 +153,7 @@ export const useDeploy = () => {
           throw new Error("Error occurred during transaction");
         }
 
-        createToast({
-          title: "Form successfully deployed!",
-          status: "success",
-        });
-
+        setDeployStatus("completed");
         return {
           formCollectionAddress,
           formUrl: getFormUrl(location.origin, formCollectionAddress),
@@ -161,30 +161,28 @@ export const useDeploy = () => {
         };
       } catch (error: any) {
         console.error(error);
-        createToast({
-          title: "Failed to deploy form",
-          description: error.message,
-          status: "error",
-        });
+        setDeployErrorMessage(error.message);
+        setDeployStatus("failed");
         return null;
-      } finally {
-        setIsDeploying(false);
       }
     },
     [
       account,
       authenticateCeramic,
       createDocument,
+      deployStatus,
       encryptWithLit,
       getFormCollectionFactoryContract,
       getLitAuthSig,
       isLitClientReady,
-      setIsDeploying,
+      setDeployErrorMessage,
+      setDeployStatus,
     ]
   );
 
   return {
     deploy,
-    isDeploying,
+    deployStatus,
+    deployErrorMessage,
   };
 };
