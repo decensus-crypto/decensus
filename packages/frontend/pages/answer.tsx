@@ -14,7 +14,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { useEffect } from "react";
-import AnswerFormDialog from "../components/AnswerFormDialog";
+import NewAnswerDialog from "../components/NewAnswerDialog";
 import { Answer, FormTemplate } from "../constants/constants";
 import { useCeramic } from "../hooks/litCeramic/useCeramic";
 import { useLit } from "../hooks/litCeramic/useLit";
@@ -178,7 +178,7 @@ const Answer = () => {
         </Container>
       </Layout>
       {formData && (
-        <AnswerFormDialog
+        <NewAnswerDialog
           title={formData.title}
           questions={formData.questions}
           isOpen={newAnswerModal.isOpen}

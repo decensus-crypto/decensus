@@ -26,8 +26,10 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { CloseSurveyModal } from "../components/CloseSurveyModal";
-import FormCreationModal from "../components/FormCreationModal";
+import CloseFormDialog from "../components/CloseFormDialog";
+import NewFormCreatedDialog from "../components/NewFormCreatedDialog";
+import NewFormInfoDialog from "../components/NewFormInfoDialog";
+import NewFormQuestionsDialog from "../components/NewFormQuestionsDialog";
 import { useAccount } from "../hooks/useAccount";
 import { Form, useFormList } from "../hooks/useFormList";
 import Layout from "../layouts/account";
@@ -220,7 +222,7 @@ const FormItem = (props: Form) => {
           />
         )}
       </Card>
-      <CloseSurveyModal
+      <CloseFormDialog
         onClose={closeSurveyModal.onClose}
         isOpen={closeSurveyModal.isOpen}
         formData={props}
@@ -270,9 +272,18 @@ const FormList = (props: { onCreateFormClicked: () => void }) => {
 const App = () => {
   const { account } = useAccount();
   // modal control
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const newFormInfoModal = useDisclosure();
+  const newFormQuestionsModal = useDisclosure();
+  const newFormCreatedModal = useDisclosure();
   // key of the modal component. By changing this key, force the modal component to be refreshed.
-  const [modalKey, setModalKey] = useState(0);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [contractAddress, setContractAddress] = useState("");
+  const [formUrl, setFormUrl] = useState("");
+
+  const clickNew = () => {
+    newFormInfoModal.onOpen();
+  };
 
   return (
     <>
@@ -289,7 +300,7 @@ const App = () => {
                 leftIcon={<AddIcon />}
                 size="sm"
                 colorScheme="whiteAlpha"
-                onClick={onOpen}
+                onClick={clickNew}
                 disabled={!account}
               >
                 Create New Form
@@ -305,7 +316,7 @@ const App = () => {
             </GridItem>
             <GridItem colSpan={{ base: 12 }}>
               {account ? (
-                <FormList onCreateFormClicked={onOpen} />
+                <FormList onCreateFormClicked={clickNew} />
               ) : (
                 <Center mt={24}>
                   <Text size="sm" color="white">
@@ -317,14 +328,37 @@ const App = () => {
           </Grid>
         </Box>
       </Layout>
-      <FormCreationModal
-        key={modalKey}
-        isOpen={isOpen}
-        onOpen={onOpen}
-        onClose={() => {
-          onClose();
-          setModalKey(modalKey + 1);
+      <NewFormInfoDialog
+        isOpen={newFormInfoModal.isOpen}
+        onOpen={newFormInfoModal.onOpen}
+        onClose={newFormInfoModal.onClose}
+        onNext={(title, description, contractAddress) => {
+          newFormInfoModal.onClose();
+          setTitle(title);
+          setDescription(description);
+          setContractAddress(contractAddress);
+          newFormQuestionsModal.onOpen();
         }}
+      />
+      <NewFormQuestionsDialog
+        title={title}
+        description={description}
+        contractAddress={contractAddress}
+        isOpen={newFormQuestionsModal.isOpen}
+        onOpen={newFormQuestionsModal.onOpen}
+        onClose={newFormQuestionsModal.onClose}
+        onCreated={(formUrl) => {
+          newFormQuestionsModal.onClose();
+          setFormUrl(formUrl);
+          newFormCreatedModal.onOpen();
+        }}
+      />
+      <NewFormCreatedDialog
+        title={title}
+        formUrl={formUrl}
+        isOpen={newFormCreatedModal.isOpen}
+        onOpen={newFormCreatedModal.onOpen}
+        onClose={newFormCreatedModal.onClose}
       />
     </>
   );

@@ -40,6 +40,10 @@ export const useDeploy = () => {
         if (!account) {
           throw new Error("Cannot deploy form. Make sure you connect wallet");
         }
+        console.log("Start Deployment");
+        console.log(formParams);
+        console.log(formViewerAddresses);
+        console.log(nftAddress);
 
         const formCollectionFactoryContract =
           getFormCollectionFactoryContract();
