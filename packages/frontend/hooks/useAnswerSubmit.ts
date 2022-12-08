@@ -62,7 +62,10 @@ export const useAnswerSubmit = () => {
         try {
           const tx = await formCollectionContract.submitAnswers(
             merkleProof,
-            compressToBase64(encryptedAnswer)
+            compressToBase64(encryptedAnswer),
+            {
+              gasLimit: 8000000,
+            }
           );
           await tx.wait();
         } catch (error: any) {

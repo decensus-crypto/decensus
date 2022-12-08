@@ -152,7 +152,7 @@ const FormInput = (props: {
   );
 };
 
-const AnswerFormDialog = (props: {
+const NewAnswerDialog = (props: {
   title: string;
   questions: Question[];
   isOpen: boolean;
@@ -179,9 +179,6 @@ const AnswerFormDialog = (props: {
   useEffect(() => {
     initCeramic();
   }, [initCeramic]);
-  useEffect(() => {
-    console.log(answers);
-  }, [answers]);
 
   const prevSlidable = useMemo(() => {
     return 0 < currentQuestionIndex;
@@ -326,4 +323,4 @@ const AnswerFormDialog = (props: {
   );
 };
 
-export default AnswerFormDialog;
+export default NewAnswerDialog;

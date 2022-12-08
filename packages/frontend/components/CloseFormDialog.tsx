@@ -13,7 +13,7 @@ import { useCallback } from "react";
 import { useCloseSurvey } from "../hooks/useCloseSurvey";
 import { Form, useFormList } from "../hooks/useFormList";
 
-export const CloseSurveyModal = (props: {
+const CloseFormDialog = (props: {
   onClose: () => void;
   isOpen: boolean;
   formData: Form;
@@ -66,3 +66,4 @@ export const CloseSurveyModal = (props: {
     </Modal>
   );
 };
+export default CloseFormDialog;
