@@ -8,7 +8,6 @@ import { useCeramic } from "./litCeramic/useCeramic";
 import { useLit } from "./litCeramic/useLit";
 import { useAccount } from "./useAccount";
 import { useContracts } from "./useContracts";
-import { useFormCollectionAddress } from "./useFormCollectionAddress";
 
 const answersListAtom = atom<{ answers: Answer[] }[] | null>(null);
 const isLoadingAnswersListAtom = atom<boolean>(true);
@@ -32,7 +31,6 @@ const areAnswersValid = (data: any) => {
 export const useResult = () => {
   const { account } = useAccount();
   const [answersList, setAnswersList] = useAtom(answersListAtom);
-  const { formCollectionAddress } = useFormCollectionAddress();
   const { loadDocument, isCeramicReady } = useCeramic();
   const { decryptWithLit, isLitClientReady, litAuthSig } = useLit();
   const { getFormCollectionContract } = useContracts();
@@ -41,49 +39,46 @@ export const useResult = () => {
     isLoadingAnswersListAtom
   );
 
-  const fetchResults = useCallback(async () => {
-    if (
-      !formCollectionAddress ||
-      !isLitClientReady ||
-      !litAuthSig ||
-      !isCeramicReady ||
-      !account
-    )
-      return;
+  const fetchResults = useCallback(
+    async (formCollectionAddress: string) => {
+      if (!isLitClientReady) return;
+      if (!litAuthSig) return;
+      if (!isCeramicReady) return;
+      if (!account) return;
 
-    const formCollectionContract = getFormCollectionContract(
-      formCollectionAddress
-    );
-    if (!formCollectionContract) return;
+      const formCollectionContract = getFormCollectionContract(
+        formCollectionAddress
+      );
+      if (!formCollectionContract) return;
 
-    try {
-      setIsLoadingAnswersList(true);
-
-      const keyUri = await formCollectionContract.answerDecryptionKeyURI();
-
-      if (keyUri.slice(0, 10) !== "ceramic://")
-        throw new Error(
-          "answer decryption key storage other than Ceramic is not supported"
-        );
-
-      const keyStreamId = keyUri.split("//").slice(-1)[0];
-
-      const keyDataInCeramic = await loadDocument(keyStreamId);
-
-      let rawAnswersList: any[];
       try {
-        const { encryptedKey, addressesToAllowRead } = JSON.parse(
-          decompressFromBase64(keyDataInCeramic)
-        );
+        setIsLoadingAnswersList(true);
 
-        const keyStr = await decryptWithLit({
-          encryptedZipBase64: encryptedKey.encryptedZipBase64,
-          encryptedSymmKeyBase64: encryptedKey.encryptedSymmKeyBase64,
-          addressesToAllowRead,
-          chain: CHAIN_NAME,
-        });
+        const keyUri = await formCollectionContract.answerDecryptionKeyURI();
 
-        const query = `
+        if (keyUri.slice(0, 10) !== "ceramic://")
+          throw new Error(
+            "answer decryption key storage other than Ceramic is not supported"
+          );
+
+        const keyStreamId = keyUri.split("//").slice(-1)[0];
+
+        const keyDataInCeramic = await loadDocument(keyStreamId);
+
+        let rawAnswersList: any[];
+        try {
+          const { encryptedKey, addressesToAllowRead } = JSON.parse(
+            decompressFromBase64(keyDataInCeramic)
+          );
+
+          const keyStr = await decryptWithLit({
+            encryptedZipBase64: encryptedKey.encryptedZipBase64,
+            encryptedSymmKeyBase64: encryptedKey.encryptedSymmKeyBase64,
+            addressesToAllowRead,
+            chain: CHAIN_NAME,
+          });
+
+          const query = `
           query GetAnswers($contractAddress: String!) {
             answers(
               where: {contractAddress: $contractAddress}
@@ -94,65 +89,68 @@ export const useResult = () => {
             }
           }`;
 
-        const graphqlQuery = {
-          query,
-          variables: {
-            contractAddress: formCollectionAddress.toLowerCase(),
-          },
-        };
+          const graphqlQuery = {
+            query,
+            variables: {
+              contractAddress: formCollectionAddress.toLowerCase(),
+            },
+          };
 
-        const res = await fetch(SUBGRAPH_URL, {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify(graphqlQuery),
-        });
+          const res = await fetch(SUBGRAPH_URL, {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify(graphqlQuery),
+          });
 
-        const data = await res.json();
+          const data = await res.json();
 
-        rawAnswersList = await Promise.all(
-          data.data.answers.map(async (row: any) => {
-            try {
-              const str = await decrypt({
-                encrypted: decompressFromBase64(row.encryptedAnswer),
-                key: keyStr,
-              });
-              const data = JSON.parse(str);
-              return data;
-            } catch (error: any) {
-              console.error(error);
-              return null;
-            }
-          })
+          rawAnswersList = await Promise.all(
+            data.data.answers.map(async (row: any) => {
+              try {
+                const str = await decrypt({
+                  encrypted: decompressFromBase64(row.encryptedAnswer),
+                  key: keyStr,
+                });
+                const data = JSON.parse(str);
+                return data;
+              } catch (error: any) {
+                console.error(error);
+                return null;
+              }
+            })
+          );
+        } catch (error) {
+          console.error(error);
+          throw new Error("Invalid answer data");
+        }
+
+        const validAnswersList = rawAnswersList.filter((a) =>
+          areAnswersValid(a)
         );
-      } catch (error) {
+
+        setAnswersList(validAnswersList);
+      } catch (error: any) {
         console.error(error);
-        throw new Error("Invalid answer data");
+        createToast({
+          title: `Failed to fetch answers: ${error.message}`,
+          status: "error",
+        });
+      } finally {
+        setIsLoadingAnswersList(false);
       }
-
-      const validAnswersList = rawAnswersList.filter((a) => areAnswersValid(a));
-
-      setAnswersList(validAnswersList);
-    } catch (error: any) {
-      console.error(error);
-      createToast({
-        title: `Failed to fetch answers: ${error.message}`,
-        status: "error",
-      });
-    } finally {
-      setIsLoadingAnswersList(false);
-    }
-  }, [
-    formCollectionAddress,
-    isLitClientReady,
-    litAuthSig,
-    isCeramicReady,
-    account,
-    getFormCollectionContract,
-    setIsLoadingAnswersList,
-    loadDocument,
-    setAnswersList,
-    decryptWithLit,
-  ]);
+    },
+    [
+      isLitClientReady,
+      litAuthSig,
+      isCeramicReady,
+      account,
+      getFormCollectionContract,
+      setIsLoadingAnswersList,
+      loadDocument,
+      setAnswersList,
+      decryptWithLit,
+    ]
+  );
 
   return {
     answersList,

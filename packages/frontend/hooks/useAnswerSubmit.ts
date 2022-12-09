@@ -5,7 +5,6 @@ import { getMerkleTree, getProofForAddress } from "../utils/merkleTree";
 import { compressToBase64 } from "../utils/stringCompression";
 import { useAccount } from "./useAccount";
 import { useContracts } from "./useContracts";
-import { useFormCollectionAddress } from "./useFormCollectionAddress";
 import { useFormData } from "./useFormData";
 
 const submitAnswerStatusAtom = atom<
@@ -15,7 +14,6 @@ const submitAnswerErrorMessageAtom = atom<string | null>(null);
 
 export const useAnswerSubmit = () => {
   const { account } = useAccount();
-  const { formCollectionAddress } = useFormCollectionAddress();
   const { formViewerAddresses } = useFormData();
   const { getFormCollectionContract } = useContracts();
 
@@ -27,13 +25,12 @@ export const useAnswerSubmit = () => {
   );
   const submitAnswer = useCallback(
     async ({
+      formCollectionAddress,
       submissionStrToEncrypt,
     }: {
+      formCollectionAddress: string;
       submissionStrToEncrypt: string;
     }): Promise<void> => {
-      if (!formCollectionAddress) {
-        throw new Error("Cannot submit answer");
-      }
       if (!account) {
         throw new Error("Cannot submit answer");
       }
@@ -97,7 +94,6 @@ export const useAnswerSubmit = () => {
     },
     [
       account,
-      formCollectionAddress,
       formViewerAddresses,
       getFormCollectionContract,
       setSubmitAnswerErrorMessage,

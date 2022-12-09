@@ -1,4 +1,5 @@
 import { Box, Center, Spinner, Text, useDisclosure } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 import { useEffect } from "react";
 import NewAnswerDialog from "../components/NewAnswerDialog";
 import { useCeramic } from "../hooks/litCeramic/useCeramic";
@@ -7,6 +8,7 @@ import { useFormData } from "../hooks/useFormData";
 import Layout from "../layouts/account";
 
 const AnswerPage = () => {
+  const formCollectionAddress = useRouter().query?.id?.toString() || null;
   const { formData, fetchStatus, fetchErrorMessage, fetchFormData } =
     useFormData();
   const newAnswerModal = useDisclosure();
@@ -15,8 +17,11 @@ const AnswerPage = () => {
   const { initCeramic } = useCeramic();
 
   useEffect(() => {
-    fetchFormData();
-  }, [fetchFormData]);
+    if (!formCollectionAddress) {
+      return;
+    }
+    fetchFormData(formCollectionAddress);
+  }, [fetchFormData, formCollectionAddress]);
 
   useEffect(() => {
     initLitClient();
@@ -82,8 +87,9 @@ const AnswerPage = () => {
           </Box>
         </Box>
       </Layout>
-      {formData && (
+      {formData && formCollectionAddress && (
         <NewAnswerDialog
+          formCollectionAddress={formCollectionAddress}
           title={formData.title}
           questions={formData.questions}
           isOpen={newAnswerModal.isOpen}
