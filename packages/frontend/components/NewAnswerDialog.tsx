@@ -387,7 +387,7 @@ const NewAnswerDialog = (props: {
                     size="sm"
                     w="100%"
                     onClick={() => {
-                      onCloseSubmit();
+                      createAnswerModal.onClose();
                     }}
                   >
                     Close
