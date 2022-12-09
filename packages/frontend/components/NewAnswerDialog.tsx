@@ -250,7 +250,6 @@ const NewAnswerDialog = (props: {
     });
   };
 
-  console.log(props.questions);
   return (
     <>
       <Modal size="full" isOpen={props.isOpen} onClose={props.onClose}>
