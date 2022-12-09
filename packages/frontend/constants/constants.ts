@@ -286,12 +286,40 @@ export const INDUSTRY_QUESTION: Question = {
   ],
 };
 
+export const COMMUNITY_QUESTION: Question = {
+  id: "2a6571da26602a67be14ea8c5ab82349",
+  question_body:
+    "What community values are the most important to you in this community?",
+  question_type: "multi_choice",
+  question_max_rating: 5,
+  options: [
+    { text: "Learning about web3 and crypto" },
+    { text: "Helping those that need it the most" },
+    { text: "Meet new people" },
+    { text: "Alpha (information not easily available out there)" },
+    { text: "Proliferating out NFT memes" },
+    { text: "Collect as many NFTs as possible" },
+    { text: "Create / build / launch stuff from within community" },
+    { text: "Just chill and have a good time" },
+  ],
+};
+
+export const RATING_QUESTION: Question = {
+  id: "3970500c6bd0a44ed7ab383650a33abc",
+  question_body: "How do you like decensus?",
+  question_type: "rating",
+  question_max_rating: 5,
+  options: [],
+};
+
 export const QUESTIONS: Question[] = [
   AGE_QUESTION,
   GENDER_QUESTION,
   ETHNICITY_QUESTION,
   INDUSTRY_QUESTION,
   COUNTRY_QUESTION,
+  COMMUNITY_QUESTION,
+  RATING_QUESTION,
 ];
 
 export type QuestionType =
