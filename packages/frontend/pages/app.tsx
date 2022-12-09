@@ -27,6 +27,7 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import CloseFormDialog from "../components/CloseFormDialog";
+import ExportAnswersDialog from "../components/ExportAnswersDialog";
 import NewFormCreatedDialog from "../components/NewFormCreatedDialog";
 import NewFormInfoDialog from "../components/NewFormInfoDialog";
 import NewFormQuestionsDialog from "../components/NewFormQuestionsDialog";
@@ -185,6 +186,7 @@ const FormItem = (props: Form) => {
     md: "row",
   });
   const closeSurveyModal = useDisclosure();
+  const exportAnswersModal = useDisclosure();
 
   const onClickCopy = () => {
     onCopy();
@@ -193,7 +195,9 @@ const FormItem = (props: Form) => {
       status: "success",
     });
   };
-  const onClickResult = () => {};
+  const onClickResult = () => {
+    exportAnswersModal.onOpen();
+  };
   const onClickClose = () => {
     closeSurveyModal.onOpen();
   };
@@ -226,6 +230,13 @@ const FormItem = (props: Form) => {
         onClose={closeSurveyModal.onClose}
         isOpen={closeSurveyModal.isOpen}
         formData={props}
+      />
+      <ExportAnswersDialog
+        useFormCollectionAddress={props.contractAddress}
+        title={props.title}
+        isOpen={exportAnswersModal.isOpen}
+        onOpen={exportAnswersModal.onOpen}
+        onClose={exportAnswersModal.onClose}
       />
     </>
   );

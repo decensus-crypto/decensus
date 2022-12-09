@@ -196,6 +196,7 @@ const FormInput = (props: {
 };
 
 const NewAnswerDialog = (props: {
+  formCollectionAddress: string;
   title: string;
   questions: Question[];
   isOpen: boolean;
@@ -256,6 +257,7 @@ const NewAnswerDialog = (props: {
       ...params,
     }));
     await submitAnswer({
+      formCollectionAddress: props.formCollectionAddress,
       submissionStrToEncrypt: JSON.stringify({ answers: answerArr }),
     });
   };
