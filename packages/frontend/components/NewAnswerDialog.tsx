@@ -152,6 +152,16 @@ const FormInput = (props: {
                 }
               />
             )}
+            {props.question.question_type === "date" && (
+              <Input
+                type="date"
+                color="white"
+                value={currentSingleAnswer}
+                onChange={(e) =>
+                  props.setAnswer({ ...answerParams, answer: e.target.value })
+                }
+              />
+            )}
             {props.question.question_type === "rating" && (
               <Box mt={8}>
                 <SelectRating
