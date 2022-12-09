@@ -1,6 +1,5 @@
 import { atom, useAtom } from "jotai";
 import { useCallback } from "react";
-import { createToast } from "../utils/createToast";
 import { encrypt } from "../utils/crypto";
 import { getMerkleTree, getProofForAddress } from "../utils/merkleTree";
 import { compressToBase64 } from "../utils/stringCompression";
@@ -9,7 +8,10 @@ import { useContracts } from "./useContracts";
 import { useFormCollectionAddress } from "./useFormCollectionAddress";
 import { useFormData } from "./useFormData";
 
-const isSubmittingAtom = atom<boolean>(false);
+const submitAnswerStatusAtom = atom<
+  "pending" | "encrypting" | "uploading" | "completed" | "failed"
+>("pending");
+const submitAnswerErrorMessageAtom = atom<string | null>(null);
 
 export const useAnswerSubmit = () => {
   const { account } = useAccount();
@@ -17,30 +19,38 @@ export const useAnswerSubmit = () => {
   const { formViewerAddresses } = useFormData();
   const { getFormCollectionContract } = useContracts();
 
-  const [isSubmitting, setIsSubmitting] = useAtom(isSubmittingAtom);
-
+  const [submitAnswerStatus, setSubmitAnswerStatus] = useAtom(
+    submitAnswerStatusAtom
+  );
+  const [submitAnswerErrorMessage, setSubmitAnswerErrorMessage] = useAtom(
+    submitAnswerErrorMessageAtom
+  );
   const submitAnswer = useCallback(
     async ({
       submissionStrToEncrypt,
     }: {
       submissionStrToEncrypt: string;
     }): Promise<void> => {
-      if (!formCollectionAddress || !account || !formViewerAddresses) {
+      if (!formCollectionAddress) {
         throw new Error("Cannot submit answer");
       }
+      if (!account) {
+        throw new Error("Cannot submit answer");
+      }
+      if (!formViewerAddresses) {
+        throw new Error("Cannot submit answer");
+      }
+      if (
+        !(submitAnswerStatus === "pending" || submitAnswerStatus === "failed")
+      )
+        return;
 
       const formCollectionContract = getFormCollectionContract(
         formCollectionAddress
       );
       if (!formCollectionContract) return;
 
-      setIsSubmitting(true);
-
-      createToast({
-        title: "Answer submission initiated",
-        description: "Please wait...",
-        status: "success",
-      });
+      setSubmitAnswerStatus("encrypting");
 
       try {
         // get Merkle proof
@@ -60,6 +70,8 @@ export const useAnswerSubmit = () => {
 
         // submit encrypted answer to contract
         try {
+          setSubmitAnswerStatus("uploading");
+
           const tx = await formCollectionContract.submitAnswers(
             merkleProof,
             compressToBase64(encryptedAnswer),
@@ -72,20 +84,11 @@ export const useAnswerSubmit = () => {
           console.error(error);
           throw new Error("Error occurred during transaction");
         }
-
-        createToast({
-          title: "Answer successfully submitted!",
-          status: "success",
-        });
+        setSubmitAnswerStatus("completed");
       } catch (error: any) {
         console.error(error);
-        createToast({
-          title: "Failed to submit answer",
-          description: error.message,
-          status: "error",
-        });
-      } finally {
-        setIsSubmitting(false);
+        setSubmitAnswerErrorMessage(error.message);
+        setSubmitAnswerStatus("failed");
       }
     },
     [
@@ -93,12 +96,15 @@ export const useAnswerSubmit = () => {
       formCollectionAddress,
       formViewerAddresses,
       getFormCollectionContract,
-      setIsSubmitting,
+      setSubmitAnswerErrorMessage,
+      setSubmitAnswerStatus,
+      submitAnswerStatus,
     ]
   );
 
   return {
-    isSubmitting,
+    submitAnswerStatus,
+    submitAnswerErrorMessage,
     submitAnswer,
   };
 };
