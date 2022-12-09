@@ -10,8 +10,12 @@ import {
   Heading,
   IconButton,
   Input,
+  Link,
   Modal,
+  ModalBody,
   ModalContent,
+  ModalFooter,
+  ModalHeader,
   ModalOverlay,
   Radio,
   RadioGroup,
@@ -20,6 +24,7 @@ import {
   Stack,
   Text,
   Tooltip,
+  useDisclosure,
 } from "@chakra-ui/react";
 import Carousel from "nuka-carousel/lib/carousel";
 import { useEffect, useMemo, useState } from "react";
@@ -45,12 +50,15 @@ const FormInput = (props: {
     typeof props.answer === "object" ? "" : props.answer || "";
   const currentMultiAnswer =
     typeof props.answer === "object" ? props.answer || [] : [];
-
+  const isValidAnswer = useMemo(() => {
+    return props.answer && 0 < props.answer.length;
+  }, [props.answer]);
   const answerParams = {
     question_type: props.question.question_type,
   };
   return (
     <Card
+      key={`question_${props.index}`}
       bg="gray.800"
       w="100%"
       maxW="4xl"
@@ -95,7 +103,10 @@ const FormInput = (props: {
                 mt={8}
               >
                 {props.question.options.map((option, i) => (
-                  <option key={i} value={option.text}>
+                  <option
+                    key={`question_${props.index}_option_${i}`}
+                    value={option.text}
+                  >
                     {option.text}
                   </option>
                 ))}
@@ -105,6 +116,7 @@ const FormInput = (props: {
               <Stack>
                 {props.question.options.map((option, i) => (
                   <Checkbox
+                    key={`question_${props.index}_option_${i}`}
                     isChecked={currentMultiAnswer.includes(option.text)}
                     onChange={(e) => {
                       const checked = e.target.checked;
@@ -123,7 +135,6 @@ const FormInput = (props: {
                       }
                     }}
                     size="lg"
-                    key={i}
                   >
                     <Box color="white">{Object.values(option)[0] || ""}</Box>
                   </Checkbox>
@@ -144,7 +155,14 @@ const FormInput = (props: {
         </Box>
       </Flex>
       <Flex align="center" justify="center" h="100%">
-        <Button size="lg" w={240} mt={8} mb={2} onClick={props.clickNext}>
+        <Button
+          size="lg"
+          w={240}
+          mt={8}
+          mb={2}
+          disabled={!isValidAnswer}
+          onClick={props.clickNext}
+        >
           Next
         </Button>
       </Flex>
@@ -159,7 +177,9 @@ const NewAnswerDialog = (props: {
   onOpen: () => void;
   onClose: () => void;
 }) => {
-  const { isSubmitting, submitAnswer } = useAnswerSubmit();
+  const createAnswerModal = useDisclosure();
+  const { submitAnswer, submitAnswerStatus, submitAnswerErrorMessage } =
+    useAnswerSubmit();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<
     Record<string, { question_type: string; answer: string | string[] }>
@@ -186,6 +206,7 @@ const NewAnswerDialog = (props: {
   const nextSlidable = useMemo(() => {
     return currentQuestionIndex < props.questions.length;
   }, [currentQuestionIndex, props.questions.length]);
+
   const canSubmit =
     Object.keys(answers).length === props.questions.length &&
     Object.values(answers).every((a) => a.answer && a.answer.length > 0);
@@ -201,6 +222,7 @@ const NewAnswerDialog = (props: {
 
   const clickSubmit = () => {
     if (!canSubmit) return;
+    createAnswerModal.onOpen();
     onSubmit();
   };
   const onSubmit = async () => {
@@ -214,112 +236,169 @@ const NewAnswerDialog = (props: {
   };
 
   return (
-    <Modal size="full" isOpen={props.isOpen} onClose={props.onClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <Box
-          h={{ base: "128px", md: "64px" }}
-          w="100%"
-          overflowY="hidden"
-          bg="black"
-        >
-          <Grid templateColumns="repeat(12, 1fr)" gap={0} w="100%">
-            <GridItem colSpan={{ base: 12, md: 3 }} h="64px">
-              <Flex align="center" justify="center" h="100%">
-                <Logo height={12} />
-              </Flex>
-            </GridItem>
-            <GridItem colSpan={{ base: 12, md: 6 }} h="64px">
-              <Flex align="center" justify="center" h="100%">
-                <Heading as="h2" size="md" color="white">
-                  {props.title}
-                </Heading>
-              </Flex>
-            </GridItem>
-          </Grid>
-        </Box>
-        <Box h="1px" w="100%" bg="gray.700" />
-        <Box w="100%" bg="black">
-          <Box h="64px" w="100%">
-            <Flex align="center" justify="center" w="100%">
-              <Box w="100%" maxW="4xl">
-                <Flex>
-                  <Tooltip label="Previous">
-                    <IconButton
-                      m={4}
-                      size="md"
-                      aria-label="Previous"
-                      icon={<ChevronLeftIcon />}
-                      disabled={!prevSlidable}
-                      onClick={clickPrev}
-                    />
-                  </Tooltip>
-                  <Spacer />
-                  <Tooltip label="Next">
-                    <IconButton
-                      m={4}
-                      size="md"
-                      aria-label="Next"
-                      icon={<ChevronRightIcon />}
-                      disabled={!nextSlidable}
-                      onClick={clickNext}
-                    />
-                  </Tooltip>
+    <>
+      <Modal size="full" isOpen={props.isOpen} onClose={props.onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <Box
+            h={{ base: "128px", md: "64px" }}
+            w="100%"
+            overflowY="hidden"
+            bg="black"
+          >
+            <Grid templateColumns="repeat(12, 1fr)" gap={0} w="100%">
+              <GridItem colSpan={{ base: 12, md: 3 }} h="64px">
+                <Flex align="center" justify="center" h="100%">
+                  <Logo height={12} />
                 </Flex>
-              </Box>
-            </Flex>
+              </GridItem>
+              <GridItem colSpan={{ base: 12, md: 6 }} h="64px">
+                <Flex align="center" justify="center" h="100%">
+                  <Heading as="h2" size="md" color="white">
+                    {props.title}
+                  </Heading>
+                </Flex>
+              </GridItem>
+            </Grid>
           </Box>
-          <Box h="calc(100vh - 64px - 1px - 64px)" w="100%" bg="black">
-            <Carousel
-              slidesToShow={1}
-              withoutControls={true}
-              dragging={false}
-              slideIndex={currentQuestionIndex}
-            >
-              {props.questions.map((question, idx) => {
-                return (
-                  <>
-                    <Flex
-                      align="center"
-                      justify="center"
-                      h="100%"
-                      key={`question_${idx}`}
-                      pt={2}
-                      px={{ base: 4, sm: 8, md: 16 }}
-                    >
-                      <FormInput
-                        index={idx}
-                        question={question}
-                        answer={
-                          answers[question.id] && answers[question.id].answer
-                        }
-                        setAnswer={(a) =>
-                          setAnswers({ ...answers, [question.id]: a })
-                        }
-                        clickNext={clickNext}
+          <Box h="1px" w="100%" bg="gray.700" />
+          <Box w="100%" bg="black">
+            <Box h="64px" w="100%">
+              <Flex align="center" justify="center" w="100%">
+                <Box w="100%" maxW="4xl">
+                  <Flex>
+                    <Tooltip label="Previous">
+                      <IconButton
+                        m={4}
+                        size="md"
+                        aria-label="Previous"
+                        icon={<ChevronLeftIcon />}
+                        disabled={!prevSlidable}
+                        onClick={clickPrev}
                       />
-                    </Flex>
-                  </>
-                );
-              })}
-              <Flex align="center" justify="center" h="100%">
-                <Box>
-                  <Button
-                    size="lg"
-                    colorScheme="pink"
-                    isLoading={isSubmitting}
-                    disabled={!canSubmit}
-                    onClick={clickSubmit}
-                  >
-                    Finish &amp; Submit
-                  </Button>
+                    </Tooltip>
+                    <Spacer />
+                    <Tooltip label="Next">
+                      <IconButton
+                        m={4}
+                        size="md"
+                        aria-label="Next"
+                        icon={<ChevronRightIcon />}
+                        disabled={!nextSlidable}
+                        onClick={clickNext}
+                      />
+                    </Tooltip>
+                  </Flex>
                 </Box>
               </Flex>
-            </Carousel>
+            </Box>
+            <Box h="calc(100vh - 64px - 1px - 64px)" w="100%" bg="black">
+              <Carousel
+                slidesToShow={1}
+                withoutControls={true}
+                dragging={false}
+                slideIndex={currentQuestionIndex}
+              >
+                {props.questions.map((question, idx) => {
+                  return (
+                    <>
+                      <Flex
+                        align="center"
+                        justify="center"
+                        h="100%"
+                        key={`question_${idx}`}
+                        pt={2}
+                        px={{ base: 4, sm: 8, md: 16 }}
+                      >
+                        <FormInput
+                          index={idx}
+                          question={question}
+                          answer={
+                            answers[question.id] && answers[question.id].answer
+                          }
+                          setAnswer={(a) =>
+                            setAnswers({ ...answers, [question.id]: a })
+                          }
+                          clickNext={clickNext}
+                        />
+                      </Flex>
+                    </>
+                  );
+                })}
+                <Flex align="center" justify="center" h="100%">
+                  <Box>
+                    <Button
+                      size="lg"
+                      colorScheme="pink"
+                      disabled={!canSubmit}
+                      onClick={clickSubmit}
+                    >
+                      Finish &amp; Submit
+                    </Button>
+                  </Box>
+                </Flex>
+              </Carousel>
+            </Box>
           </Box>
-        </Box>
-      </ModalContent>
-    </Modal>
+        </ModalContent>
+      </Modal>
+
+      <Modal
+        isCentered
+        isOpen={createAnswerModal.isOpen}
+        onClose={createAnswerModal.onClose}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader as="h2" fontWeight="light" color="gray">
+            Submitting answers...
+          </ModalHeader>
+          <ModalBody>
+            {submitAnswerStatus === "pending" && <Text>Nothing Happening</Text>}
+            {submitAnswerStatus === "encrypting" && (
+              <Text>Encrypting the answers...</Text>
+            )}
+            {submitAnswerStatus === "uploading" && <Text>Uploading...</Text>}
+            {submitAnswerStatus === "completed" && (
+              <Text>Answer successfully submitted!</Text>
+            )}
+            {submitAnswerStatus === "failed" && (
+              <Text>
+                Failed :(
+                <br />
+                {submitAnswerErrorMessage}
+              </Text>
+            )}
+          </ModalBody>
+          <ModalFooter>
+            <Grid templateColumns="repeat(12, 1fr)" gap={4} w="100%" mt={4}>
+              {submitAnswerStatus === "completed" && (
+                <GridItem colSpan={{ base: 12 }}>
+                  <Link href="/">
+                    <Button size="sm" w="100%">
+                      Finish
+                    </Button>
+                  </Link>
+                </GridItem>
+              )}
+              {submitAnswerStatus === "failed" && (
+                <GridItem colSpan={{ base: 12 }}>
+                  <Button
+                    size="sm"
+                    w="100%"
+                    onClick={() => {
+                      createAnswerModal.onClose();
+                    }}
+                  >
+                    Close
+                  </Button>
+                </GridItem>
+              )}
+            </Grid>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
   );
 };
 

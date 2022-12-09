@@ -1,7 +1,6 @@
 import { atom, useAtom } from "jotai";
 import { useCallback } from "react";
 import { CHAIN_NAME, FormTemplate } from "../constants/constants";
-import { createToast } from "../utils/createToast";
 import { decompressFromBase64 } from "../utils/stringCompression";
 import { useCeramic } from "./litCeramic/useCeramic";
 import { useLit } from "./litCeramic/useLit";
@@ -11,8 +10,11 @@ import { useFormCollectionAddress } from "./useFormCollectionAddress";
 
 const formDataAtom = atom<(FormTemplate & { closed: boolean }) | null>(null);
 const nftAddressAtom = atom<string | null>(null);
-const isLoadingAtom = atom<boolean>(false);
 const formViewerAddressesAtom = atom<string[] | null>(null);
+const fetchStatusAtom = atom<
+  "pending" | "retrieving" | "decrypting" | "completed" | "failed"
+>("pending");
+const fetchErrorMessageAtom = atom<string | null>(null);
 
 export const useFormData = () => {
   const { formCollectionAddress } = useFormCollectionAddress();
@@ -23,20 +25,21 @@ export const useFormData = () => {
 
   const [formData, setFormData] = useAtom(formDataAtom);
   const [nftAddress, setNftAddress] = useAtom(nftAddressAtom);
-  const [isLoading, setIsLoading] = useAtom(isLoadingAtom);
   const [formViewerAddresses, setFormViewerAddresses] = useAtom(
     formViewerAddressesAtom
   );
+  const [fetchStatus, setFetchStatus] = useAtom(fetchStatusAtom);
+  const [fetchErrorMessage, setFetchErrorMessage] = useAtom(
+    fetchErrorMessageAtom
+  );
 
   const fetchFormData = useCallback(async () => {
-    if (
-      !formCollectionAddress ||
-      !isLitClientReady ||
-      !litAuthSig ||
-      !isCeramicReady ||
-      !account
-    )
-      return;
+    if (!formCollectionAddress) return;
+    if (!isLitClientReady) return;
+    if (!litAuthSig) return;
+    if (!isCeramicReady) return;
+    if (!account) return;
+    if (!(fetchStatus === "pending" || fetchStatus === "failed")) return;
 
     const formCollectionContract = getFormCollectionContract(
       formCollectionAddress
@@ -44,7 +47,7 @@ export const useFormData = () => {
     if (!formCollectionContract) return;
 
     try {
-      setIsLoading(true);
+      setFetchStatus("retrieving");
 
       const [formDataUri, closed] = await Promise.all([
         formCollectionContract.formDataURI(),
@@ -60,6 +63,7 @@ export const useFormData = () => {
 
       const formDataInCeramic = await loadDocument(formDataStreamId);
       try {
+        setFetchStatus("decrypting");
         const { encryptedFormData, addressesToAllowRead, nftAddress } =
           JSON.parse(decompressFromBase64(formDataInCeramic));
 
@@ -72,6 +76,7 @@ export const useFormData = () => {
 
         const formData = { ...JSON.parse(formDataStr), closed };
 
+        setFetchStatus("completed");
         setNftAddress(nftAddress);
         setFormData(formData);
         setFormViewerAddresses(addressesToAllowRead);
@@ -81,33 +86,31 @@ export const useFormData = () => {
       }
     } catch (error: any) {
       console.error(error);
-      createToast({
-        title: "Failed to get form data",
-        description: error.message,
-        status: "error",
-      });
-    } finally {
-      setIsLoading(false);
+      setFetchStatus("failed");
+      setFetchErrorMessage(error.message);
     }
   }, [
     account,
     decryptWithLit,
+    fetchStatus,
     formCollectionAddress,
     getFormCollectionContract,
     isCeramicReady,
     isLitClientReady,
     litAuthSig,
     loadDocument,
+    setFetchErrorMessage,
+    setFetchStatus,
     setFormData,
-    setNftAddress,
     setFormViewerAddresses,
-    setIsLoading,
+    setNftAddress,
   ]);
 
   return {
     formData,
     nftAddress,
-    isLoadingFormData: isLoading,
+    fetchStatus,
+    fetchErrorMessage,
     formCollectionAddress,
     formViewerAddresses,
     fetchFormData,
