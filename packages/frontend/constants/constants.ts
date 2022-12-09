@@ -304,6 +304,13 @@ export const COMMUNITY_QUESTION: Question = {
   ],
 };
 
+export const DOB_QUESTION: Question = {
+  id: "49005b30c6bdba31ed7ad383650a33eb0",
+  question_body: "Select your date of birth.",
+  question_type: "date",
+  question_max_rating: 5,
+  options: [],
+};
 export const RATING_QUESTION: Question = {
   id: "3970500c6bd0a44ed7ab383650a33abc",
   question_body: "How do you like decensus?",
@@ -319,6 +326,7 @@ export const QUESTIONS: Question[] = [
   INDUSTRY_QUESTION,
   COUNTRY_QUESTION,
   COMMUNITY_QUESTION,
+  DOB_QUESTION,
   RATING_QUESTION,
 ];
 
@@ -327,6 +335,7 @@ export type QuestionType =
   | "single_choice_dropdown"
   | "multi_choice"
   | "text"
+  | "date"
   | "rating";
 
 export type FormTemplate = {

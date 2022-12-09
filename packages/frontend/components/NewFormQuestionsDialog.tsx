@@ -133,6 +133,7 @@ const QuestionForm = (props: {
                   | "single_choice_dropdown"
                   | "multi_choice"
                   | "text"
+                  | "date"
                   | "rating"
               )
             }
@@ -141,6 +142,7 @@ const QuestionForm = (props: {
             <option value="single_choice_dropdown">Dropdown</option>
             <option value="multi_choice">Checkbox</option>
             <option value="text">Text</option>
+            <option value="date">Date Picker</option>
             <option value="rating">Rating</option>
           </Select>
         </FormControl>
