@@ -18,6 +18,7 @@ export const AGE_QUESTION: Question = {
   id: "2f633cdd1181d42a9c7ae9a889362ff7",
   question_body: "What's your age range?",
   question_type: "single_choice",
+  question_max_rating: 5,
   options: [
     { text: "Under 21" },
     { text: "Between 21 and 30" },
@@ -32,6 +33,7 @@ export const GENDER_QUESTION: Question = {
   id: "c31248e78aced0c36320b2f13a8a7891",
   question_body: "What's your gender?",
   question_type: "single_choice",
+  question_max_rating: 5,
   options: [
     { text: "Male" },
     { text: "Female" },
@@ -47,6 +49,7 @@ export const COUNTRY_QUESTION: Question = {
   id: "5ca2aa845c8cd5ace6b016841f100d82",
   question_body: "In what country are you based?",
   question_type: "single_choice_dropdown",
+  question_max_rating: 5,
   options: [
     { text: "Afghanistan" },
     { text: "Albania" },
@@ -251,6 +254,7 @@ export const ETHNICITY_QUESTION: Question = {
   id: "8e9c7a86c8295244c2f50e1049023b1b",
   question_body: "What's your ethnicity?",
   question_type: "single_choice",
+  question_max_rating: 5,
   options: [
     { text: "Hispanic" },
     { text: "White alone, non-Hispanic" },
@@ -271,6 +275,7 @@ export const INDUSTRY_QUESTION: Question = {
   id: "c570503c6bd0a44eb7ab38365ca83ced",
   question_body: "What's your occupation's industry?",
   question_type: "single_choice",
+  question_max_rating: 5,
   options: [
     { text: "Arts and entertainment" },
     { text: "Business administration" },
@@ -293,7 +298,8 @@ export type QuestionType =
   | "single_choice"
   | "single_choice_dropdown"
   | "multi_choice"
-  | "text";
+  | "text"
+  | "rating";
 
 export type FormTemplate = {
   title: string;
@@ -304,6 +310,7 @@ export type Question = {
   id: string;
   question_body: string;
   question_type: QuestionType;
+  question_max_rating: number;
   options: { text: string }[];
 };
 

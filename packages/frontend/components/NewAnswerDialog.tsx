@@ -33,6 +33,7 @@ import { useCeramic } from "../hooks/litCeramic/useCeramic";
 import { useLit } from "../hooks/litCeramic/useLit";
 import { useAnswerSubmit } from "../hooks/useAnswerSubmit";
 import Logo from "./logo";
+import SelectRating from "./SelectRating";
 
 type AnswerInForm = {
   question_type: QuestionType;
@@ -151,6 +152,20 @@ const FormInput = (props: {
                 }
               />
             )}
+            {props.question.question_type === "rating" && (
+              <Box mt={8}>
+                <SelectRating
+                  rating={Number.parseInt(currentSingleAnswer)}
+                  ratingMax={props.question.question_max_rating}
+                  onChange={(value) =>
+                    props.setAnswer({
+                      ...answerParams,
+                      answer: value.toString(),
+                    })
+                  }
+                />
+              </Box>
+            )}
           </Box>
         </Box>
       </Flex>
@@ -235,6 +250,7 @@ const NewAnswerDialog = (props: {
     });
   };
 
+  console.log(props.questions);
   return (
     <>
       <Modal size="full" isOpen={props.isOpen} onClose={props.onClose}>
