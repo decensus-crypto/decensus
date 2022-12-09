@@ -51,6 +51,7 @@ import { useDeploy } from "../hooks/useDeploy";
 import { useTokenHolders } from "../hooks/useTokenHolders";
 import { fetchNftBaseInfo } from "../utils/zdk";
 import Logo from "./logo";
+import SelectRating from "./SelectRating";
 
 const QuestionForm = (props: {
   idx: number;
@@ -63,6 +64,9 @@ const QuestionForm = (props: {
   const [questionBody, setQuestionBody] = useState(
     props.question.question_body
   );
+  const [questionMaxRating, setQuestionMaxRating] = useState(
+    props.question.question_max_rating
+  );
   const [options, setOptions] = useState(props.question.options);
 
   useEffect(() => {
@@ -72,13 +76,14 @@ const QuestionForm = (props: {
           id: props.question.id,
           question_type: questionType,
           question_body: questionBody,
+          question_max_rating: questionMaxRating,
           options: options,
         },
         props.idx
       );
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [questionType, questionBody, options]);
+  }, [questionType, questionBody, questionMaxRating, options]);
 
   const setOptionText = (val: string, idx: number) => {
     setOptions((options) => {
@@ -128,6 +133,7 @@ const QuestionForm = (props: {
                   | "single_choice_dropdown"
                   | "multi_choice"
                   | "text"
+                  | "rating"
               )
             }
           >
@@ -135,6 +141,7 @@ const QuestionForm = (props: {
             <option value="single_choice_dropdown">Dropdown</option>
             <option value="multi_choice">Checkbox</option>
             <option value="text">Text</option>
+            <option value="rating">Rating</option>
           </Select>
         </FormControl>
         {["single_choice", "single_choice_dropdown", "multi_choice"].some(
@@ -168,6 +175,28 @@ const QuestionForm = (props: {
             <Button size="sm" leftIcon={<AddIcon />} mt={2} onClick={addOption}>
               Add
             </Button>
+          </FormControl>
+        )}
+        {["rating"].some((opt) => opt === questionType) && (
+          <FormControl mt={4}>
+            <FormLabel color="white">Max Rating</FormLabel>
+            <Select
+              w={240}
+              color="white"
+              required
+              size="sm"
+              value={questionMaxRating}
+              onChange={(evt) =>
+                setQuestionMaxRating(Number.parseInt(evt.target.value))
+              }
+            >
+              <option value="3">3</option>
+              <option value="5">5</option>
+              <option value="10">10</option>
+            </Select>
+            <Box mt={2}>
+              <SelectRating ratingMax={questionMaxRating} />
+            </Box>
           </FormControl>
         )}
       </Box>
@@ -326,8 +355,8 @@ const NewFormQuestionsDialog = (props: {
     const records = [...questions];
     records[idx].question_type = question.question_type;
     records[idx].question_body = question.question_body;
+    records[idx].question_max_rating = question.question_max_rating;
     records[idx].options = [...question.options];
-
     setQuestions(records);
   };
 
@@ -339,6 +368,7 @@ const NewFormQuestionsDialog = (props: {
         id: uuidv4(),
         question_type: currentQuestion.question_type,
         question_body: currentQuestion.question_body,
+        question_max_rating: currentQuestion.question_max_rating,
         options: currentQuestion.options,
       });
       return records;
@@ -356,6 +386,7 @@ const NewFormQuestionsDialog = (props: {
         id: uuidv4(),
         question_type: "single_choice",
         question_body: "",
+        question_max_rating: 5,
         options: [],
       });
       return records;

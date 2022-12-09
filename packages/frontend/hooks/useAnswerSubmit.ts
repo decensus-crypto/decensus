@@ -50,6 +50,10 @@ export const useAnswerSubmit = () => {
       );
       if (!formCollectionContract) return;
 
+      console.log("Start Submitting the Answer");
+      console.log(submissionStrToEncrypt);
+      console.log(formCollectionAddress);
+
       setSubmitAnswerStatus("encrypting");
 
       try {

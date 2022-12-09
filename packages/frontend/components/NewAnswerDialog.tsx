@@ -33,6 +33,7 @@ import { useCeramic } from "../hooks/litCeramic/useCeramic";
 import { useLit } from "../hooks/litCeramic/useLit";
 import { useAnswerSubmit } from "../hooks/useAnswerSubmit";
 import Logo from "./logo";
+import SelectRating from "./SelectRating";
 
 type AnswerInForm = {
   question_type: QuestionType;
@@ -150,6 +151,20 @@ const FormInput = (props: {
                   props.setAnswer({ ...answerParams, answer: e.target.value })
                 }
               />
+            )}
+            {props.question.question_type === "rating" && (
+              <Box mt={8}>
+                <SelectRating
+                  rating={Number.parseInt(currentSingleAnswer)}
+                  ratingMax={props.question.question_max_rating}
+                  onChange={(value) =>
+                    props.setAnswer({
+                      ...answerParams,
+                      answer: value.toString(),
+                    })
+                  }
+                />
+              </Box>
             )}
           </Box>
         </Box>
