@@ -135,7 +135,7 @@ describe("form collection", function () {
     expect(decoded).to.eql({
       name,
       description,
-      external_link: "https://phorms.xyz",
+      external_link: "https://decensus.centiv.xyz",
     });
   });
 
@@ -155,12 +155,12 @@ describe("form collection", function () {
 
     expect(prefix).to.eql("data:application/json;base64");
     expect(decoded).to.contain({
-      name,
+      name: `${name}: Answer #0`,
       description,
     });
     expect(imagePrefix).to.eql("data:image/svg+xml;base64");
     expect(decodedImage).to.eql(
-      `<svg viewBox="0 0 180 180" style="font-family:monospace"><rect width="100%" height="100%"/><path d="M20 0v180M0 20h180" style="stroke:gray"/><text x="23" y="15" style="font-size:6px" fill="#fff">${name}</text><text text-anchor="middle" x="50%" y="40%" fill="#fff" style="font-size:10px">Answer #0</text><text text-anchor="middle" x="50%" y="60%" fill="#fff" style="font-size:16px"><tspan fill="#FC8CC9">de</tspan>census</text></svg>`
+      `<svg viewBox="0 0 180 180" style="font-family:monospace" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%"/><path d="M20 0v180M0 20h180" style="stroke:gray"/><text x="23" y="15" style="font-size:6px" fill="#fff">${name}</text><text text-anchor="middle" x="50%" y="40%" fill="#fff" style="font-size:10px">Answer #0</text><text text-anchor="middle" x="50%" y="60%" fill="#fff" style="font-size:16px"><tspan fill="#FC8CC9">de</tspan>census</text></svg>`
     );
   });
 });

@@ -88,8 +88,7 @@ contract FormCollection is
                         name(),
                         '", "description": "',
                         description,
-                        // TODO: fix domain
-                        '", "external_link": "https://phorms.xyz"}'
+                        '", "external_link": "https://decensus.centiv.xyz"}'
                     )
                 )
             )
@@ -112,7 +111,7 @@ contract FormCollection is
 
         string memory newSvg = string(
             abi.encodePacked(
-                '<svg viewBox="0 0 180 180" style="font-family:monospace"><rect width="100%" height="100%"/><path d="M20 0v180M0 20h180" style="stroke:gray"/><text x="23" y="15" style="font-size:6px" fill="#fff">',
+                '<svg viewBox="0 0 180 180" style="font-family:monospace" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%"/><path d="M20 0v180M0 20h180" style="stroke:gray"/><text x="23" y="15" style="font-size:6px" fill="#fff">',
                 name(),
                 '</text><text text-anchor="middle" x="50%" y="40%" fill="#fff" style="font-size:10px">Answer #',
                 Strings.toString(tokenId),
@@ -126,6 +125,8 @@ contract FormCollection is
                     abi.encodePacked(
                         '{"name": "',
                         name(),
+                        ": Answer #",
+                        Strings.toString(tokenId),
                         '", "description": "',
                         description,
                         '", "image": "data:image/svg+xml;base64,',
