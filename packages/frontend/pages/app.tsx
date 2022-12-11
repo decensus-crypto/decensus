@@ -306,6 +306,7 @@ const App = () => {
               <Button
                 leftIcon={<AddIcon />}
                 size="sm"
+                color="white"
                 colorScheme="whiteAlpha"
                 onClick={newFormInfoModal.onOpen}
                 disabled={!account}

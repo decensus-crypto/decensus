@@ -38,20 +38,22 @@ const NewFormCreatedDialog = (props: {
     <>
       <Modal isCentered isOpen={props.isOpen} onClose={props.onOpen}>
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader as="h2" fontWeight="light" color="gray">
+        <ModalContent bg="gray.700">
+          <ModalHeader as="h2" fontWeight="light" color="white">
             {props.title} is Published!
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Text>
+            <Text fontSize="sm" color="white">
               Completed!
               <br />
               Let&lsquo;s share the form to your community members.
             </Text>
             <Box mt={2}>
-              <Text>Link:</Text>
-              <Text>
+              <Text fontSize="sm" color="white">
+                Link:
+              </Text>
+              <Text fontSize="sm" color="white">
                 <Link isExternal href={props.formUrl}>
                   {props.formUrl}
                 </Link>

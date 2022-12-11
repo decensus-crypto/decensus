@@ -629,18 +629,28 @@ const NewFormQuestionsDialog = (props: {
         onClose={deployModal.onClose}
       >
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader as="h2" fontWeight="light" color="gray">
+        <ModalContent bg="gray.700">
+          <ModalHeader as="h2" fontWeight="light" color="white">
             Publish {props.title} in progress...
           </ModalHeader>
           <ModalBody>
-            {deployStatus === "pending" && <Text>Nothing Happening</Text>}
-            {deployStatus === "encrypting" && (
-              <Text>Encrypting the form contents...</Text>
+            {deployStatus === "pending" && (
+              <Text size="sm" color="white">
+                Nothing Happening
+              </Text>
             )}
-            {deployStatus === "uploading" && <Text>Decentralizing...</Text>}
+            {deployStatus === "encrypting" && (
+              <Text size="sm" color="white">
+                Encrypting the form contents...
+              </Text>
+            )}
+            {deployStatus === "uploading" && (
+              <Text size="sm" color="white">
+                Decentralizing...
+              </Text>
+            )}
             {deployStatus === "failed" && (
-              <Text>
+              <Text size="sm" color="white">
                 Failed :(
                 <br />
                 {deployErrorMessage}
