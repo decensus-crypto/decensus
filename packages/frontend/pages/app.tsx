@@ -180,7 +180,11 @@ const FormRow = (props: {
 };
 
 const FormItem = (props: Form) => {
-  const { onCopy } = useClipboard(props.formUrl);
+  const { onCopy, value, setValue, hasCopied } = useClipboard("");
+  useEffect(() => {
+    setValue(props.formUrl);
+  }, [props.formUrl, setValue]);
+
   const itemType = useBreakpointValue({
     base: "grid",
     md: "row",
@@ -190,10 +194,12 @@ const FormItem = (props: Form) => {
 
   const onClickCopy = () => {
     onCopy();
-    createToast({
-      title: "Form URL copied!",
-      status: "success",
-    });
+    if (hasCopied) {
+      createToast({
+        title: "Form URL copied!",
+        status: "success",
+      });
+    }
   };
   const onClickResult = () => {
     exportAnswersModal.onOpen();
