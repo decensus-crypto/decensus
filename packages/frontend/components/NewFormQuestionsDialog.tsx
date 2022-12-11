@@ -48,6 +48,7 @@ import { Question, QUESTIONS } from "../constants/constants";
 import { useCeramic } from "../hooks/litCeramic/useCeramic";
 import { useLit } from "../hooks/litCeramic/useLit";
 import { useDeploy } from "../hooks/useDeploy";
+import { useFormList } from "../hooks/useFormList";
 import { useTokenHolders } from "../hooks/useTokenHolders";
 import { fetchNftBaseInfo } from "../utils/zdk";
 import Logo from "./logo";
@@ -294,6 +295,7 @@ const NewFormQuestionsDialog = (props: {
   const { initLitClient, isLitClientReady } = useLit();
   const { initCeramic, isCeramicReady } = useCeramic();
   const { tokenHolders, fetchHolders } = useTokenHolders();
+  const { fetchFormList } = useFormList();
 
   const deployModal = useDisclosure();
 
@@ -429,6 +431,18 @@ const NewFormQuestionsDialog = (props: {
     }
     props.onCreated(res.formUrl);
     deployModal.onClose();
+    await fetchFormList({
+      overrides: [
+        {
+          title: props.title,
+          formUrl: res.formUrl,
+          resultUrl: res.resultUrl,
+          contractAddress: res.formCollectionAddress,
+          createdAt: Date.now(),
+          closed: false,
+        },
+      ],
+    });
   };
 
   return (
