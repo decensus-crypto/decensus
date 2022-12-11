@@ -376,21 +376,33 @@ const NewAnswerDialog = (props: {
         onClose={createAnswerModal.onClose}
       >
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader as="h2" fontWeight="light" color="gray">
+        <ModalContent bg="gray.700">
+          <ModalHeader as="h2" fontWeight="light" color="white">
             Submitting answers...
           </ModalHeader>
           <ModalBody>
-            {submitAnswerStatus === "pending" && <Text>Nothing Happening</Text>}
-            {submitAnswerStatus === "encrypting" && (
-              <Text>Encrypting the answers...</Text>
+            {submitAnswerStatus === "pending" && (
+              <Text fontSize="sm" color="white">
+                Nothing Happening
+              </Text>
             )}
-            {submitAnswerStatus === "uploading" && <Text>Uploading...</Text>}
+            {submitAnswerStatus === "encrypting" && (
+              <Text fontSize="sm" color="white">
+                Encrypting the answers...
+              </Text>
+            )}
+            {submitAnswerStatus === "uploading" && (
+              <Text fontSize="sm" color="white">
+                Uploading...
+              </Text>
+            )}
             {submitAnswerStatus === "completed" && (
-              <Text>Answer successfully submitted!</Text>
+              <Text fontSize="sm" color="white">
+                Answer successfully submitted!
+              </Text>
             )}
             {submitAnswerStatus === "failed" && (
-              <Text>
+              <Text fontSize="sm" color="white">
                 Failed :(
                 <br />
                 {submitAnswerErrorMessage}

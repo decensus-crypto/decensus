@@ -104,9 +104,12 @@ const NftFormControl = (props: {
   return (
     <>
       <FormControl mt={4}>
-        <FormLabel size="sm">NFT Contract Address</FormLabel>
+        <FormLabel size="sm" color="white">
+          NFT Contract Address
+        </FormLabel>
         <Input
           required
+          color="white"
           isInvalid={!isContractAddressFormatValid}
           placeholder="0xabcd..."
           value={contractAddress}
@@ -116,53 +119,63 @@ const NftFormControl = (props: {
       <Button
         variant="ghost"
         size="xs"
+        color="gray.400"
+        colorScheme="gray"
         onClick={() => setContractAddress(TEST_NFT_CONTRACT_ADDRESS)}
       >
         User Sample Address
       </Button>
       {isContractAddressFormatValid && (
-        <Card bg="gray.100" p={1} mt={2}>
+        <Card bg="gray.900" p={1} mt={2}>
           <CardBody p={1}>
             <Flex align="center">
-              {isLoadingNftName && <Text fontSize="sm">Loading...</Text>}
+              {isLoadingNftName && (
+                <Text fontSize="sm" color="white">
+                  Loading...
+                </Text>
+              )}
               {!isLoadingNftName && nftName && (
                 <>
-                  <CheckIcon />
-                  <Text ml={2} fontSize="sm">
+                  <CheckIcon color="white" />
+                  <Text ml={2} fontSize="sm" color="white">
                     Project Found: {nftName}
                   </Text>
                 </>
               )}
               {!isLoadingNftName && !nftName && (
                 <>
-                  <NotAllowedIcon />
-                  <Text ml={2} fontSize="sm">
+                  <NotAllowedIcon color="white" />
+                  <Text ml={2} fontSize="sm" color="white">
                     Project Not Found
                   </Text>
                 </>
               )}
             </Flex>
             <Flex align="center">
-              {isLoadingNftName && <Text fontSize="sm">Loading...</Text>}
+              {isLoadingNftName && (
+                <Text fontSize="sm" color="white">
+                  Loading...
+                </Text>
+              )}
               {!isLoadingNftName && tokenHolders && (
                 <>
-                  <CheckIcon />
-                  <Text ml={2} fontSize="sm">
+                  <CheckIcon color="white" />
+                  <Text ml={2} fontSize="sm" color="white">
                     Token Holders: {tokenHolders.length}
                   </Text>
                 </>
               )}
               {!isLoadingNftName && !tokenHolders && (
                 <>
-                  <NotAllowedIcon />
-                  <Text ml={2} fontSize="sm">
+                  <NotAllowedIcon color="white" />
+                  <Text ml={2} fontSize="sm" color="white">
                     Token Holders Not Found
                   </Text>
                 </>
               )}
             </Flex>
             <Flex align="center">
-              <Text fontSize="sm">
+              <Text fontSize="sm" color="white">
                 {isLoadingNftName && "Loading..."}
                 {!isLoadingNftName &&
                   isHoldersIncludeWallet &&
@@ -213,16 +226,19 @@ const NewFormInfoDialog = (props: {
     <>
       <Modal isCentered isOpen={props.isOpen} onClose={props.onClose}>
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader as="h2" fontWeight="light" color="gray">
+        <ModalContent bg="gray.700">
+          <ModalHeader as="h2" fontWeight="light" color="white">
             Create New Form
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <FormControl>
-              <FormLabel size="sm">Form Title</FormLabel>
+              <FormLabel fontSize="sm" color="white">
+                Form Title
+              </FormLabel>
               <Input
                 required
+                color="white"
                 isInvalid={!isTitleFormatValid}
                 placeholder="My best form ever"
                 value={title}
@@ -230,9 +246,12 @@ const NewFormInfoDialog = (props: {
               />
             </FormControl>
             <FormControl mt={4}>
-              <FormLabel size="sm">Form Description</FormLabel>
+              <FormLabel fontSize="sm" color="white">
+                Form Description
+              </FormLabel>
               <Textarea
                 required
+                color="white"
                 isInvalid={!isDescriptionFormatValid}
                 placeholder="A survey to analyze the demography of NFT holders"
                 value={description}
