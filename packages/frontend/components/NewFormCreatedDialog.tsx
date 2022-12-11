@@ -1,8 +1,7 @@
-import { Button } from "@chakra-ui/react";
-
 import { CopyIcon } from "@chakra-ui/icons";
 import {
   Box,
+  Button,
   Grid,
   GridItem,
   Link,
@@ -16,6 +15,7 @@ import {
   Text,
   useClipboard,
 } from "@chakra-ui/react";
+import { useEffect } from "react";
 import { createToast } from "../utils/createToast";
 
 const NewFormCreatedDialog = (props: {
@@ -25,9 +25,13 @@ const NewFormCreatedDialog = (props: {
   onOpen: () => void;
   onClose: () => void;
 }) => {
-  const copyFormUrl = useClipboard(props.formUrl);
+  const { onCopy, value, setValue, hasCopied } = useClipboard("");
+  useEffect(() => {
+    setValue(props.formUrl);
+  }, [props.formUrl, setValue]);
+
   const onClickFormUrlCopy = () => {
-    copyFormUrl.onCopy();
+    onCopy();
     createToast({
       title: "Form URL copied!",
       status: "success",
