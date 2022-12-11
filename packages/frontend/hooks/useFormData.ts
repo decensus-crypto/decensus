@@ -7,7 +7,9 @@ import { useLit } from "./litCeramic/useLit";
 import { useAccount } from "./useAccount";
 import { useContracts } from "./useContracts";
 
-const formDataAtom = atom<(FormTemplate & { closed: boolean }) | null>(null);
+const formDataAtom = atom<
+  (FormTemplate & { closed: boolean; alreadyAnswered: boolean }) | null
+>(null);
 const nftAddressAtom = atom<string | null>(null);
 const formViewerAddressesAtom = atom<string[] | null>(null);
 const fetchStatusAtom = atom<
@@ -48,9 +50,10 @@ export const useFormData = () => {
       try {
         setFetchStatus("retrieving");
 
-        const [formDataUri, closed] = await Promise.all([
+        const [formDataUri, closed, answeredNum] = await Promise.all([
           formCollectionContract.formDataURI(),
           formCollectionContract.closed(),
+          formCollectionContract.balanceOf(account),
         ]);
 
         if (formDataUri.slice(0, 10) !== "ceramic://")
@@ -73,7 +76,11 @@ export const useFormData = () => {
             chain: CHAIN_NAME,
           });
 
-          const formData = { ...JSON.parse(formDataStr), closed };
+          const formData = {
+            ...JSON.parse(formDataStr),
+            closed,
+            alreadyAnswered: answeredNum > 0,
+          };
 
           setFetchStatus("completed");
           setNftAddress(nftAddress);

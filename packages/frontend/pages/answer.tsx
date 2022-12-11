@@ -42,6 +42,13 @@ const AnswerPage = () => {
     newAnswerModal.onOpen();
   }, [formData, newAnswerModal]);
 
+  const canShowForm =
+    fetchStatus === "completed" &&
+    formData &&
+    formCollectionAddress &&
+    !formData.closed &&
+    !formData.alreadyAnswered;
+
   return (
     <>
       <Layout>
@@ -78,16 +85,30 @@ const AnswerPage = () => {
               </>
             )}
             {fetchStatus === "failed" && (
-              <Text color="white">
-                Failed :(
-                <br />
-                {fetchErrorMessage}
-              </Text>
+              <Center>
+                <Text color="white">
+                  Failed :(
+                  <br />
+                  {fetchErrorMessage}
+                </Text>
+              </Center>
             )}
+            {fetchStatus === "completed" && formData?.closed && (
+              <Center>
+                <Text color="white">Survey closed</Text>
+              </Center>
+            )}
+            {fetchStatus === "completed" &&
+              !formData?.closed &&
+              formData?.alreadyAnswered && (
+                <Center>
+                  <Text color="white">You cannot answer survey twice</Text>
+                </Center>
+              )}
           </Box>
         </Box>
       </Layout>
-      {formData && formCollectionAddress && (
+      {canShowForm && (
         <NewAnswerDialog
           formCollectionAddress={formCollectionAddress}
           title={formData.title}
