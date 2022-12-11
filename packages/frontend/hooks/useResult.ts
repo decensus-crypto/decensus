@@ -9,9 +9,10 @@ import { useLit } from "./litCeramic/useLit";
 import { useAccount } from "./useAccount";
 import { useContracts } from "./useContracts";
 
-const answersListAtom = atom<{ answers: Answer[] }[] | null>(null);
+const answersListAtom = atom<{ answers: Answer[]; address: string }[] | null>(
+  null
+);
 const isLoadingAnswersListAtom = atom<boolean>(true);
-const isLoadingNftAddressAtom = atom<boolean>(true);
 
 const areAnswersValid = (data: any) => {
   if (typeof data !== "object" || !data) return false;
@@ -112,7 +113,7 @@ export const useResult = () => {
                   key: keyStr,
                 });
                 const data = JSON.parse(str);
-                return data;
+                return { address: row.respondentAddress, data };
               } catch (error: any) {
                 console.error(error);
                 return null;
@@ -124,9 +125,9 @@ export const useResult = () => {
           throw new Error("Invalid answer data");
         }
 
-        const validAnswersList = rawAnswersList.filter((a) =>
-          areAnswersValid(a)
-        );
+        const validAnswersList = rawAnswersList
+          .filter(({ data }) => areAnswersValid(data))
+          .map(({ address, data }) => ({ ...data, address }));
 
         setAnswersList(validAnswersList);
       } catch (error: any) {

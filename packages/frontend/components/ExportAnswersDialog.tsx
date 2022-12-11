@@ -56,7 +56,7 @@ const ExportAnswersDialog = (props: {
   useEffect(() => {
     if (!props.isOpen) return;
     fetchResults(props.useFormCollectionAddress);
-  }, [props.isOpen, fetchResults]);
+  }, [props.isOpen, fetchResults, props.useFormCollectionAddress]);
 
   const questions = formData?.questions;
 
@@ -69,12 +69,15 @@ const ExportAnswersDialog = (props: {
   const csvData = useMemo(() => {
     if (!answersList || !questions) return [];
 
-    let csvData = [["question_id", "question_body", "question_type", "answer"]];
+    let csvData = [
+      ["address", "question_id", "question_body", "question_type", "answer"],
+    ];
     answersList.forEach((answer) => {
       answer.answers.forEach((ans) => {
         const question = questions.find((q) => q.id === ans.question_id);
         if (question) {
           csvData.push([
+            answer.address,
             question.id,
             question.question_body,
             question.question_type,
