@@ -1,7 +1,6 @@
 import { HStack, IconButton } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
-// @ts-expect-error
 import { v4 as uuidv4 } from "uuid";
 
 export default function SelectRating(props: {
