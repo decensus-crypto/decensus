@@ -57,54 +57,66 @@ import SelectRating from "./SelectRating";
 const QuestionForm = (props: {
   idx: number;
   question: Question;
-  onChanged: (question: Question, idx: number) => void;
+  onChanged: (question: Question) => void;
 }) => {
-  const [questionType, setQuestionType] = useState(
-    props.question.question_type
-  );
-  const [questionBody, setQuestionBody] = useState(
-    props.question.question_body
-  );
-  const [questionMaxRating, setQuestionMaxRating] = useState(
-    props.question.question_max_rating
-  );
-  const [options, setOptions] = useState(props.question.options);
-
-  useEffect(() => {
+  const setQuestionBody = (value: string) => {
     (async () => {
-      props.onChanged(
-        {
-          id: props.question.id,
-          question_type: questionType,
-          question_body: questionBody,
-          question_max_rating: questionMaxRating,
-          options: options,
-        },
-        props.idx
-      );
+      props.onChanged({
+        ...props.question,
+        question_body: value,
+      });
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [questionType, questionBody, questionMaxRating, options]);
+  };
+
+  const setQuestionType = (
+    value:
+      | "single_choice"
+      | "single_choice_dropdown"
+      | "multi_choice"
+      | "text"
+      | "date"
+      | "rating"
+  ) => {
+    (async () => {
+      props.onChanged({
+        ...props.question,
+        question_type: value,
+      });
+    })();
+  };
 
   const setOptionText = (val: string, idx: number) => {
-    setOptions((options) => {
-      const records = [...options];
-      records[idx] = { text: val };
-      return records;
-    });
+    (async () => {
+      const options = [...props.question.options];
+      options[idx] = { text: val };
+      props.onChanged({
+        ...props.question,
+        options: options,
+      });
+    })();
   };
+
   const addOption = () => {
-    setOptions((options) => {
-      return [...options, { text: "" }];
-    });
+    (async () => {
+      const options = [...props.question.options, { text: "" }];
+      props.onChanged({
+        ...props.question,
+        options: options,
+      });
+    })();
   };
+
   const removeOption = (idx: number) => {
-    setOptions((options) => {
-      return options.filter((_, iidx) => idx !== iidx);
-    });
+    (async () => {
+      const options = props.question.options.filter((_, iidx) => idx !== iidx);
+      props.onChanged({
+        ...props.question,
+        options: options,
+      });
+    })();
   };
   return (
-    <Flex>
+    <Flex key={`question_form_${props.question.id}`}>
       <Text fontSize="2xl" px={4} w={16} color="white">
         {props.idx + 1}
       </Text>
@@ -115,7 +127,7 @@ const QuestionForm = (props: {
             required
             size="lg"
             placeholder="What's your age range?"
-            value={questionBody}
+            value={props.question.question_body}
             onChange={(evt) => setQuestionBody(evt.target.value)}
           />
         </FormControl>
@@ -126,7 +138,7 @@ const QuestionForm = (props: {
             color="white"
             required
             size="sm"
-            value={questionType}
+            value={props.question.question_type}
             onChange={(evt) =>
               setQuestionType(
                 evt.target.value as
@@ -148,14 +160,17 @@ const QuestionForm = (props: {
           </Select>
         </FormControl>
         {["single_choice", "single_choice_dropdown", "multi_choice"].some(
-          (opt) => opt === questionType
+          (opt) => opt === props.question.question_type
         ) && (
           <FormControl mt={4}>
             <FormLabel color="white">Choices</FormLabel>
             <VStack align="start">
-              {options.flatMap((option, iidx) => {
+              {props.question.options.map((option, iidx) => {
                 return (
-                  <Flex align="center">
+                  <Flex
+                    align="center"
+                    key={`question_form_${props.question.id}_options_${iidx}`}
+                  >
                     <Input
                       flex={1}
                       required
@@ -166,7 +181,9 @@ const QuestionForm = (props: {
                     />
                     <IconButton
                       variant="ghost"
+                      size="sm"
                       ml={2}
+                      color="white"
                       aria-label="Remove"
                       icon={<CloseIcon />}
                       onClick={() => removeOption(iidx)}
@@ -180,7 +197,7 @@ const QuestionForm = (props: {
             </Button>
           </FormControl>
         )}
-        {["rating"].some((opt) => opt === questionType) && (
+        {["rating"].some((opt) => opt === props.question.question_type) && (
           <FormControl mt={4}>
             <FormLabel color="white">Max Rating</FormLabel>
             <Select
@@ -188,9 +205,12 @@ const QuestionForm = (props: {
               color="white"
               required
               size="sm"
-              value={questionMaxRating}
+              value={props.question.question_max_rating}
               onChange={(evt) =>
-                setQuestionMaxRating(Number.parseInt(evt.target.value))
+                props.onChanged({
+                  ...props.question,
+                  question_max_rating: Number.parseInt(evt.target.value),
+                })
               }
             >
               <option value="3">3</option>
@@ -198,7 +218,7 @@ const QuestionForm = (props: {
               <option value="10">10</option>
             </Select>
             <Box mt={2}>
-              <SelectRating ratingMax={questionMaxRating} />
+              <SelectRating ratingMax={props.question.question_max_rating} />
             </Box>
           </FormControl>
         )}
@@ -211,7 +231,6 @@ const QuestionRow = (props: {
   idx: number;
   question: Question;
   isActive: boolean;
-  onQuestionChanged: (question: Question, idx: number) => void;
   onQuestionSelected: (idx: number) => void;
   onDuplicateQuestionClicked: (idx: number) => void;
   onRemoveQuestionClicked: (idx: number) => void;
@@ -347,63 +366,62 @@ const NewFormQuestionsDialog = (props: {
   }, [fetchHolders, isLoadingNftName, loadedNftName, props.contractAddress]);
 
   const onDragEnd = (result: DropResult, provided: ResponderProvided) => {
-    if (!result.destination) return;
+    (async () => {
+      if (!result.destination) return;
 
-    const reorderedQuestions = Array.from(questions);
-    const [removed] = reorderedQuestions.splice(result.source.index, 1);
-    reorderedQuestions.splice(result.destination.index, 0, removed);
-    setQuestions(reorderedQuestions);
+      const reorderedQuestions = [...questions];
+      const [removed] = reorderedQuestions.splice(result.source.index, 1);
+      reorderedQuestions.splice(result.destination.index, 0, removed);
+      setQuestions(reorderedQuestions);
+    })();
   };
 
   const onQuestionChanged = (question: Question, idx: number) => {
-    const records = [...questions];
-    records[idx].question_type = question.question_type;
-    records[idx].question_body = question.question_body;
-    records[idx].question_max_rating = question.question_max_rating;
-    records[idx].options = [...question.options];
-    setQuestions(records);
+    (async () => {
+      setQuestions((questions) => {
+        questions[idx] = question;
+        return [...questions];
+      });
+    })();
   };
 
   const clickDuplicateQuestion = (idx: number) => {
-    const currentQuestion = questions[idx];
-    setQuestions((questions) => {
-      const records = [...questions];
-      records.push({
-        id: uuidv4(),
-        question_type: currentQuestion.question_type,
-        question_body: currentQuestion.question_body,
-        question_max_rating: currentQuestion.question_max_rating,
-        options: currentQuestion.options,
-      });
-      return records;
-    });
+    (async () => {
+      setQuestions([...questions, { ...questions[idx] }]);
+    })();
   };
+
   const clickRemoveQuestion = (idx: number) => {
-    setQuestions((questions) => {
-      return [...questions].filter((_, iidx) => idx !== iidx);
-    });
+    (async () => {
+      setQuestions([...questions].filter((_, iidx) => idx !== iidx));
+    })();
   };
+
   const clickAddQuestion = () => {
-    setQuestions((questions) => {
-      const records = [...questions];
-      records.push({
-        id: uuidv4(),
-        question_type: "single_choice",
-        question_body: "",
-        question_max_rating: 5,
-        options: [],
-      });
-      return records;
-    });
+    (async () => {
+      setQuestions([
+        ...questions,
+        {
+          id: uuidv4(),
+          question_type: "single_choice",
+          question_body: "",
+          question_max_rating: 5,
+          options: [],
+        },
+      ]);
+    })();
   };
+
   const clickPrev = () => {
     if (!prevSlidable) return;
     setActiveQuestionIdx(activeQuestionIdx - 1);
   };
+
   const clickNext = () => {
     if (!nextSlidable) return;
     setActiveQuestionIdx(activeQuestionIdx + 1);
   };
+
   const onClickDeploy = () => {
     if (!(deployStatus === "pending" || deployStatus === "failed")) return;
     if (!isCeramicReady) return;
@@ -510,7 +528,7 @@ const NewFormQuestionsDialog = (props: {
                         >
                           {questions.map((question, idx) => (
                             <Draggable
-                              key={question.id}
+                              key={`question_${question.id}`}
                               draggableId={"q-" + question.id}
                               index={idx}
                             >
@@ -527,7 +545,6 @@ const NewFormQuestionsDialog = (props: {
                                     idx={idx}
                                     question={question}
                                     isActive={idx === activeQuestionIdx}
-                                    onQuestionChanged={onQuestionChanged}
                                     onQuestionSelected={(idx) =>
                                       setActiveQuestionIdx(idx)
                                     }
@@ -611,7 +628,9 @@ const NewFormQuestionsDialog = (props: {
                           <QuestionForm
                             idx={activeQuestionIdx}
                             question={question}
-                            onChanged={onQuestionChanged}
+                            onChanged={(question) =>
+                              onQuestionChanged(question, idx)
+                            }
                           />
                         </Card>
                       );
