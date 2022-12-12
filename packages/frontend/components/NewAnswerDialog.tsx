@@ -59,7 +59,7 @@ const FormInput = (props: {
   };
   return (
     <Card
-      key={`question_${props.index}`}
+      key={`question_form_${props.index}`}
       bg="gray.800"
       w="100%"
       maxW="4xl"
@@ -86,8 +86,12 @@ const FormInput = (props: {
               >
                 <Stack>
                   {props.question.options.map((option, i) => (
-                    <Radio size="lg" key={i} value={option.text}>
-                      <Box color="white">{Object.values(option)[0] || ""}</Box>
+                    <Radio
+                      size="lg"
+                      key={`question_form_${props.index}_option_${i}`}
+                      value={option.text}
+                    >
+                      <Box color="white">{option.text}</Box>
                     </Radio>
                   ))}
                 </Stack>
@@ -105,7 +109,7 @@ const FormInput = (props: {
               >
                 {props.question.options.map((option, i) => (
                   <option
-                    key={`question_${props.index}_option_${i}`}
+                    key={`question_form_${props.index}_option_${i}`}
                     value={option.text}
                   >
                     {option.text}
@@ -117,7 +121,7 @@ const FormInput = (props: {
               <Stack>
                 {props.question.options.map((option, i) => (
                   <Checkbox
-                    key={`question_${props.index}_option_${i}`}
+                    key={`question_form_${props.index}_option_${i}`}
                     isChecked={currentMultiAnswer.includes(option.text)}
                     onChange={(e) => {
                       const checked = e.target.checked;
@@ -137,7 +141,7 @@ const FormInput = (props: {
                     }}
                     size="lg"
                   >
-                    <Box color="white">{Object.values(option)[0] || ""}</Box>
+                    <Box color="white">{option.text}</Box>
                   </Checkbox>
                 ))}
               </Stack>
@@ -251,6 +255,7 @@ const NewAnswerDialog = (props: {
     createAnswerModal.onOpen();
     onSubmit();
   };
+
   const onSubmit = async () => {
     const answerArr = Object.entries(answers).map(([question_id, params]) => ({
       question_id,

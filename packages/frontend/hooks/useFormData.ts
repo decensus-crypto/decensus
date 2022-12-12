@@ -75,7 +75,6 @@ export const useFormData = () => {
             nftAddressToAllowRead: nftAddress,
             chain: CHAIN_NAME,
           });
-
           const formData = {
             ...JSON.parse(formDataStr),
             closed,

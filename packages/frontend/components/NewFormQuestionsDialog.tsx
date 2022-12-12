@@ -42,9 +42,8 @@ import {
   DropResult,
   ResponderProvided,
 } from "react-beautiful-dnd";
-// @ts-expect-error
 import { v4 as uuidv4 } from "uuid";
-import { Question, QUESTIONS } from "../constants/constants";
+import { Question, QUESTIONS, QuestionType } from "../constants/constants";
 import { useCeramic } from "../hooks/litCeramic/useCeramic";
 import { useLit } from "../hooks/litCeramic/useLit";
 import { useDeploy } from "../hooks/useDeploy";
@@ -68,15 +67,7 @@ const QuestionForm = (props: {
     })();
   };
 
-  const setQuestionType = (
-    value:
-      | "single_choice"
-      | "single_choice_dropdown"
-      | "multi_choice"
-      | "text"
-      | "date"
-      | "rating"
-  ) => {
+  const setQuestionType = (value: QuestionType) => {
     (async () => {
       props.onChanged({
         ...props.question,
@@ -88,7 +79,7 @@ const QuestionForm = (props: {
   const setOptionText = (val: string, idx: number) => {
     (async () => {
       const options = [...props.question.options];
-      options[idx] = { text: val };
+      options[idx].text = val;
       props.onChanged({
         ...props.question,
         options: options,
@@ -98,7 +89,10 @@ const QuestionForm = (props: {
 
   const addOption = () => {
     (async () => {
-      const options = [...props.question.options, { text: "" }];
+      const options = [
+        ...props.question.options,
+        { index: props.question.options.length, text: "" },
+      ];
       props.onChanged({
         ...props.question,
         options: options,
@@ -140,15 +134,7 @@ const QuestionForm = (props: {
             size="sm"
             value={props.question.question_type}
             onChange={(evt) =>
-              setQuestionType(
-                evt.target.value as
-                  | "single_choice"
-                  | "single_choice_dropdown"
-                  | "multi_choice"
-                  | "text"
-                  | "date"
-                  | "rating"
-              )
+              setQuestionType(evt.target.value as QuestionType)
             }
           >
             <option value="single_choice">Choice</option>
