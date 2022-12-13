@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from "uuid";
+import { genQuestionId } from "../utils/questionId";
 
 export const FORM_COLLECTION_FACTORY_CONTRACT_ADDRESS =
   "0x9D6Ed668911245785088B1B2dBe560D8137f7015";
@@ -17,7 +17,7 @@ export const SUBGRAPH_URL =
   "https://api.thegraph.com/subgraphs/name/nakaakist/form-collection-mumbai";
 
 const AGE_QUESTION: Question = {
-  id: uuidv4(),
+  id: genQuestionId(),
   question_body: "What's your age range?",
   question_type: "single_choice",
   question_max_rating: 5,
@@ -32,7 +32,7 @@ const AGE_QUESTION: Question = {
 };
 
 const GENDER_QUESTION: Question = {
-  id: uuidv4(),
+  id: genQuestionId(),
   question_body: "What's your gender?",
   question_type: "single_choice",
   question_max_rating: 5,
@@ -48,7 +48,7 @@ const GENDER_QUESTION: Question = {
 };
 
 const COUNTRY_QUESTION: Question = {
-  id: uuidv4(),
+  id: genQuestionId(),
   question_body: "In what country are you based?",
   question_type: "single_choice_dropdown",
   question_max_rating: 5,
@@ -255,7 +255,7 @@ const COUNTRY_QUESTION: Question = {
 };
 
 const ETHNICITY_QUESTION: Question = {
-  id: uuidv4(),
+  id: genQuestionId(),
   question_body: "What's your ethnicity?",
   question_type: "single_choice",
   question_max_rating: 5,
@@ -277,7 +277,7 @@ const ETHNICITY_QUESTION: Question = {
 };
 
 const INDUSTRY_QUESTION: Question = {
-  id: uuidv4(),
+  id: genQuestionId(),
   question_body: "What's your occupation's industry?",
   question_type: "single_choice",
   question_max_rating: 5,
@@ -292,7 +292,7 @@ const INDUSTRY_QUESTION: Question = {
 };
 
 const COMMUNITY_QUESTION: Question = {
-  id: uuidv4(),
+  id: genQuestionId(),
   question_body:
     "What community values are the most important to you in this community?",
   question_type: "multi_choice",
@@ -310,14 +310,14 @@ const COMMUNITY_QUESTION: Question = {
 };
 
 const DOB_QUESTION: Question = {
-  id: uuidv4(),
+  id: genQuestionId(),
   question_body: "Select your date of birth.",
   question_type: "date",
   question_max_rating: 5,
   options: [],
 };
 const RATING_QUESTION: Question = {
-  id: uuidv4(),
+  id: genQuestionId(),
   question_body: "How do you like decensus?",
   question_type: "rating",
   question_max_rating: 5,

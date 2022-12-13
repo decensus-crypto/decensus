@@ -42,13 +42,13 @@ import {
   DropResult,
   ResponderProvided,
 } from "react-beautiful-dnd";
-import { v4 as uuidv4 } from "uuid";
 import { Question, QUESTIONS, QuestionType } from "../constants/constants";
 import { useCeramic } from "../hooks/litCeramic/useCeramic";
 import { useLit } from "../hooks/litCeramic/useLit";
 import { useDeploy } from "../hooks/useDeploy";
 import { useFormList } from "../hooks/useFormList";
 import { useTokenHolders } from "../hooks/useTokenHolders";
+import { genQuestionId } from "../utils/questionId";
 import { fetchNftBaseInfo } from "../utils/zdk";
 import Logo from "./logo";
 import SelectRating from "./SelectRating";
@@ -388,7 +388,7 @@ const NewFormQuestionsDialog = (props: {
       setQuestions([
         ...questions,
         {
-          id: uuidv4(),
+          id: genQuestionId(),
           question_type: "single_choice",
           question_body: "",
           question_max_rating: 5,

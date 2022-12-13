@@ -1,7 +1,7 @@
 import { HStack, IconButton } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
-import { v4 as uuidv4 } from "uuid";
+import { genQuestionId } from "../utils/questionId";
 
 export default function SelectRating(props: {
   rating?: number | null;
@@ -19,7 +19,7 @@ export default function SelectRating(props: {
     <HStack>
       {[...Array(props.ratingMax)].map((_, idx) => (
         <IconButton
-          key={uuidv4()}
+          key={genQuestionId()}
           variant="ghost"
           aria-label="{idx + 1}"
           size="md"
