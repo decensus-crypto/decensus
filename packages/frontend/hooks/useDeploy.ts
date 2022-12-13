@@ -1,7 +1,8 @@
 import { ContractReceipt } from "ethers";
 import { atom, useAtom } from "jotai";
 import { useCallback } from "react";
-import { CHAIN_NAME, FormTemplate } from "../constants/constants";
+import { CHAIN_NAME } from "../constants/constants";
+import { Form } from "../types";
 import { genKeyPair } from "../utils/crypto";
 import { getMerkleTree, getMerkleTreeRootHash } from "../utils/merkleTree";
 import { compressToBase64 } from "../utils/stringCompression";
@@ -33,7 +34,7 @@ export const useDeploy = () => {
       formViewerAddresses,
       nftAddress,
     }: {
-      formParams: FormTemplate;
+      formParams: Form;
       formViewerAddresses: string[];
       nftAddress: string;
     }): Promise<{

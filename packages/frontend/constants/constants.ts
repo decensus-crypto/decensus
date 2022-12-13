@@ -1,3 +1,4 @@
+import { Question } from "../types";
 import { genQuestionId } from "../utils/questionId";
 
 export const FORM_COLLECTION_FACTORY_CONTRACT_ADDRESS =
@@ -324,7 +325,7 @@ const RATING_QUESTION: Question = {
   options: [],
 };
 
-export const QUESTIONS: Question[] = [
+export const PRESET_QUESTIONS: Question[] = [
   AGE_QUESTION,
   GENDER_QUESTION,
   ETHNICITY_QUESTION,
@@ -334,31 +335,3 @@ export const QUESTIONS: Question[] = [
   DOB_QUESTION,
   RATING_QUESTION,
 ];
-
-export type QuestionType =
-  | "single_choice"
-  | "single_choice_dropdown"
-  | "multi_choice"
-  | "text"
-  | "date"
-  | "rating";
-
-export type Option = { index: number; text: string };
-
-export type FormTemplate = {
-  title: string;
-  description: string;
-  questions: Question[];
-};
-export type Question = {
-  id: string;
-  question_body: string;
-  question_type: QuestionType;
-  question_max_rating: number;
-  options: Option[];
-};
-
-export type Answer = {
-  qid: string;
-  val: string | string[];
-};

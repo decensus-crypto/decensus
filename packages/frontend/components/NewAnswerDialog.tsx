@@ -24,14 +24,14 @@ import {
   Stack,
   Text,
   Tooltip,
-  useDisclosure
+  useDisclosure,
 } from "@chakra-ui/react";
 import Carousel from "nuka-carousel/lib/carousel";
 import { useEffect, useMemo, useState } from "react";
-import { Answer, Question, QuestionType } from "../constants/constants";
 import { useCeramic } from "../hooks/litCeramic/useCeramic";
 import { useLit } from "../hooks/litCeramic/useLit";
 import { useAnswerSubmit } from "../hooks/useAnswerSubmit";
+import { Answer, Question, QuestionType } from "../types";
 import Logo from "./logo";
 import SelectRating from "./SelectRating";
 

@@ -42,12 +42,13 @@ import {
   DropResult,
   ResponderProvided,
 } from "react-beautiful-dnd";
-import { Question, QUESTIONS, QuestionType } from "../constants/constants";
+import { PRESET_QUESTIONS } from "../constants/constants";
 import { useCeramic } from "../hooks/litCeramic/useCeramic";
 import { useLit } from "../hooks/litCeramic/useLit";
 import { useDeploy } from "../hooks/useDeploy";
 import { useFormList } from "../hooks/useFormList";
 import { useTokenHolders } from "../hooks/useTokenHolders";
+import { Question, QuestionType } from "../types";
 import { genQuestionId } from "../utils/questionId";
 import { fetchNftBaseInfo } from "../utils/zdk";
 import Logo from "./logo";
@@ -309,7 +310,7 @@ const NewFormQuestionsDialog = (props: {
   const [loadedNftName, setLoadedNftName] = useState(false);
 
   // question IDs to include in form
-  const [questions, setQuestions] = useState<Question[]>([...QUESTIONS]);
+  const [questions, setQuestions] = useState<Question[]>(PRESET_QUESTIONS);
   const isSecondStepValid = questions.length > 0;
   const [activeQuestionIdx, setActiveQuestionIdx] = useState(0);
 

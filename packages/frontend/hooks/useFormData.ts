@@ -1,6 +1,7 @@
 import { atom, useAtom } from "jotai";
 import { useCallback } from "react";
-import { CHAIN_NAME, FormTemplate } from "../constants/constants";
+import { CHAIN_NAME } from "../constants/constants";
+import { Form } from "../types";
 import { decompressFromBase64 } from "../utils/stringCompression";
 import { useCeramic } from "./litCeramic/useCeramic";
 import { useLit } from "./litCeramic/useLit";
@@ -8,7 +9,7 @@ import { useAccount } from "./useAccount";
 import { useContracts } from "./useContracts";
 
 const formDataAtom = atom<
-  (FormTemplate & { closed: boolean; alreadyAnswered: boolean }) | null
+  (Form & { closed: boolean; alreadyAnswered: boolean }) | null
 >(null);
 const nftAddressAtom = atom<string | null>(null);
 const formViewerAddressesAtom = atom<string[] | null>(null);

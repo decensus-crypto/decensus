@@ -1,6 +1,7 @@
 import { atom, useAtom } from "jotai";
 import { useCallback } from "react";
-import { Answer, CHAIN_NAME, SUBGRAPH_URL } from "../constants/constants";
+import { CHAIN_NAME, SUBGRAPH_URL } from "../constants/constants";
+import { Answer } from "../types";
 import { createToast } from "../utils/createToast";
 import { decrypt } from "../utils/crypto";
 import { decompressFromBase64 } from "../utils/stringCompression";

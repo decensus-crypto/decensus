@@ -14,12 +14,12 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useMemo } from "react";
 import { CSVLink } from "react-csv";
-import { Question } from "../constants/constants";
 import { useCeramic } from "../hooks/litCeramic/useCeramic";
 import { useLit } from "../hooks/litCeramic/useLit";
 import { useAccount } from "../hooks/useAccount";
 import { useFormData } from "../hooks/useFormData";
 import { useResult } from "../hooks/useResult";
+import { Question } from "../types";
 
 const convertAnswerVal = (val: string | string[], question: Question) => {
   if (
