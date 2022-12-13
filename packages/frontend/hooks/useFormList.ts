@@ -73,11 +73,11 @@ export const useFormList = () => {
         })) as Form[];
 
         const overWrittenFormMap: Record<string, Form> = Object.fromEntries(
-          _formList.map((f) => [f.contractAddress, f]),
+          _formList.map((f) => [f.contractAddress.toLowerCase(), f]),
         );
         if (params.overrides) {
           params.overrides.forEach((o) => {
-            overWrittenFormMap[o.contractAddress] = o;
+            overWrittenFormMap[o.contractAddress.toLowerCase()] = o;
           });
         }
 
