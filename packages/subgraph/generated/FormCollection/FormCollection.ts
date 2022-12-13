@@ -7,7 +7,7 @@ import {
   Entity,
   Bytes,
   Address,
-  BigInt
+  BigInt,
 } from "@graphprotocol/graph-ts";
 
 export class AnswerSubmitted extends ethereum.Event {
@@ -174,21 +174,13 @@ export class FormCollection extends ethereum.SmartContract {
   }
 
   answerDecryptionKeyURI(): string {
-    let result = super.call(
-      "answerDecryptionKeyURI",
-      "answerDecryptionKeyURI():(string)",
-      []
-    );
+    let result = super.call("answerDecryptionKeyURI", "answerDecryptionKeyURI():(string)", []);
 
     return result[0].toString();
   }
 
   try_answerDecryptionKeyURI(): ethereum.CallResult<string> {
-    let result = super.tryCall(
-      "answerDecryptionKeyURI",
-      "answerDecryptionKeyURI():(string)",
-      []
-    );
+    let result = super.tryCall("answerDecryptionKeyURI", "answerDecryptionKeyURI():(string)", []);
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -197,21 +189,13 @@ export class FormCollection extends ethereum.SmartContract {
   }
 
   answerEncryptionKey(): string {
-    let result = super.call(
-      "answerEncryptionKey",
-      "answerEncryptionKey():(string)",
-      []
-    );
+    let result = super.call("answerEncryptionKey", "answerEncryptionKey():(string)", []);
 
     return result[0].toString();
   }
 
   try_answerEncryptionKey(): ethereum.CallResult<string> {
-    let result = super.tryCall(
-      "answerEncryptionKey",
-      "answerEncryptionKey():(string)",
-      []
-    );
+    let result = super.tryCall("answerEncryptionKey", "answerEncryptionKey():(string)", []);
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -221,7 +205,7 @@ export class FormCollection extends ethereum.SmartContract {
 
   balanceOf(owner: Address): BigInt {
     let result = super.call("balanceOf", "balanceOf(address):(uint256)", [
-      ethereum.Value.fromAddress(owner)
+      ethereum.Value.fromAddress(owner),
     ]);
 
     return result[0].toBigInt();
@@ -229,7 +213,7 @@ export class FormCollection extends ethereum.SmartContract {
 
   try_balanceOf(owner: Address): ethereum.CallResult<BigInt> {
     let result = super.tryCall("balanceOf", "balanceOf(address):(uint256)", [
-      ethereum.Value.fromAddress(owner)
+      ethereum.Value.fromAddress(owner),
     ]);
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -284,21 +268,17 @@ export class FormCollection extends ethereum.SmartContract {
   }
 
   encryptedAnswers(param0: Address): string {
-    let result = super.call(
-      "encryptedAnswers",
-      "encryptedAnswers(address):(string)",
-      [ethereum.Value.fromAddress(param0)]
-    );
+    let result = super.call("encryptedAnswers", "encryptedAnswers(address):(string)", [
+      ethereum.Value.fromAddress(param0),
+    ]);
 
     return result[0].toString();
   }
 
   try_encryptedAnswers(param0: Address): ethereum.CallResult<string> {
-    let result = super.tryCall(
-      "encryptedAnswers",
-      "encryptedAnswers(address):(string)",
-      [ethereum.Value.fromAddress(param0)]
-    );
+    let result = super.tryCall("encryptedAnswers", "encryptedAnswers(address):(string)", [
+      ethereum.Value.fromAddress(param0),
+    ]);
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -323,18 +303,16 @@ export class FormCollection extends ethereum.SmartContract {
 
   getApproved(tokenId: BigInt): Address {
     let result = super.call("getApproved", "getApproved(uint256):(address)", [
-      ethereum.Value.fromUnsignedBigInt(tokenId)
+      ethereum.Value.fromUnsignedBigInt(tokenId),
     ]);
 
     return result[0].toAddress();
   }
 
   try_getApproved(tokenId: BigInt): ethereum.CallResult<Address> {
-    let result = super.tryCall(
-      "getApproved",
-      "getApproved(uint256):(address)",
-      [ethereum.Value.fromUnsignedBigInt(tokenId)]
-    );
+    let result = super.tryCall("getApproved", "getApproved(uint256):(address)", [
+      ethereum.Value.fromUnsignedBigInt(tokenId),
+    ]);
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -343,24 +321,19 @@ export class FormCollection extends ethereum.SmartContract {
   }
 
   isApprovedForAll(owner: Address, operator: Address): boolean {
-    let result = super.call(
-      "isApprovedForAll",
-      "isApprovedForAll(address,address):(bool)",
-      [ethereum.Value.fromAddress(owner), ethereum.Value.fromAddress(operator)]
-    );
+    let result = super.call("isApprovedForAll", "isApprovedForAll(address,address):(bool)", [
+      ethereum.Value.fromAddress(owner),
+      ethereum.Value.fromAddress(operator),
+    ]);
 
     return result[0].toBoolean();
   }
 
-  try_isApprovedForAll(
-    owner: Address,
-    operator: Address
-  ): ethereum.CallResult<boolean> {
-    let result = super.tryCall(
-      "isApprovedForAll",
-      "isApprovedForAll(address,address):(bool)",
-      [ethereum.Value.fromAddress(owner), ethereum.Value.fromAddress(operator)]
-    );
+  try_isApprovedForAll(owner: Address, operator: Address): ethereum.CallResult<boolean> {
+    let result = super.tryCall("isApprovedForAll", "isApprovedForAll(address,address):(bool)", [
+      ethereum.Value.fromAddress(owner),
+      ethereum.Value.fromAddress(operator),
+    ]);
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -399,21 +372,13 @@ export class FormCollection extends ethereum.SmartContract {
   }
 
   numberOfAnswers(): BigInt {
-    let result = super.call(
-      "numberOfAnswers",
-      "numberOfAnswers():(uint256)",
-      []
-    );
+    let result = super.call("numberOfAnswers", "numberOfAnswers():(uint256)", []);
 
     return result[0].toBigInt();
   }
 
   try_numberOfAnswers(): ethereum.CallResult<BigInt> {
-    let result = super.tryCall(
-      "numberOfAnswers",
-      "numberOfAnswers():(uint256)",
-      []
-    );
+    let result = super.tryCall("numberOfAnswers", "numberOfAnswers():(uint256)", []);
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -438,7 +403,7 @@ export class FormCollection extends ethereum.SmartContract {
 
   ownerOf(tokenId: BigInt): Address {
     let result = super.call("ownerOf", "ownerOf(uint256):(address)", [
-      ethereum.Value.fromUnsignedBigInt(tokenId)
+      ethereum.Value.fromUnsignedBigInt(tokenId),
     ]);
 
     return result[0].toAddress();
@@ -446,7 +411,7 @@ export class FormCollection extends ethereum.SmartContract {
 
   try_ownerOf(tokenId: BigInt): ethereum.CallResult<Address> {
     let result = super.tryCall("ownerOf", "ownerOf(uint256):(address)", [
-      ethereum.Value.fromUnsignedBigInt(tokenId)
+      ethereum.Value.fromUnsignedBigInt(tokenId),
     ]);
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -456,21 +421,17 @@ export class FormCollection extends ethereum.SmartContract {
   }
 
   supportsInterface(interfaceId: Bytes): boolean {
-    let result = super.call(
-      "supportsInterface",
-      "supportsInterface(bytes4):(bool)",
-      [ethereum.Value.fromFixedBytes(interfaceId)]
-    );
+    let result = super.call("supportsInterface", "supportsInterface(bytes4):(bool)", [
+      ethereum.Value.fromFixedBytes(interfaceId),
+    ]);
 
     return result[0].toBoolean();
   }
 
   try_supportsInterface(interfaceId: Bytes): ethereum.CallResult<boolean> {
-    let result = super.tryCall(
-      "supportsInterface",
-      "supportsInterface(bytes4):(bool)",
-      [ethereum.Value.fromFixedBytes(interfaceId)]
-    );
+    let result = super.tryCall("supportsInterface", "supportsInterface(bytes4):(bool)", [
+      ethereum.Value.fromFixedBytes(interfaceId),
+    ]);
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -495,7 +456,7 @@ export class FormCollection extends ethereum.SmartContract {
 
   tokenURI(tokenId: BigInt): string {
     let result = super.call("tokenURI", "tokenURI(uint256):(string)", [
-      ethereum.Value.fromUnsignedBigInt(tokenId)
+      ethereum.Value.fromUnsignedBigInt(tokenId),
     ]);
 
     return result[0].toString();
@@ -503,7 +464,7 @@ export class FormCollection extends ethereum.SmartContract {
 
   try_tokenURI(tokenId: BigInt): ethereum.CallResult<string> {
     let result = super.tryCall("tokenURI", "tokenURI(uint256):(string)", [
-      ethereum.Value.fromUnsignedBigInt(tokenId)
+      ethereum.Value.fromUnsignedBigInt(tokenId),
     ]);
     if (result.reverted) {
       return new ethereum.CallResult();

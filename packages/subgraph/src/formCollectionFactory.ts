@@ -1,9 +1,7 @@
 import { FormCollectionCreated } from "../generated/FormCollectionFactory/FormCollectionFactory";
 import { FormCollection } from "../generated/schema";
 
-export function handleFormCollectionCreated(
-  event: FormCollectionCreated
-): void {
+export function handleFormCollectionCreated(event: FormCollectionCreated): void {
   let collection = new FormCollection(event.params.newFormCollection);
 
   collection.contractAddress = event.params.newFormCollection;

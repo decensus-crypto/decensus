@@ -41,10 +41,7 @@ export const useAccount = () => {
     return threeId.getDidProvider();
   }, [account, provider]);
 
-  const isWrongChain = useMemo(
-    () => !!account && chainId !== CHAIN_ID,
-    [account, chainId]
-  );
+  const isWrongChain = useMemo(() => !!account && chainId !== CHAIN_ID, [account, chainId]);
 
   const disconnectWallet = useCallback(async () => {
     try {

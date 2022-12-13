@@ -46,10 +46,7 @@ const IncorrectChainDialog = (props: {
         <ModalCloseButton />
         <ModalBody>
           <Text>Please switch to</Text>
-          <Text>
-            {CHAIN_NAME.slice(0, 1).toUpperCase() +
-              CHAIN_NAME.slice(1).toLowerCase()}
-          </Text>
+          <Text>{CHAIN_NAME.slice(0, 1).toUpperCase() + CHAIN_NAME.slice(1).toLowerCase()}</Text>
           <Text> in your wallet app and reload the page. </Text>
         </ModalBody>
         <ModalFooter></ModalFooter>
@@ -59,13 +56,7 @@ const IncorrectChainDialog = (props: {
 };
 
 const Layout = (props: { children: ReactNode }) => {
-  const {
-    account,
-    isLoadingAccount,
-    isWrongChain,
-    connectWallet,
-    disconnectWallet,
-  } = useAccount();
+  const { account, isLoadingAccount, isWrongChain, connectWallet, disconnectWallet } = useAccount();
   const wrongNetworkModal = useDisclosure();
 
   useEffect(() => {

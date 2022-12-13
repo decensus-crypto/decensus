@@ -4,8 +4,7 @@ import { genQuestionId } from "../utils/questionId";
 export const FORM_COLLECTION_FACTORY_CONTRACT_ADDRESS =
   "0x9D6Ed668911245785088B1B2dBe560D8137f7015";
 
-export const TEST_NFT_CONTRACT_ADDRESS =
-  "0xe5b4d6b5f37cae9dc4c7384cd97038cd0573d7d2"; // Strxngers
+export const TEST_NFT_CONTRACT_ADDRESS = "0xe5b4d6b5f37cae9dc4c7384cd97038cd0573d7d2"; // Strxngers
 
 export const CHAIN_NAME = "mumbai";
 
@@ -294,8 +293,7 @@ const INDUSTRY_QUESTION: Question = {
 
 const COMMUNITY_QUESTION: Question = {
   id: genQuestionId(),
-  question_body:
-    "What community values are the most important to you in this community?",
+  question_body: "What community values are the most important to you in this community?",
   question_type: "multi_choice",
   question_max_rating: 5,
   options: [

@@ -3,11 +3,7 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 import { MerkleTree } from "merkletreejs";
 import { FormCollection, FormCollectionFactory } from "../typechain-types";
-import {
-  getMerkleTree,
-  getMerkleTreeRootHash,
-  getProofForAddress,
-} from "./utils/cryptography";
+import { getMerkleTree, getMerkleTreeRootHash, getProofForAddress } from "./utils/cryptography";
 
 const deployFactory = async () => {
   const Contract = await ethers.getContractFactory("FormCollectionFactory");
@@ -48,13 +44,11 @@ describe("form collection", function () {
         merkleRoot,
         formDataURI,
         answerEncryptionKey,
-        answerDecryptionKeyURI
+        answerDecryptionKeyURI,
       )
       .then((tx) => tx.wait());
 
-    const createdEvent = res.events?.find(
-      (e) => e.event === "FormCollectionCreated"
-    );
+    const createdEvent = res.events?.find((e) => e.event === "FormCollectionCreated");
 
     const formAddress = createdEvent?.args ? createdEvent.args[0] : "";
 
@@ -64,12 +58,8 @@ describe("form collection", function () {
   it("Should have correct form metadata", async () => {
     expect(await formContract.description()).to.eql(description);
     expect(await formContract.formDataURI()).to.eql(formDataURI);
-    expect(await formContract.answerEncryptionKey()).to.eql(
-      answerEncryptionKey
-    );
-    expect(await formContract.answerDecryptionKeyURI()).to.eql(
-      answerDecryptionKeyURI
-    );
+    expect(await formContract.answerEncryptionKey()).to.eql(answerEncryptionKey);
+    expect(await formContract.answerDecryptionKeyURI()).to.eql(answerDecryptionKeyURI);
   });
 
   it("Should succeed in submitting answer", async () => {
@@ -78,9 +68,7 @@ describe("form collection", function () {
       .submitAnswers(proof, encryptedAnswer)
       .then((tx) => tx.wait());
 
-    const submittedEvent = res2.events?.find(
-      (e) => e.event === "AnswerSubmitted"
-    );
+    const submittedEvent = res2.events?.find((e) => e.event === "AnswerSubmitted");
     const submittedArgs = submittedEvent?.args ? submittedEvent.args : [];
 
     expect(submittedArgs[0]).to.eql(randomPerson.address);
@@ -90,7 +78,7 @@ describe("form collection", function () {
 
   it("Should reject answers from non-whitelisted wallet", async () => {
     await expect(
-      formContract.connect(owner).submitAnswers(proof, encryptedAnswer)
+      formContract.connect(owner).submitAnswers(proof, encryptedAnswer),
     ).to.rejectedWith();
   });
 
@@ -108,7 +96,7 @@ describe("form collection", function () {
 
     await expect(closedEvent).to.not.be.undefined;
     await expect(
-      formContract.connect(randomPerson).submitAnswers(proof, encryptedAnswer)
+      formContract.connect(randomPerson).submitAnswers(proof, encryptedAnswer),
     ).to.rejectedWith("Survey closed");
   });
 
@@ -119,9 +107,7 @@ describe("form collection", function () {
       .then((tx) => tx.wait());
 
     await expect(
-      formContract
-        .connect(randomPerson)
-        .transferFrom(randomPerson.address, owner.address, 0)
+      formContract.connect(randomPerson).transferFrom(randomPerson.address, owner.address, 0),
     ).to.rejectedWith("ERC721: token transfer disabled");
   });
 
@@ -160,7 +146,7 @@ describe("form collection", function () {
     });
     expect(imagePrefix).to.eql("data:image/svg+xml;base64");
     expect(decodedImage).to.eql(
-      `<svg viewBox="0 0 180 180" style="font-family:monospace" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%"/><path d="M20 0v180M0 20h180" style="stroke:gray"/><text x="23" y="15" style="font-size:6px" fill="#fff">${name}</text><text text-anchor="middle" x="50%" y="40%" fill="#fff" style="font-size:10px">Answer #0</text><text text-anchor="middle" x="50%" y="60%" fill="#fff" style="font-size:16px"><tspan fill="#FC8CC9">de</tspan>census</text></svg>`
+      `<svg viewBox="0 0 180 180" style="font-family:monospace" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%"/><path d="M20 0v180M0 20h180" style="stroke:gray"/><text x="23" y="15" style="font-size:6px" fill="#fff">${name}</text><text text-anchor="middle" x="50%" y="40%" fill="#fff" style="font-size:10px">Answer #0</text><text text-anchor="middle" x="50%" y="60%" fill="#fff" style="font-size:16px"><tspan fill="#FC8CC9">de</tspan>census</text></svg>`,
     );
   });
 });

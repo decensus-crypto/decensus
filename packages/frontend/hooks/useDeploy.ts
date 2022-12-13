@@ -12,9 +12,9 @@ import { useLit } from "./litCeramic/useLit";
 import { useAccount } from "./useAccount";
 import { useContracts } from "./useContracts";
 
-const deployStatusAtom = atom<
-  "pending" | "encrypting" | "uploading" | "completed" | "failed"
->("pending");
+const deployStatusAtom = atom<"pending" | "encrypting" | "uploading" | "completed" | "failed">(
+  "pending",
+);
 const deployErrorMessageAtom = atom<string | null>(null);
 
 export const useDeploy = () => {
@@ -24,9 +24,7 @@ export const useDeploy = () => {
   const { getFormCollectionFactoryContract } = useContracts();
 
   const [deployStatus, setDeployStatus] = useAtom(deployStatusAtom);
-  const [deployErrorMessage, setDeployErrorMessage] = useAtom(
-    deployErrorMessageAtom
-  );
+  const [deployErrorMessage, setDeployErrorMessage] = useAtom(deployErrorMessageAtom);
 
   const deploy = useCallback(
     async ({
@@ -56,8 +54,7 @@ export const useDeploy = () => {
         console.log(nftAddress);
 
         setDeployStatus("encrypting");
-        const formCollectionFactoryContract =
-          getFormCollectionFactoryContract();
+        const formCollectionFactoryContract = getFormCollectionFactoryContract();
 
         if (
           !isCeramicReady ||
@@ -107,8 +104,8 @@ export const useDeploy = () => {
                 encryptedFormData: encryptedFormData,
                 addressesToAllowRead: formViewerAddresses,
                 nftAddress,
-              })
-            )
+              }),
+            ),
           );
           formDataUri = formDataStreamId.toUrl();
 
@@ -118,8 +115,8 @@ export const useDeploy = () => {
                 encryptedKey,
                 addressesToAllowRead: resultViewerAddresses,
                 nftAddress,
-              })
-            )
+              }),
+            ),
           );
           answerDecryptionKeyUri = keyStreamId.toUrl();
         } catch (error) {
@@ -139,16 +136,12 @@ export const useDeploy = () => {
             answerDecryptionKeyUri,
             {
               gasLimit: 8000000,
-            }
+            },
           );
 
           const res: ContractReceipt = await tx.wait();
-          const createdEvent = res.events?.find(
-            (e) => e.event === "FormCollectionCreated"
-          );
-          formCollectionAddress = createdEvent?.args
-            ? createdEvent.args[0]
-            : "";
+          const createdEvent = res.events?.find((e) => e.event === "FormCollectionCreated");
+          formCollectionAddress = createdEvent?.args ? createdEvent.args[0] : "";
         } catch (error) {
           console.error(error);
           throw new Error("Error occurred during transaction");
@@ -179,7 +172,7 @@ export const useDeploy = () => {
       isLitClientReady,
       setDeployErrorMessage,
       setDeployStatus,
-    ]
+    ],
   );
 
   return {

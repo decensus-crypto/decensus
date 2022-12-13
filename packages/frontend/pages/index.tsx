@@ -27,12 +27,7 @@ const Home = () => {
           </GridItem>
           <GridItem colSpan={{ base: 12, md: 6 }}>
             <Center mt={16} w="100%" h="100%" minH={40} position="relative">
-              <Image
-                style={{ objectFit: "contain" }}
-                src="/lp.jpg"
-                alt="LP"
-                fill
-              />
+              <Image style={{ objectFit: "contain" }} src="/lp.jpg" alt="LP" fill />
             </Center>
           </GridItem>
         </Grid>

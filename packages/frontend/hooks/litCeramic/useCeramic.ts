@@ -51,7 +51,7 @@ export const useCeramic = () => {
 
       return doc.id;
     },
-    [ceramic]
+    [ceramic],
   );
 
   const loadDocument = useCallback(
@@ -62,7 +62,7 @@ export const useCeramic = () => {
         await TileDocument.load(ceramic, id)
       ).content) as string;
     },
-    [ceramic]
+    [ceramic],
   );
 
   return {

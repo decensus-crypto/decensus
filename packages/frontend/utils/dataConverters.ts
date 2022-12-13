@@ -11,7 +11,7 @@ export const blobToBase64 = async (blob: Blob): Promise<string> => {
     reader.onloadend = () =>
       resolve(
         // @ts-ignore
-        reader.result.replace("data:application/octet-stream;base64,", "")
+        reader.result.replace("data:application/octet-stream;base64,", ""),
       );
     reader.readAsDataURL(blob);
   });

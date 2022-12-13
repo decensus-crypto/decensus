@@ -16,10 +16,7 @@ const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
 export const genKeyPair = async () => {
-  const keyPair = await window.crypto.subtle.generateKey(ALGORITHM, true, [
-    "encrypt",
-    "decrypt",
-  ]);
+  const keyPair = await window.crypto.subtle.generateKey(ALGORITHM, true, ["encrypt", "decrypt"]);
 
   const [publicKey, privateKey] = await Promise.all([
     publicKeyToStr(keyPair.publicKey),
@@ -38,11 +35,7 @@ export const encrypt = async ({ text, key }: { text: string; key: string }) => {
 
   const _encrypt = async (chunk: Uint8Array) => {
     const _key = await strToPublicKey(key);
-    const encrypted = await window.crypto.subtle.encrypt(
-      ALGORITHM,
-      _key,
-      chunk
-    );
+    const encrypted = await window.crypto.subtle.encrypt(ALGORITHM, _key, chunk);
 
     return btoa(ab2str(encrypted));
   };
@@ -51,23 +44,17 @@ export const encrypt = async ({ text, key }: { text: string; key: string }) => {
     [...Array(numChunks)].map((_, i) => {
       const chunk = encoded.slice(
         i * ENCRYPTION_TEXT_CHUNK_SIZE,
-        (i + 1) * ENCRYPTION_TEXT_CHUNK_SIZE
+        (i + 1) * ENCRYPTION_TEXT_CHUNK_SIZE,
       );
 
       return _encrypt(chunk);
-    })
+    }),
   );
 
   return encryptedChunks.join(".");
 };
 
-export const decrypt = async ({
-  encrypted,
-  key,
-}: {
-  encrypted: string;
-  key: string;
-}) => {
+export const decrypt = async ({ encrypted, key }: { encrypted: string; key: string }) => {
   const _key = await strToPrivateKey(key);
 
   const chunks = encrypted.split(".").map((a) => str2ab(atob(a)));
@@ -77,10 +64,7 @@ export const decrypt = async ({
   };
 
   const decryptedChunks = await Promise.all(chunks.map(_decrypt));
-  const totalLength = decryptedChunks.reduce(
-    (acc, chunk) => acc + chunk.byteLength,
-    0
-  );
+  const totalLength = decryptedChunks.reduce((acc, chunk) => acc + chunk.byteLength, 0);
   const decrypted = new Uint8Array(totalLength);
   let offset = 0;
   decryptedChunks.forEach((chunk) => {
@@ -99,13 +83,7 @@ const publicKeyToStr = async (key: CryptoKey) => {
 const strToPublicKey = async (str: string) => {
   const binaryDer = str2ab(str);
 
-  return await window.crypto.subtle.importKey(
-    "spki",
-    binaryDer,
-    ALGORITHM,
-    true,
-    ["encrypt"]
-  );
+  return await window.crypto.subtle.importKey("spki", binaryDer, ALGORITHM, true, ["encrypt"]);
 };
 
 const privateKeyToStr = async (key: CryptoKey) => {
@@ -116,11 +94,5 @@ const privateKeyToStr = async (key: CryptoKey) => {
 const strToPrivateKey = async (str: string) => {
   const binaryDer = str2ab(str);
 
-  return await window.crypto.subtle.importKey(
-    "pkcs8",
-    binaryDer,
-    ALGORITHM,
-    true,
-    ["decrypt"]
-  );
+  return await window.crypto.subtle.importKey("pkcs8", binaryDer, ALGORITHM, true, ["decrypt"]);
 };

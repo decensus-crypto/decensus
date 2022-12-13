@@ -7,7 +7,7 @@ import {
   Entity,
   Bytes,
   Address,
-  BigInt
+  BigInt,
 } from "@graphprotocol/graph-ts";
 
 export class FormCollectionCreated extends ethereum.Event {
@@ -64,21 +64,13 @@ export class FormCollectionFactory extends ethereum.SmartContract {
   }
 
   baseFormCollection(): Address {
-    let result = super.call(
-      "baseFormCollection",
-      "baseFormCollection():(address)",
-      []
-    );
+    let result = super.call("baseFormCollection", "baseFormCollection():(address)", []);
 
     return result[0].toAddress();
   }
 
   try_baseFormCollection(): ethereum.CallResult<Address> {
-    let result = super.tryCall(
-      "baseFormCollection",
-      "baseFormCollection():(address)",
-      []
-    );
+    let result = super.tryCall("baseFormCollection", "baseFormCollection():(address)", []);
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -87,30 +79,19 @@ export class FormCollectionFactory extends ethereum.SmartContract {
   }
 
   formOwners(param0: Address, param1: BigInt): Address {
-    let result = super.call(
-      "formOwners",
-      "formOwners(address,uint256):(address)",
-      [
-        ethereum.Value.fromAddress(param0),
-        ethereum.Value.fromUnsignedBigInt(param1)
-      ]
-    );
+    let result = super.call("formOwners", "formOwners(address,uint256):(address)", [
+      ethereum.Value.fromAddress(param0),
+      ethereum.Value.fromUnsignedBigInt(param1),
+    ]);
 
     return result[0].toAddress();
   }
 
-  try_formOwners(
-    param0: Address,
-    param1: BigInt
-  ): ethereum.CallResult<Address> {
-    let result = super.tryCall(
-      "formOwners",
-      "formOwners(address,uint256):(address)",
-      [
-        ethereum.Value.fromAddress(param0),
-        ethereum.Value.fromUnsignedBigInt(param1)
-      ]
-    );
+  try_formOwners(param0: Address, param1: BigInt): ethereum.CallResult<Address> {
+    let result = super.tryCall("formOwners", "formOwners(address,uint256):(address)", [
+      ethereum.Value.fromAddress(param0),
+      ethereum.Value.fromUnsignedBigInt(param1),
+    ]);
     if (result.reverted) {
       return new ethereum.CallResult();
     }

@@ -18,9 +18,7 @@ const isLoadingTokenHoldersState = atom<boolean>(false);
 
 export const useTokenHolders = () => {
   const [tokenHolders, setTokenHolders] = useAtom(tokenHoldersState);
-  const [isLoadingTokenHolders, setIsLoadingTokenHolders] = useAtom(
-    isLoadingTokenHoldersState
-  );
+  const [isLoadingTokenHolders, setIsLoadingTokenHolders] = useAtom(isLoadingTokenHoldersState);
 
   const fetchHolders = useCallback(
     async (token_address: string) => {
@@ -52,7 +50,7 @@ export const useTokenHolders = () => {
         setIsLoadingTokenHolders(false);
       }
     },
-    [setIsLoadingTokenHolders, setTokenHolders]
+    [setIsLoadingTokenHolders, setTokenHolders],
   );
 
   return { fetchHolders, tokenHolders, isLoadingTokenHolders };

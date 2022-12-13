@@ -21,7 +21,7 @@ export const useContracts = () => {
       const contract = new ethers.Contract(
         FORM_COLLECTION_FACTORY_CONTRACT_ADDRESS,
         FORM_COLLECTION_FACTORY_ABI,
-        signer
+        signer,
       );
 
       return contract;
@@ -43,11 +43,7 @@ export const useContracts = () => {
         const signer = provider.getSigner(account);
         if (!signer) return null;
 
-        const contract = new ethers.Contract(
-          address,
-          FORM_COLLECTION_ABI,
-          signer
-        );
+        const contract = new ethers.Contract(address, FORM_COLLECTION_ABI, signer);
 
         return contract;
       } catch (error) {
@@ -59,7 +55,7 @@ export const useContracts = () => {
         return null;
       }
     },
-    [account, provider]
+    [account, provider],
   );
 
   return { getFormCollectionFactoryContract, getFormCollectionContract };

@@ -73,7 +73,7 @@ export const useFormList = () => {
         })) as Form[];
 
         const overWrittenFormMap: Record<string, Form> = Object.fromEntries(
-          _formList.map((f) => [f.contractAddress, f])
+          _formList.map((f) => [f.contractAddress, f]),
         );
         if (params.overrides) {
           params.overrides.forEach((o) => {
@@ -82,15 +82,11 @@ export const useFormList = () => {
         }
 
         console.log(
-          Object.values(overWrittenFormMap).sort(
-            (f1, f2) => f2.createdAt - f1.createdAt
-          )
+          Object.values(overWrittenFormMap).sort((f1, f2) => f2.createdAt - f1.createdAt),
         );
 
         setFormList(
-          Object.values(overWrittenFormMap).sort(
-            (f1, f2) => f2.createdAt - f1.createdAt
-          )
+          Object.values(overWrittenFormMap).sort((f1, f2) => f2.createdAt - f1.createdAt),
         );
       } catch {
         setFormList([]);
@@ -98,7 +94,7 @@ export const useFormList = () => {
         setIsLoading(false);
       }
     },
-    [account, setFormList, setIsLoading]
+    [account, setFormList, setIsLoading],
   );
 
   return {

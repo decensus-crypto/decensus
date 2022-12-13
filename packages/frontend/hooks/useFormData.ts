@@ -8,14 +8,12 @@ import { useLit } from "./litCeramic/useLit";
 import { useAccount } from "./useAccount";
 import { useContracts } from "./useContracts";
 
-const formDataAtom = atom<
-  (Form & { closed: boolean; alreadyAnswered: boolean }) | null
->(null);
+const formDataAtom = atom<(Form & { closed: boolean; alreadyAnswered: boolean }) | null>(null);
 const nftAddressAtom = atom<string | null>(null);
 const formViewerAddressesAtom = atom<string[] | null>(null);
-const fetchStatusAtom = atom<
-  "pending" | "retrieving" | "decrypting" | "completed" | "failed"
->("pending");
+const fetchStatusAtom = atom<"pending" | "retrieving" | "decrypting" | "completed" | "failed">(
+  "pending",
+);
 const fetchErrorMessageAtom = atom<string | null>(null);
 
 export const useFormData = () => {
@@ -26,13 +24,9 @@ export const useFormData = () => {
 
   const [formData, setFormData] = useAtom(formDataAtom);
   const [nftAddress, setNftAddress] = useAtom(nftAddressAtom);
-  const [formViewerAddresses, setFormViewerAddresses] = useAtom(
-    formViewerAddressesAtom
-  );
+  const [formViewerAddresses, setFormViewerAddresses] = useAtom(formViewerAddressesAtom);
   const [fetchStatus, setFetchStatus] = useAtom(fetchStatusAtom);
-  const [fetchErrorMessage, setFetchErrorMessage] = useAtom(
-    fetchErrorMessageAtom
-  );
+  const [fetchErrorMessage, setFetchErrorMessage] = useAtom(fetchErrorMessageAtom);
 
   const fetchFormData = useCallback(
     async (formCollectionAddress: string) => {
@@ -43,9 +37,7 @@ export const useFormData = () => {
       if (!account) return;
       if (!(fetchStatus === "pending" || fetchStatus === "failed")) return;
 
-      const formCollectionContract = getFormCollectionContract(
-        formCollectionAddress
-      );
+      const formCollectionContract = getFormCollectionContract(formCollectionAddress);
       if (!formCollectionContract) return;
 
       try {
@@ -58,17 +50,16 @@ export const useFormData = () => {
         ]);
 
         if (formDataUri.slice(0, 10) !== "ceramic://")
-          throw new Error(
-            "Form data storage other than Ceramic is not supported"
-          );
+          throw new Error("Form data storage other than Ceramic is not supported");
 
         const formDataStreamId = formDataUri.split("//").slice(-1)[0];
 
         const formDataInCeramic = await loadDocument(formDataStreamId);
         try {
           setFetchStatus("decrypting");
-          const { encryptedFormData, addressesToAllowRead, nftAddress } =
-            JSON.parse(decompressFromBase64(formDataInCeramic));
+          const { encryptedFormData, addressesToAllowRead, nftAddress } = JSON.parse(
+            decompressFromBase64(formDataInCeramic),
+          );
 
           const formDataStr = await decryptWithLit({
             encryptedZipBase64: encryptedFormData.encryptedZipBase64,
@@ -110,7 +101,7 @@ export const useFormData = () => {
       setFormData,
       setFormViewerAddresses,
       setNftAddress,
-    ]
+    ],
   );
 
   return {

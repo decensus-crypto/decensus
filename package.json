@@ -6,7 +6,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "format": "prettier --config .prettierrc.json 'packages/**/*' --write"
+    "format": "prettier --config .prettierrc.json '**/*.{js,ts,tsx,jsx,json}' --write"
   },
   "workspaces": [
     "packages/*"

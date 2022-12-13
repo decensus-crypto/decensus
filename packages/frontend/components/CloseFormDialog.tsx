@@ -13,11 +13,7 @@ import { useCallback } from "react";
 import { useCloseSurvey } from "../hooks/useCloseSurvey";
 import { Form, useFormList } from "../hooks/useFormList";
 
-const CloseFormDialog = (props: {
-  onClose: () => void;
-  isOpen: boolean;
-  formData: Form;
-}) => {
+const CloseFormDialog = (props: { onClose: () => void; isOpen: boolean; formData: Form }) => {
   const { isClosing, close } = useCloseSurvey();
   const { fetchFormList } = useFormList();
 
@@ -45,20 +41,13 @@ const CloseFormDialog = (props: {
         <ModalHeader>Close survey</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <Text>
-            After you close the survey, no answers will be able to be submitted.
-          </Text>
+          <Text>After you close the survey, no answers will be able to be submitted.</Text>
         </ModalBody>
         <ModalFooter>
           <Button onClick={props.onClose} disabled={isClosing}>
             Cancel
           </Button>
-          <Button
-            onClick={onClickCloseSurvey}
-            color="red"
-            ml={4}
-            isLoading={isClosing}
-          >
+          <Button onClick={onClickCloseSurvey} color="red" ml={4} isLoading={isClosing}>
             Close survey
           </Button>
         </ModalFooter>

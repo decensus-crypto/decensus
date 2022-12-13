@@ -21,9 +21,7 @@ export const useCloseSurvey = () => {
         throw new Error("Cannot close survey");
       }
 
-      const formCollectionContract = getFormCollectionContract(
-        formCollectionAddress
-      );
+      const formCollectionContract = getFormCollectionContract(formCollectionAddress);
       if (!formCollectionContract) return null;
 
       setIsClosing(true);
@@ -64,7 +62,7 @@ export const useCloseSurvey = () => {
         return null;
       }
     },
-    [account, getFormCollectionContract, setIsClosing]
+    [account, getFormCollectionContract, setIsClosing],
   );
 
   return {

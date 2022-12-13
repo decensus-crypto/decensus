@@ -10,9 +10,7 @@ import { useLit } from "./litCeramic/useLit";
 import { useAccount } from "./useAccount";
 import { useContracts } from "./useContracts";
 
-const answersListAtom = atom<{ answers: Answer[]; address: string }[] | null>(
-  null
-);
+const answersListAtom = atom<{ answers: Answer[]; address: string }[] | null>(null);
 const isLoadingAnswersListAtom = atom<boolean>(true);
 
 const areAnswersValid = (data: any) => {
@@ -42,9 +40,7 @@ export const useResult = () => {
   const { decryptWithLit, isLitClientReady, litAuthSig } = useLit();
   const { getFormCollectionContract } = useContracts();
 
-  const [isLoadingAnswersList, setIsLoadingAnswersList] = useAtom(
-    isLoadingAnswersListAtom
-  );
+  const [isLoadingAnswersList, setIsLoadingAnswersList] = useAtom(isLoadingAnswersListAtom);
 
   const fetchResults = useCallback(
     async (formCollectionAddress: string) => {
@@ -53,9 +49,7 @@ export const useResult = () => {
       if (!isCeramicReady) return;
       if (!account) return;
 
-      const formCollectionContract = getFormCollectionContract(
-        formCollectionAddress
-      );
+      const formCollectionContract = getFormCollectionContract(formCollectionAddress);
       if (!formCollectionContract) return;
 
       try {
@@ -64,9 +58,7 @@ export const useResult = () => {
         const keyUri = await formCollectionContract.answerDecryptionKeyURI();
 
         if (keyUri.slice(0, 10) !== "ceramic://")
-          throw new Error(
-            "answer decryption key storage other than Ceramic is not supported"
-          );
+          throw new Error("answer decryption key storage other than Ceramic is not supported");
 
         const keyStreamId = keyUri.split("//").slice(-1)[0];
 
@@ -75,7 +67,7 @@ export const useResult = () => {
         let rawAnswersList: any[];
         try {
           const { encryptedKey, addressesToAllowRead } = JSON.parse(
-            decompressFromBase64(keyDataInCeramic)
+            decompressFromBase64(keyDataInCeramic),
           );
 
           const keyStr = await decryptWithLit({
@@ -124,7 +116,7 @@ export const useResult = () => {
                 console.error(error);
                 return null;
               }
-            })
+            }),
           );
         } catch (error) {
           console.error(error);
@@ -156,7 +148,7 @@ export const useResult = () => {
       loadDocument,
       setAnswersList,
       decryptWithLit,
-    ]
+    ],
   );
 
   return {

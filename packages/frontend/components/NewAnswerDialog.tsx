@@ -47,10 +47,8 @@ const FormInput = (props: {
   setAnswer: (answer: AnswerInForm) => void;
   clickNext: () => void;
 }) => {
-  const currentSingleAnswer =
-    typeof props.answer === "object" ? "" : props.answer || "";
-  const currentMultiAnswer =
-    typeof props.answer === "object" ? props.answer || [] : [];
+  const currentSingleAnswer = typeof props.answer === "object" ? "" : props.answer || "";
+  const currentMultiAnswer = typeof props.answer === "object" ? props.answer || [] : [];
   const isValidAnswer = useMemo(() => {
     return props.answer && 0 < props.answer.length;
   }, [props.answer]);
@@ -80,9 +78,7 @@ const FormInput = (props: {
             {props.question.question_type === "single_choice" && (
               <RadioGroup
                 value={currentSingleAnswer}
-                onChange={(v) =>
-                  props.setAnswer({ ...answerParams, answer: v })
-                }
+                onChange={(v) => props.setAnswer({ ...answerParams, answer: v })}
               >
                 <Stack>
                   {props.question.options.map((option, i) => (
@@ -100,18 +96,13 @@ const FormInput = (props: {
             {props.question.question_type === "single_choice_dropdown" && (
               <Select
                 value={currentSingleAnswer}
-                onChange={(e) =>
-                  props.setAnswer({ ...answerParams, answer: e.target.value })
-                }
+                onChange={(e) => props.setAnswer({ ...answerParams, answer: e.target.value })}
                 placeholder="Please select"
                 color="white"
                 mt={8}
               >
                 {props.question.options.map((option, i) => (
-                  <option
-                    key={`question_form_${props.index}_option_${i}`}
-                    value={i.toString()}
-                  >
+                  <option key={`question_form_${props.index}_option_${i}`} value={i.toString()}>
                     {option.text}
                   </option>
                 ))}
@@ -152,9 +143,7 @@ const FormInput = (props: {
                 mt={8}
                 placeholder="Answer Here"
                 value={currentSingleAnswer}
-                onChange={(e) =>
-                  props.setAnswer({ ...answerParams, answer: e.target.value })
-                }
+                onChange={(e) => props.setAnswer({ ...answerParams, answer: e.target.value })}
               />
             )}
             {props.question.question_type === "date" && (
@@ -162,9 +151,7 @@ const FormInput = (props: {
                 type="date"
                 color="white"
                 value={currentSingleAnswer}
-                onChange={(e) =>
-                  props.setAnswer({ ...answerParams, answer: e.target.value })
-                }
+                onChange={(e) => props.setAnswer({ ...answerParams, answer: e.target.value })}
               />
             )}
             {props.question.question_type === "rating" && (
@@ -185,14 +172,7 @@ const FormInput = (props: {
         </Box>
       </Flex>
       <Flex align="center" justify="center" h="100%">
-        <Button
-          size="lg"
-          w={240}
-          mt={8}
-          mb={2}
-          disabled={!isValidAnswer}
-          onClick={props.clickNext}
-        >
+        <Button size="lg" w={240} mt={8} mb={2} disabled={!isValidAnswer} onClick={props.clickNext}>
           Next
         </Button>
       </Flex>
@@ -209,8 +189,7 @@ const NewAnswerDialog = (props: {
   onClose: () => void;
 }) => {
   const createAnswerModal = useDisclosure();
-  const { submitAnswer, submitAnswerStatus, submitAnswerErrorMessage } =
-    useAnswerSubmit();
+  const { submitAnswer, submitAnswerStatus, submitAnswerErrorMessage } = useAnswerSubmit();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<
     Record<string, { question_type: string; answer: string | string[] }>
@@ -258,12 +237,10 @@ const NewAnswerDialog = (props: {
   };
 
   const onSubmit = async () => {
-    const answerArr: Answer[] = Object.entries(answers).map(
-      ([question_id, params]) => ({
-        qid: question_id,
-        val: params.answer,
-      })
-    );
+    const answerArr: Answer[] = Object.entries(answers).map(([question_id, params]) => ({
+      qid: question_id,
+      val: params.answer,
+    }));
     await submitAnswer({
       formCollectionAddress: props.formCollectionAddress,
       submissionStrToEncrypt: JSON.stringify({ answers: answerArr }),
@@ -275,12 +252,7 @@ const NewAnswerDialog = (props: {
       <Modal size="full" isOpen={props.isOpen} onClose={props.onClose}>
         <ModalOverlay />
         <ModalContent>
-          <Box
-            h={{ base: "128px", md: "64px" }}
-            w="100%"
-            overflowY="hidden"
-            bg="black"
-          >
+          <Box h={{ base: "128px", md: "64px" }} w="100%" overflowY="hidden" bg="black">
             <Grid templateColumns="repeat(12, 1fr)" gap={0} w="100%">
               <GridItem colSpan={{ base: 12, md: 3 }} h="64px">
                 <Flex align="center" justify="center" h="100%">
@@ -348,12 +320,8 @@ const NewAnswerDialog = (props: {
                         <FormInput
                           index={idx}
                           question={question}
-                          answer={
-                            answers[question.id] && answers[question.id].answer
-                          }
-                          setAnswer={(a) =>
-                            setAnswers({ ...answers, [question.id]: a })
-                          }
+                          answer={answers[question.id] && answers[question.id].answer}
+                          setAnswer={(a) => setAnswers({ ...answers, [question.id]: a })}
                           clickNext={clickNext}
                         />
                       </Flex>
@@ -378,11 +346,7 @@ const NewAnswerDialog = (props: {
         </ModalContent>
       </Modal>
 
-      <Modal
-        isCentered
-        isOpen={createAnswerModal.isOpen}
-        onClose={createAnswerModal.onClose}
-      >
+      <Modal isCentered isOpen={createAnswerModal.isOpen} onClose={createAnswerModal.onClose}>
         <ModalOverlay />
         <ModalContent bg="gray.700">
           <ModalHeader as="h2" fontWeight="light" color="white">

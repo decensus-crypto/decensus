@@ -17,11 +17,9 @@ export const useAnswerSubmit = () => {
   const { formViewerAddresses } = useFormData();
   const { getFormCollectionContract } = useContracts();
 
-  const [submitAnswerStatus, setSubmitAnswerStatus] = useAtom(
-    submitAnswerStatusAtom
-  );
+  const [submitAnswerStatus, setSubmitAnswerStatus] = useAtom(submitAnswerStatusAtom);
   const [submitAnswerErrorMessage, setSubmitAnswerErrorMessage] = useAtom(
-    submitAnswerErrorMessageAtom
+    submitAnswerErrorMessageAtom,
   );
   const submitAnswer = useCallback(
     async ({
@@ -37,14 +35,9 @@ export const useAnswerSubmit = () => {
       if (!formViewerAddresses) {
         throw new Error("Cannot submit answer");
       }
-      if (
-        !(submitAnswerStatus === "pending" || submitAnswerStatus === "failed")
-      )
-        return;
+      if (!(submitAnswerStatus === "pending" || submitAnswerStatus === "failed")) return;
 
-      const formCollectionContract = getFormCollectionContract(
-        formCollectionAddress
-      );
+      const formCollectionContract = getFormCollectionContract(formCollectionAddress);
       if (!formCollectionContract) return;
 
       console.log("Start Submitting the Answer");
@@ -59,9 +52,7 @@ export const useAnswerSubmit = () => {
         const merkleProof = getProofForAddress(account, merkleTree);
 
         // get encryption key
-        const publicKey = atob(
-          await formCollectionContract.answerEncryptionKey()
-        );
+        const publicKey = atob(await formCollectionContract.answerEncryptionKey());
 
         // encrypt answer
         const encryptedAnswer = await encrypt({
@@ -78,7 +69,7 @@ export const useAnswerSubmit = () => {
             compressToBase64(encryptedAnswer),
             {
               gasLimit: 8000000,
-            }
+            },
           );
           await tx.wait();
         } catch (error: any) {
@@ -99,7 +90,7 @@ export const useAnswerSubmit = () => {
       setSubmitAnswerErrorMessage,
       setSubmitAnswerStatus,
       submitAnswerStatus,
-    ]
+    ],
   );
 
   return {

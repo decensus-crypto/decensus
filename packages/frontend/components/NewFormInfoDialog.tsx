@@ -32,8 +32,7 @@ const NftFormControl = (props: {
   onChange: (val: string, isValid: boolean) => void;
 }) => {
   const { account } = useAccount();
-  const { tokenHolders, isLoadingTokenHolders, fetchHolders } =
-    useTokenHolders();
+  const { tokenHolders, isLoadingTokenHolders, fetchHolders } = useTokenHolders();
   const [contractAddress, setContractAddress] = useState("");
   const [isLoadingNftName, setIsLoadingNftName] = useState(false);
   const [loadedNftName, setLoadedNftName] = useState(false);
@@ -177,12 +176,8 @@ const NftFormControl = (props: {
             <Flex align="center">
               <Text fontSize="sm" color="white">
                 {isLoadingNftName && "Loading..."}
-                {!isLoadingNftName &&
-                  isHoldersIncludeWallet &&
-                  "including you!"}
-                {!isLoadingNftName &&
-                  !isHoldersIncludeWallet &&
-                  "you have no tokens"}
+                {!isLoadingNftName && isHoldersIncludeWallet && "including you!"}
+                {!isLoadingNftName && !isHoldersIncludeWallet && "you have no tokens"}
               </Text>
             </Flex>
           </CardBody>
@@ -212,9 +207,7 @@ const NewFormInfoDialog = (props: {
   }, [description]);
 
   const isFirstStepValid = useMemo(() => {
-    return (
-      isTitleFormatValid && isDescriptionFormatValid && isContractAddressValid
-    );
+    return isTitleFormatValid && isDescriptionFormatValid && isContractAddressValid;
   }, [isContractAddressValid, isDescriptionFormatValid, isTitleFormatValid]);
 
   const clickNext = () => {
@@ -273,12 +266,7 @@ const NewFormInfoDialog = (props: {
           <ModalFooter>
             <Grid templateColumns="repeat(12, 1fr)" gap={4} w="100%" mt={4}>
               <GridItem colSpan={{ base: 3 }}>
-                <Button
-                  size="sm"
-                  w="100%"
-                  variant="ghost"
-                  onClick={props.onClose}
-                >
+                <Button size="sm" w="100%" variant="ghost" onClick={props.onClose}>
                   Cancel
                 </Button>
               </GridItem>

@@ -8,7 +8,7 @@ import {
   store,
   Bytes,
   BigInt,
-  BigDecimal
+  BigDecimal,
 } from "@graphprotocol/graph-ts";
 
 export class Answer extends Entity {
@@ -23,7 +23,7 @@ export class Answer extends Entity {
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        `Entities of type Answer must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+        `Entities of type Answer must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`,
       );
       store.set("Answer", id.toString(), this);
     }
@@ -91,16 +91,14 @@ export class FormCollection extends Entity {
     if (id) {
       assert(
         id.kind == ValueKind.BYTES,
-        `Entities of type FormCollection must have an ID of type Bytes but the id '${id.displayData()}' is of type ${id.displayKind()}`
+        `Entities of type FormCollection must have an ID of type Bytes but the id '${id.displayData()}' is of type ${id.displayKind()}`,
       );
       store.set("FormCollection", id.toBytes().toHexString(), this);
     }
   }
 
   static load(id: Bytes): FormCollection | null {
-    return changetype<FormCollection | null>(
-      store.get("FormCollection", id.toHexString())
-    );
+    return changetype<FormCollection | null>(store.get("FormCollection", id.toHexString()));
   }
 
   get id(): Bytes {

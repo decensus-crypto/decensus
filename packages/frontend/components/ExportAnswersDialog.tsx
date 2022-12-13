@@ -22,13 +22,10 @@ import { useResult } from "../hooks/useResult";
 import { Question } from "../types";
 
 const convertAnswerVal = (val: string | string[], question: Question) => {
-  if (
-    ["single_choice", "single_choice_dropdown"].includes(question.question_type)
-  ) {
+  if (["single_choice", "single_choice_dropdown"].includes(question.question_type)) {
     return question.options[parseInt(val.toString())]?.text ?? "";
   } else if (["multi_choice"].includes(question.question_type)) {
-    if (typeof val === "string")
-      return question.options[parseInt(val)]?.text ?? "";
+    if (typeof val === "string") return question.options[parseInt(val)]?.text ?? "";
     return val.map((v) => question.options[parseInt(v)]?.text ?? "").join(", ");
   } else {
     return val.toString();
@@ -74,9 +71,7 @@ const ExportAnswersDialog = (props: {
   }, [props.isOpen, fetchResults, props.useFormCollectionAddress]);
 
   const isLoadingFormData = useMemo(() => {
-    return ["retrieving", "decrypting"].some(
-      (status) => fetchStatus === status
-    );
+    return ["retrieving", "decrypting"].some((status) => fetchStatus === status);
   }, [fetchStatus]);
 
   const formDataMap = useMemo(() => {
@@ -92,9 +87,7 @@ const ExportAnswersDialog = (props: {
   const csvData = useMemo(() => {
     if (!answersList || !formDataMap) return [];
 
-    let csvData = [
-      ["address", "question_id", "question_body", "question_type", "answer"],
-    ];
+    let csvData = [["address", "question_id", "question_body", "question_type", "answer"]];
     answersList.forEach((answer) => {
       answer.answers.forEach((ans) => {
         const question = formDataMap.get(ans.qid);
@@ -112,18 +105,11 @@ const ExportAnswersDialog = (props: {
     return csvData;
   }, [answersList, formDataMap]);
 
-  const status = useMemo(():
-    | "pending"
-    | "loading"
-    | "completed"
-    | "completed_zero" => {
+  const status = useMemo((): "pending" | "loading" | "completed" | "completed_zero" => {
     if (isLoadingAnswersList || isLoadingFormData) {
       return "loading";
     }
-    if (
-      (!isLoadingAnswersList && answersList && answersList.length === 0) ||
-      !account
-    ) {
+    if ((!isLoadingAnswersList && answersList && answersList.length === 0) || !account) {
       return "completed_zero";
     }
     if (!isLoadingAnswersList && answersList && 0 < answersList.length) {
@@ -169,10 +155,7 @@ const ExportAnswersDialog = (props: {
           {status === "completed" && (
             <>
               <Text>Ready to Downlaod</Text>
-              <CSVLink
-                data={csvData}
-                filename={`result-${props.useFormCollectionAddress}file.csv`}
-              >
+              <CSVLink data={csvData} filename={`result-${props.useFormCollectionAddress}file.csv`}>
                 <Button size="sm" colorScheme="pink" mt={2}>
                   Download
                 </Button>

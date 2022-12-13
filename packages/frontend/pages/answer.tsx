@@ -9,8 +9,7 @@ import Layout from "../layouts/account";
 
 const AnswerPage = () => {
   const formCollectionAddress = useRouter().query?.id?.toString() || null;
-  const { formData, fetchStatus, fetchErrorMessage, fetchFormData } =
-    useFormData();
+  const { formData, fetchStatus, fetchErrorMessage, fetchFormData } = useFormData();
   const newAnswerModal = useDisclosure();
 
   const { initLitClient, getLitAuthSig } = useLit();
@@ -98,13 +97,11 @@ const AnswerPage = () => {
                 <Text color="white">Survey closed</Text>
               </Center>
             )}
-            {fetchStatus === "completed" &&
-              !formData?.closed &&
-              formData?.alreadyAnswered && (
-                <Center>
-                  <Text color="white">You cannot answer survey twice</Text>
-                </Center>
-              )}
+            {fetchStatus === "completed" && !formData?.closed && formData?.alreadyAnswered && (
+              <Center>
+                <Text color="white">You cannot answer survey twice</Text>
+              </Center>
+            )}
           </Box>
         </Box>
       </Layout>

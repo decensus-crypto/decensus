@@ -1,0 +1,5 @@
+.next
+typechain-types
+artifacts
+cache
+build

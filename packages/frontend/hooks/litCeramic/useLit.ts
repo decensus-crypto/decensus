@@ -3,12 +3,7 @@ import { atom, useAtom } from "jotai";
 import LitJsSdk from "lit-js-sdk";
 import { useCallback } from "react";
 import { CHAIN_NAME, LIT_CHAIN } from "../../constants/constants";
-import {
-  blobToBase64,
-  decodeb64,
-  encodeb64,
-  uint8ArrayToString,
-} from "../../utils/dataConverters";
+import { blobToBase64, decodeb64, encodeb64, uint8ArrayToString } from "../../utils/dataConverters";
 import { useAccount } from "../useAccount";
 
 const litClientAtom = atom<any | null>(null);
@@ -87,11 +82,11 @@ export const useLit = () => {
 
       if (!params.addressesToAllowRead && !params.nftAddressToAllowRead)
         throw new Error(
-          "Allowed wallet addresses or NFT address is not specified in Lit encyrption"
+          "Allowed wallet addresses or NFT address is not specified in Lit encyrption",
         );
 
       const { encryptedZip, symmetricKey } = await LitJsSdk.zipAndEncryptString(
-        params.strToEncrypt
+        params.strToEncrypt,
       );
 
       const acc = params.nftAddressToAllowRead
@@ -116,7 +111,7 @@ export const useLit = () => {
         encryptedSymmKeyBase64,
       };
     },
-    [authSig, client, isWrongChain]
+    [authSig, client, isWrongChain],
   );
 
   const decryptWithLit = useCallback(
@@ -127,18 +122,14 @@ export const useLit = () => {
       nftAddressToAllowRead?: string;
       chain: string;
     }): Promise<string> => {
-      if (!authSig || !client || isWrongChain)
-        throw new Error("Lit initialization incomplete");
+      if (!authSig || !client || isWrongChain) throw new Error("Lit initialization incomplete");
 
       if (!params.addressesToAllowRead && !params.nftAddressToAllowRead)
         throw new Error(
-          "Allowed wallet addresses or NFT address is not specified in Lit encyrption"
+          "Allowed wallet addresses or NFT address is not specified in Lit encyrption",
         );
 
-      const toDecrypt = uint8ArrayToString(
-        decodeb64(params.encryptedSymmKeyBase64),
-        "base16"
-      );
+      const toDecrypt = uint8ArrayToString(decodeb64(params.encryptedSymmKeyBase64), "base16");
 
       const acc = params.nftAddressToAllowRead
         ? accFromNftAddress({ nftAddress: params.nftAddressToAllowRead || "" })
@@ -156,13 +147,13 @@ export const useLit = () => {
       // decrypt the files
       const decryptedFiles = await LitJsSdk.decryptZip(
         new Blob([decodeb64(params.encryptedZipBase64)]),
-        decryptedSymmKey
+        decryptedSymmKey,
       );
       const decryptedString = await decryptedFiles["string.txt"].async("text");
 
       return decryptedString;
     },
-    [authSig, client, isWrongChain]
+    [authSig, client, isWrongChain],
   );
 
   return {

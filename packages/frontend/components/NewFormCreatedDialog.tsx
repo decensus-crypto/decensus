@@ -77,12 +77,7 @@ const NewFormCreatedDialog = (props: {
           <ModalFooter>
             <Grid templateColumns="repeat(12, 1fr)" gap={4} w="100%" mt={4}>
               <GridItem colSpan={{ base: 12 }}>
-                <Button
-                  size="sm"
-                  w="100%"
-                  colorScheme="pink"
-                  onClick={() => props.onClose()}
-                >
+                <Button size="sm" w="100%" colorScheme="pink" onClick={() => props.onClose()}>
                   Finish
                 </Button>
               </GridItem>

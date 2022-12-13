@@ -134,9 +134,7 @@ const QuestionForm = (props: {
             required
             size="sm"
             value={props.question.question_type}
-            onChange={(evt) =>
-              setQuestionType(evt.target.value as QuestionType)
-            }
+            onChange={(evt) => setQuestionType(evt.target.value as QuestionType)}
           >
             <option value="single_choice">Choice</option>
             <option value="single_choice_dropdown">Dropdown</option>
@@ -147,17 +145,14 @@ const QuestionForm = (props: {
           </Select>
         </FormControl>
         {["single_choice", "single_choice_dropdown", "multi_choice"].some(
-          (opt) => opt === props.question.question_type
+          (opt) => opt === props.question.question_type,
         ) && (
           <FormControl mt={4}>
             <FormLabel color="white">Choices</FormLabel>
             <VStack align="start">
               {props.question.options.map((option, iidx) => {
                 return (
-                  <Flex
-                    align="center"
-                    key={`question_form_${props.question.id}_options_${iidx}`}
-                  >
+                  <Flex align="center" key={`question_form_${props.question.id}_options_${iidx}`}>
                     <Input
                       flex={1}
                       required
@@ -223,21 +218,10 @@ const QuestionRow = (props: {
   onRemoveQuestionClicked: (idx: number) => void;
 }) => {
   return (
-    <Flex
-      py="4px"
-      px="2px"
-      w="320px"
-      bg={props.isActive ? "gray.800" : "inherit"}
-    >
+    <Flex py="4px" px="2px" w="320px" bg={props.isActive ? "gray.800" : "inherit"}>
       <Center>
         <Box w="32px" h="32px">
-          <Text
-            fontSize="md"
-            textAlign="center"
-            color="white"
-            mt="4px"
-            mr="4px"
-          >
+          <Text fontSize="md" textAlign="center" color="white" mt="4px" mr="4px">
             {props.idx + 1}
           </Text>
         </Box>
@@ -497,22 +481,13 @@ const NewFormQuestionsDialog = (props: {
             <Flex>
               <Box h="calc(100vh - 64px - 1px)" w="320px">
                 <Box h="calc(100vh - 64px - 1px - 64px)" overflowY="scroll">
-                  <Heading
-                    as="h3"
-                    size="sm"
-                    fontWeight="light"
-                    color="white"
-                    p={2}
-                  >
+                  <Heading as="h3" size="sm" fontWeight="light" color="white" p={2}>
                     Questions
                   </Heading>
                   <DragDropContext onDragEnd={onDragEnd}>
                     <Droppable droppableId="droppable">
                       {(provided, snapshot) => (
-                        <Box
-                          {...provided.droppableProps}
-                          ref={provided.innerRef}
-                        >
+                        <Box {...provided.droppableProps} ref={provided.innerRef}>
                           {questions.map((question, idx) => (
                             <Draggable
                               key={`question_${question.id}`}
@@ -524,23 +499,15 @@ const NewFormQuestionsDialog = (props: {
                                   ref={provided.innerRef}
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
-                                  bg={
-                                    snapshot.isDragging ? "ping.100" : "inherit"
-                                  }
+                                  bg={snapshot.isDragging ? "ping.100" : "inherit"}
                                 >
                                   <QuestionRow
                                     idx={idx}
                                     question={question}
                                     isActive={idx === activeQuestionIdx}
-                                    onQuestionSelected={(idx) =>
-                                      setActiveQuestionIdx(idx)
-                                    }
-                                    onDuplicateQuestionClicked={
-                                      clickDuplicateQuestion
-                                    }
-                                    onRemoveQuestionClicked={
-                                      clickRemoveQuestion
-                                    }
+                                    onQuestionSelected={(idx) => setActiveQuestionIdx(idx)}
+                                    onDuplicateQuestionClicked={clickDuplicateQuestion}
+                                    onRemoveQuestionClicked={clickRemoveQuestion}
                                   />
                                 </Box>
                               )}
@@ -565,11 +532,7 @@ const NewFormQuestionsDialog = (props: {
                 </Box>
               </Box>
               <Box h="calc(100vh - 64px - 1px)" w="1px" bg="gray.700"></Box>
-              <Box
-                h="calc(100vh - 64px - 1px)"
-                w="calc(100vw - 280px - 1px)"
-                overflowY="scroll"
-              >
+              <Box h="calc(100vh - 64px - 1px)" w="calc(100vw - 280px - 1px)" overflowY="scroll">
                 <Box h="68px" w="100%">
                   <Flex>
                     <Tooltip label="Previous">
@@ -615,9 +578,7 @@ const NewFormQuestionsDialog = (props: {
                           <QuestionForm
                             idx={activeQuestionIdx}
                             question={question}
-                            onChanged={(question) =>
-                              onQuestionChanged(question, idx)
-                            }
+                            onChanged={(question) => onQuestionChanged(question, idx)}
                           />
                         </Card>
                       );
@@ -629,11 +590,7 @@ const NewFormQuestionsDialog = (props: {
           </Box>
         </ModalContent>
       </Modal>
-      <Modal
-        isCentered
-        isOpen={deployModal.isOpen}
-        onClose={deployModal.onClose}
-      >
+      <Modal isCentered isOpen={deployModal.isOpen} onClose={deployModal.onClose}>
         <ModalOverlay />
         <ModalContent bg="gray.700">
           <ModalHeader as="h2" fontWeight="light" color="white">

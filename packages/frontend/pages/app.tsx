@@ -1,10 +1,4 @@
-import {
-  AddIcon,
-  CopyIcon,
-  EditIcon,
-  LinkIcon,
-  NotAllowedIcon,
-} from "@chakra-ui/icons";
+import { AddIcon, CopyIcon, EditIcon, LinkIcon, NotAllowedIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -271,11 +265,7 @@ const FormList = (props: { onCreateFormClicked: () => void }) => {
             </>
           ) : (
             <Center mt={24}>
-              <Button
-                size="lg"
-                colorScheme="pink"
-                onClick={props.onCreateFormClicked}
-              >
+              <Button size="lg" colorScheme="pink" onClick={props.onCreateFormClicked}>
                 Create My First Form
               </Button>
             </Center>
