@@ -1,16 +1,17 @@
 {
   "name": "subgraph",
+  "version": "0.1.0",
   "license": "UNLICENSED",
   "scripts": {
-    "codegen": "graph codegen",
-    "build": "graph build",
-    "deploy:polygon": "mustache config/polygon.json subgraph-template.mustache > subgraph.yaml && graph deploy --product hosted-service nakaakist/form-collection-polygon",
-    "deploy:mumbai": "mustache config/mumbai.json subgraph-template.mustache > subgraph.yaml && graph deploy --product hosted-service nakaakist/form-collection-mumbai",
-    "create-local": "graph create --node http://localhost:8020/ decensus-form-collection",
-    "remove-local": "graph remove --node http://localhost:8020/ decensus-form-collection",
-    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 decensus-form-collection",
-    "test": "graph test",
-    "auth": "graph auth --product hosted-service",
+    "codegen": "yarn graph codegen",
+    "build": "yarn graph build",
+    "deploy:polygon": "mustache config/polygon.json subgraph-template.mustache > subgraph.yaml && yarn graph deploy --product hosted-service nakaakist/form-collection-polygon",
+    "deploy:mumbai": "mustache config/mumbai.json subgraph-template.mustache > subgraph.yaml && yarn graph deploy --product hosted-service nakaakist/form-collection-mumbai",
+    "create-local": "yarn graph create --node http://localhost:8020/ decensus-form-collection",
+    "remove-local": "yarn graph remove --node http://localhost:8020/ decensus-form-collection",
+    "deploy-local": "yarn graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 decensus-form-collection",
+    "test": "yarn graph test",
+    "auth": "yarn graph auth --product hosted-service",
     "test:ci": "yarn build"
   },
   "dependencies": {
