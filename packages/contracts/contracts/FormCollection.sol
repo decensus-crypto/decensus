@@ -6,11 +6,7 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import {Base64} from "./Base64.sol";
 
-contract FormCollection is
-    Initializable,
-    ERC721Upgradeable,
-    OwnableUpgradeable
-{
+contract FormCollection is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     bytes32 public merkleRoot;
     string public description;
     string public formDataURI;
@@ -21,11 +17,7 @@ contract FormCollection is
     mapping(address => string) public encryptedAnswers;
     uint256 public numberOfAnswers;
 
-    event AnswerSubmitted(
-        address respondent,
-        string encryptedAnswer,
-        uint256 tokenId
-    );
+    event AnswerSubmitted(address respondent, string encryptedAnswer, uint256 tokenId);
 
     event Closed();
 
@@ -47,10 +39,9 @@ contract FormCollection is
         answerDecryptionKeyURI = _answerDecryptionKeyURI;
     }
 
-    function submitAnswers(
-        bytes32[] calldata _merkleProof,
-        string calldata _encryptedAnswer
-    ) external {
+    function submitAnswers(bytes32[] calldata _merkleProof, string calldata _encryptedAnswer)
+        external
+    {
         require(!closed, "Survey closed");
         require(
             bytes(encryptedAnswers[msg.sender]).length == 0,
@@ -60,10 +51,7 @@ contract FormCollection is
         // only check proof if form is token gated
         if (merkleRoot.length != 0) {
             bytes32 leaf = keccak256(abi.encodePacked(msg.sender));
-            require(
-                MerkleProof.verify(_merkleProof, merkleRoot, leaf),
-                "Invalid Merkle proof."
-            );
+            require(MerkleProof.verify(_merkleProof, merkleRoot, leaf), "Invalid Merkle proof.");
         }
 
         _safeMint(msg.sender, numberOfAnswers);
@@ -101,12 +89,7 @@ contract FormCollection is
         return finalContractUri;
     }
 
-    function tokenURI(uint256 tokenId)
-        public
-        view
-        override
-        returns (string memory)
-    {
+    function tokenURI(uint256 tokenId) public view override returns (string memory) {
         require(_exists(tokenId), "Token does not exist.");
 
         string memory newSvg = string(

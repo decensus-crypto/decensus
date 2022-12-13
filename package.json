@@ -6,12 +6,13 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "format": "prettier --config .prettierrc.json '**/*.{js,ts,tsx,jsx,json}' --write"
+    "format": "prettier --config .prettierrc.json '**/*.{js,ts,tsx,jsx,json,sol}' --write"
   },
   "workspaces": [
     "packages/*"
   ],
   "devDependencies": {
-    "prettier": "^2.8.1"
+    "prettier": "^2.8.1",
+    "prettier-plugin-solidity": "^1.0.0"
   }
 }

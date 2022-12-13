@@ -9,20 +9,13 @@ contract FormCollectionFactory is Ownable {
 
     mapping(address => address[]) public formOwners;
 
-    event FormCollectionCreated(
-        address newFormCollection,
-        string name,
-        string description
-    );
+    event FormCollectionCreated(address newFormCollection, string name, string description);
 
     constructor() {
         baseFormCollection = address(new FormCollection());
     }
 
-    function setBaseFormCollection(address _baseFormCollection)
-        public
-        onlyOwner
-    {
+    function setBaseFormCollection(address _baseFormCollection) public onlyOwner {
         baseFormCollection = _baseFormCollection;
     }
 
