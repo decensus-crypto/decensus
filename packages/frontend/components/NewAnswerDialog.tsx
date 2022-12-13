@@ -24,11 +24,11 @@ import {
   Stack,
   Text,
   Tooltip,
-  useDisclosure,
+  useDisclosure
 } from "@chakra-ui/react";
 import Carousel from "nuka-carousel/lib/carousel";
 import { useEffect, useMemo, useState } from "react";
-import { Question, QuestionType } from "../constants/constants";
+import { Answer, Question, QuestionType } from "../constants/constants";
 import { useCeramic } from "../hooks/litCeramic/useCeramic";
 import { useLit } from "../hooks/litCeramic/useLit";
 import { useAnswerSubmit } from "../hooks/useAnswerSubmit";
@@ -89,7 +89,7 @@ const FormInput = (props: {
                     <Radio
                       size="lg"
                       key={`question_form_${props.index}_option_${i}`}
-                      value={option.text}
+                      value={i.toString()}
                     >
                       <Box color="white">{option.text}</Box>
                     </Radio>
@@ -110,7 +110,7 @@ const FormInput = (props: {
                 {props.question.options.map((option, i) => (
                   <option
                     key={`question_form_${props.index}_option_${i}`}
-                    value={option.text}
+                    value={i.toString()}
                   >
                     {option.text}
                   </option>
@@ -119,31 +119,32 @@ const FormInput = (props: {
             )}
             {props.question.question_type === "multi_choice" && (
               <Stack>
-                {props.question.options.map((option, i) => (
-                  <Checkbox
-                    key={`question_form_${props.index}_option_${i}`}
-                    isChecked={currentMultiAnswer.includes(option.text)}
-                    onChange={(e) => {
-                      const checked = e.target.checked;
-                      if (checked) {
-                        props.setAnswer({
-                          ...answerParams,
-                          answer: [...currentMultiAnswer, option.text],
-                        });
-                      } else {
-                        props.setAnswer({
-                          ...answerParams,
-                          answer: currentMultiAnswer.filter(
-                            (a) => a !== option.text
-                          ),
-                        });
-                      }
-                    }}
-                    size="lg"
-                  >
-                    <Box color="white">{option.text}</Box>
-                  </Checkbox>
-                ))}
+                {props.question.options.map((option, i) => {
+                  const _i = i.toString();
+                  return (
+                    <Checkbox
+                      key={`question_form_${props.index}_option_${i}`}
+                      isChecked={currentMultiAnswer.includes(_i)}
+                      onChange={(e) => {
+                        const checked = e.target.checked;
+                        if (checked) {
+                          props.setAnswer({
+                            ...answerParams,
+                            answer: [...currentMultiAnswer, _i],
+                          });
+                        } else {
+                          props.setAnswer({
+                            ...answerParams,
+                            answer: currentMultiAnswer.filter((a) => a !== _i),
+                          });
+                        }
+                      }}
+                      size="lg"
+                    >
+                      <Box color="white">{option.text}</Box>
+                    </Checkbox>
+                  );
+                })}
               </Stack>
             )}
             {props.question.question_type === "text" && (
@@ -257,10 +258,12 @@ const NewAnswerDialog = (props: {
   };
 
   const onSubmit = async () => {
-    const answerArr = Object.entries(answers).map(([question_id, params]) => ({
-      question_id,
-      ...params,
-    }));
+    const answerArr: Answer[] = Object.entries(answers).map(
+      ([question_id, params]) => ({
+        qid: question_id,
+        val: params.answer,
+      })
+    );
     await submitAnswer({
       formCollectionAddress: props.formCollectionAddress,
       submissionStrToEncrypt: JSON.stringify({ answers: answerArr }),

@@ -20,10 +20,15 @@ const areAnswersValid = (data: any) => {
 
   const answers = data.answers;
   for (const a of answers) {
-    if (!a.question_id || typeof a.question_id !== "string") return false;
-    if (!a.question_type || typeof a.question_type !== "string") return false;
-    if (!a.answer) return false;
-    if (!Array.isArray(a.answer) && typeof a.answer !== "string") return false;
+    if (!a.qid || typeof a.qid !== "string") return false;
+    if (!a.val) return false;
+    if (Array.isArray(a.val)) {
+      for (const v of a.val) {
+        if (typeof v !== "string") return false;
+      }
+    } else {
+      if (typeof a.val !== "string") return false;
+    }
   }
 
   return true;

@@ -359,7 +359,6 @@ export type Question = {
 };
 
 export type Answer = {
-  question_id: string;
-  question_type: QuestionType;
-  answer: string | string[];
+  qid: string;
+  val: string | string[];
 };

@@ -174,6 +174,7 @@ export const useDeploy = () => {
       encryptWithLit,
       getFormCollectionFactoryContract,
       getLitAuthSig,
+      isCeramicReady,
       isLitClientReady,
       setDeployErrorMessage,
       setDeployStatus,

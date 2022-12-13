@@ -14,11 +14,26 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useMemo } from "react";
 import { CSVLink } from "react-csv";
+import { Question } from "../constants/constants";
 import { useCeramic } from "../hooks/litCeramic/useCeramic";
 import { useLit } from "../hooks/litCeramic/useLit";
 import { useAccount } from "../hooks/useAccount";
 import { useFormData } from "../hooks/useFormData";
 import { useResult } from "../hooks/useResult";
+
+const convertAnswerVal = (val: string | string[], question: Question) => {
+  if (
+    ["single_choice", "single_choice_dropdown"].includes(question.question_type)
+  ) {
+    return question.options[parseInt(val.toString())]?.text ?? "";
+  } else if (["multi_choice"].includes(question.question_type)) {
+    if (typeof val === "string")
+      return question.options[parseInt(val)]?.text ?? "";
+    return val.map((v) => question.options[parseInt(v)]?.text ?? "").join(", ");
+  } else {
+    return val.toString();
+  }
+};
 
 const ExportAnswersDialog = (props: {
   useFormCollectionAddress: string;
@@ -58,36 +73,44 @@ const ExportAnswersDialog = (props: {
     fetchResults(props.useFormCollectionAddress);
   }, [props.isOpen, fetchResults, props.useFormCollectionAddress]);
 
-  const questions = formData?.questions;
-
   const isLoadingFormData = useMemo(() => {
     return ["retrieving", "decrypting"].some(
       (status) => fetchStatus === status
     );
   }, [fetchStatus]);
 
+  const formDataMap = useMemo(() => {
+    if (!formData) return;
+
+    const formDataMap = new Map<string, Question>();
+    formData.questions.forEach((question) => {
+      formDataMap.set(question.id, question);
+    });
+    return formDataMap;
+  }, [formData]);
+
   const csvData = useMemo(() => {
-    if (!answersList || !questions) return [];
+    if (!answersList || !formDataMap) return [];
 
     let csvData = [
       ["address", "question_id", "question_body", "question_type", "answer"],
     ];
     answersList.forEach((answer) => {
       answer.answers.forEach((ans) => {
-        const question = questions.find((q) => q.id === ans.question_id);
+        const question = formDataMap.get(ans.qid);
         if (question) {
           csvData.push([
             answer.address,
             question.id,
             question.question_body,
             question.question_type,
-            ans.answer.toString(),
+            convertAnswerVal(ans.val, question),
           ]);
         }
       });
     });
     return csvData;
-  }, [answersList, questions]);
+  }, [answersList, formDataMap]);
 
   const status = useMemo(():
     | "pending"
