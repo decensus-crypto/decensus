@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "analyze": "ANALYZE=true next build",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "test:ci": "yarn type-check && yarn build && yarn lint"
   },
   "dependencies": {
     "@3id/connect": "^0.4.1",

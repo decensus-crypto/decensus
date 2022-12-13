@@ -14,7 +14,8 @@
     "balance": "hardhat balance",
     "generate": "hardhat generate",
     "account": "hardhat account",
-    "solhint-check": "hardhat check"
+    "solhint-check": "hardhat check",
+    "test:ci": "yarn solhint-check && yarn test"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.4.7",
