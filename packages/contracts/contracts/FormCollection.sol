@@ -39,9 +39,10 @@ contract FormCollection is Initializable, ERC721Upgradeable, OwnableUpgradeable 
         answerDecryptionKeyURI = _answerDecryptionKeyURI;
     }
 
-    function submitAnswers(bytes32[] calldata _merkleProof, string calldata _encryptedAnswer)
-        external
-    {
+    function submitAnswers(
+        bytes32[] calldata _merkleProof,
+        string calldata _encryptedAnswer
+    ) external {
         require(!closed, "Survey closed");
         require(
             bytes(encryptedAnswers[msg.sender]).length == 0,
@@ -132,11 +133,7 @@ contract FormCollection is Initializable, ERC721Upgradeable, OwnableUpgradeable 
     /// @notice ERC721 _transfer() Disabled
     /// @dev _transfer() has been overriden
     /// @dev reverts on transferFrom() and safeTransferFrom()
-    function _transfer(
-        address from,
-        address to,
-        uint256 tokenId
-    ) internal override {
+    function _transfer(address from, address to, uint256 tokenId) internal override {
         require(!true, "ERC721: token transfer disabled");
         super._transfer(from, to, tokenId);
     }

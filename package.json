@@ -6,12 +6,19 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "format": "prettier --config .prettierrc.json '**/*.{js,ts,tsx,jsx,json,sol}' --write"
+    "format": "prettier --config .prettierrc.json '**/*.{js,ts,tsx,jsx,json,sol,md,json,yaml,yml}'",
+    "format:write": "yarn format --write",
+    "format:check": "yarn format --check"
   },
   "workspaces": [
     "packages/*"
   ],
+  "lint-staged": {
+    "*.{js,ts,tsx,jsx,json,sol,md,json,yaml,yml}": "yarn format:write"
+  },
   "devDependencies": {
+    "husky": "^8.0.2",
+    "lint-staged": "^13.1.0",
     "prettier": "^2.8.1",
     "prettier-plugin-solidity": "^1.0.0"
   }
