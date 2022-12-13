@@ -1,6 +1,6 @@
 {
   "solidity.defaultCompiler": "localFile",
-  "solidity.packageDefaultDependenciesDirectory": "packages/contracts/node_modules",
+  "solidity.packageDefaultDependenciesDirectory": "node_modules",
   "editor.codeActionsOnSave": {
     "source.organizeImports": true
   },

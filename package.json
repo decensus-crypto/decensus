@@ -1,0 +1,11 @@
+{
+  "name": "decensus-app",
+  "version": "1.0.0",
+  "repository": "https://github.com/decensus-crypto/app.git",
+  "author": "Nariyuki Saito <toshincompos@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ]
+}

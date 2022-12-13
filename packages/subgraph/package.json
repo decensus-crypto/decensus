@@ -1,5 +1,5 @@
 {
-  "name": "decensus-form-collection",
+  "name": "subgraph",
   "license": "UNLICENSED",
   "scripts": {
     "codegen": "graph codegen",
