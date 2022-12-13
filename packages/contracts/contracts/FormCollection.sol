@@ -94,10 +94,12 @@ contract FormCollection is Initializable, ERC721Upgradeable, OwnableUpgradeable 
 
         string memory newSvg = string(
             abi.encodePacked(
+                // solhint-disable-next-line
                 '<svg viewBox="0 0 180 180" style="font-family:monospace" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%"/><path d="M20 0v180M0 20h180" style="stroke:gray"/><text x="23" y="15" style="font-size:6px" fill="#fff">',
                 name(),
                 '</text><text text-anchor="middle" x="50%" y="40%" fill="#fff" style="font-size:10px">Answer #',
                 Strings.toString(tokenId),
+                // solhint-disable-next-line
                 '</text><text text-anchor="middle" x="50%" y="60%" fill="#fff" style="font-size:16px"><tspan fill="#FC8CC9">de</tspan>census</text></svg>'
             )
         );

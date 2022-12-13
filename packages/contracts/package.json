@@ -13,7 +13,8 @@
     "accounts": "hardhat accounts",
     "balance": "hardhat balance",
     "generate": "hardhat generate",
-    "account": "hardhat account"
+    "account": "hardhat account",
+    "solhint-check": "hardhat check"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.4.7",
