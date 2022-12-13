@@ -1,13 +1,11 @@
-# Sample Hardhat Project
+# Contracts
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
+This package contains the smart contracts.
 
-Try running some of the following tasks:
+## Local development
 
-```shell
-npx hardhat help
-npx hardhat test
-GAS_REPORT=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.ts
-```
+create `.env` file according to `.env.example`.
+
+`yarn test` to run unit tests.
+
+`yarn deploy:<network>` to deploy.
