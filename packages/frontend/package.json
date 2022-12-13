@@ -1,6 +1,9 @@
 {
   "name": "frontend",
   "version": "0.1.0",
+  "repository": "https://github.com/decensus-crypto/decensus.git",
+  "author": "Centiv Inc.",
+  "license": "MIT",
   "private": true,
   "scripts": {
     "dev": "next dev",

@@ -1,8 +1,8 @@
 {
   "name": "decensus-app",
-  "version": "1.0.0",
-  "repository": "https://github.com/decensus-crypto/app.git",
-  "author": "Nariyuki Saito <toshincompos@gmail.com>",
+  "version": "0.1.0",
+  "repository": "https://github.com/decensus-crypto/decensus.git",
+  "author": "Centiv Inc.",
   "license": "MIT",
   "private": true,
   "scripts": {
