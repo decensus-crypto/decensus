@@ -4,4 +4,10 @@ This package contains Decensus's web frontend.
 
 ## Local development
 
-`yarn dev` will start a local development server on port 3000.
+`yarn dev` to start a local development server on port 3000.
+
+`yarn type-check` to run type check.
+
+`yarn lint` to run lint.
+
+`yarn analyze` to analyze the bundle size.

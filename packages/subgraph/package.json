@@ -1,7 +1,10 @@
 {
   "name": "subgraph",
   "version": "0.1.0",
-  "license": "UNLICENSED",
+  "repository": "https://github.com/decensus-crypto/decensus.git",
+  "author": "Centiv Inc.",
+  "license": "MIT",
+  "private": true,
   "scripts": {
     "codegen": "yarn graph codegen",
     "build": "yarn graph build",

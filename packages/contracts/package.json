@@ -1,7 +1,10 @@
 {
   "name": "contracts",
-  "version": "1.0.0",
+  "version": "0.1.0",
+  "repository": "https://github.com/decensus-crypto/decensus.git",
+  "author": "Centiv Inc.",
   "license": "MIT",
+  "private": true,
   "scripts": {
     "chain": "hardhat node",
     "test": "hardhat test",
