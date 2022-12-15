@@ -1,13 +1,12 @@
 import { atom, useAtom } from "jotai";
 import { useCallback } from "react";
 import { SUBGRAPH_URL } from "../constants/constants";
-import { getFormUrl, getResultUrl } from "../utils/urls";
+import { getFormUrl } from "../utils/urls";
 import { useAccount } from "./useAccount";
 
 export type Form = {
   title: string;
   formUrl: string;
-  resultUrl: string;
   contractAddress: string;
   createdAt: number;
   closed: boolean;
@@ -65,7 +64,6 @@ export const useFormList = () => {
 
         const _formList = data.data.formCollections.map((f: any) => ({
           formUrl: getFormUrl(location.origin, f.contractAddress),
-          resultUrl: getResultUrl(location.origin, f.contractAddress),
           title: f.name,
           contractAddress: f.contractAddress,
           createdAt: parseInt(f.createdAt) * 1000,

@@ -1,2 +1,6 @@
-export const getFormUrl = (origin: string, surveyId: string) => `${origin}/answer?id=${surveyId}`;
-export const getResultUrl = (origin: string, surveyId: string) => `${origin}/result?id=${surveyId}`;
+export const getFormUrl = (origin: string, surveyId: string) => {
+  const url = new URL("/answer", origin);
+  url.search = new URLSearchParams({ id: surveyId }).toString();
+
+  return url.toString();
+};
