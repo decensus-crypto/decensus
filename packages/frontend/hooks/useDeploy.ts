@@ -6,7 +6,7 @@ import { Form } from "../types";
 import { genKeyPair } from "../utils/crypto";
 import { getMerkleTree, getMerkleTreeRootHash } from "../utils/merkleTree";
 import { compressToBase64 } from "../utils/stringCompression";
-import { getFormUrl, getResultUrl } from "../utils/urls";
+import { getFormUrl } from "../utils/urls";
 import { useCeramic } from "./litCeramic/useCeramic";
 import { useLit } from "./litCeramic/useLit";
 import { useAccount } from "./useAccount";
@@ -38,7 +38,6 @@ export const useDeploy = () => {
     }): Promise<{
       formCollectionAddress: string;
       formUrl: string;
-      resultUrl: string;
     } | null> => {
       try {
         if (!account) {
@@ -151,7 +150,6 @@ export const useDeploy = () => {
         return {
           formCollectionAddress,
           formUrl: getFormUrl(location.origin, formCollectionAddress),
-          resultUrl: getResultUrl(location.origin, formCollectionAddress),
         };
       } catch (error: any) {
         console.error(error);

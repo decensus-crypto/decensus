@@ -6,8 +6,16 @@ const PAGE_SIZE = 500; // Max is 500 for reservoir
 
 // Resorvoir API offers caching by default (max-age: 3600 s). No extra caching is necessary.
 const reqHolders = async (token_address: string, offset: number) => {
-  const url = `https://api.reservoir.tools/owners/v1?collection=${token_address}&offset=${offset}&limit=${PAGE_SIZE}`;
-  const res = await fetch(url);
+  const params = new URLSearchParams({
+    collection: token_address,
+    offset: offset.toString(),
+    limit: PAGE_SIZE.toString(),
+  });
+  const res = await fetch("https://api.reservoir.tools/owners/v1?" + params, {
+    headers: {
+      "x-api-key": process.env.NEXT_PUBLIC_RESERVOIR_API_KEY ?? "",
+    },
+  });
   const data = await res.json();
 
   return data.owners as { address: string }[];
@@ -37,9 +45,8 @@ export const useTokenHolders = () => {
           if (addresses.length < PAGE_SIZE) {
             keepGoing = false;
           }
-
-          setTokenHolders(records);
         }
+        setTokenHolders(records);
       } catch (error) {
         console.error(error);
         createToast({

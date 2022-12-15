@@ -43,7 +43,8 @@ const NftFormControl = (props: {
   }, [contractAddress]);
 
   const isHoldersIncludeWallet = useMemo(() => {
-    return tokenHolders.some((a) => a === account);
+    const _account = account?.toLowerCase();
+    return tokenHolders.some((a) => a.toLowerCase() === _account);
   }, [account, tokenHolders]);
 
   const isValid = useMemo(() => {

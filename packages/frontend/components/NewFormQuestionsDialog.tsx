@@ -425,7 +425,6 @@ const NewFormQuestionsDialog = (props: {
         {
           title: props.title,
           formUrl: res.formUrl,
-          resultUrl: res.resultUrl,
           contractAddress: res.formCollectionAddress,
           createdAt: Date.now(),
           closed: false,
