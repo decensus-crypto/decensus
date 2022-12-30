@@ -27,9 +27,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import Carousel from "nuka-carousel/lib/carousel";
-import { useEffect, useMemo, useState } from "react";
-import { useCeramic } from "../hooks/litCeramic/useCeramic";
-import { useLit } from "../hooks/litCeramic/useLit";
+import { useMemo, useState } from "react";
 import { useAnswerSubmit } from "../hooks/useAnswerSubmit";
 import { Answer, Question, QuestionType } from "../types";
 import Logo from "./logo";
@@ -194,21 +192,6 @@ const NewAnswerDialog = (props: {
   const [answers, setAnswers] = useState<
     Record<string, { question_type: string; answer: string | string[] }>
   >({});
-
-  const { initLitClient, getLitAuthSig } = useLit();
-  const { initCeramic } = useCeramic();
-
-  useEffect(() => {
-    initLitClient();
-  }, [initLitClient]);
-
-  useEffect(() => {
-    getLitAuthSig();
-  }, [getLitAuthSig]);
-
-  useEffect(() => {
-    initCeramic();
-  }, [initCeramic]);
 
   const prevSlidable = useMemo(() => {
     return 0 < currentQuestionIndex;
