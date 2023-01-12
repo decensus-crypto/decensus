@@ -55,36 +55,36 @@ const AnswerPage = () => {
             {fetchStatus === "pending" && (
               <>
                 <Center>
-                  <Spinner color="white" />
+                  <Spinner />
                 </Center>
                 <Center mt={4}>
-                  <Text color="white">Initializing...</Text>
+                  <Text>Initializing...</Text>
                 </Center>
               </>
             )}
             {fetchStatus === "retrieving" && (
               <>
                 <Center>
-                  <Spinner color="white" />
+                  <Spinner />
                 </Center>
                 <Center mt={4}>
-                  <Text color="white">Retrieving the form contents...</Text>
+                  <Text>Retrieving the form contents...</Text>
                 </Center>
               </>
             )}
             {fetchStatus === "decrypting" && (
               <>
                 <Center>
-                  <Spinner color="white" />
+                  <Spinner />
                 </Center>
                 <Center mt={4}>
-                  <Text color="white">Decrypting...</Text>
+                  <Text>Decrypting...</Text>
                 </Center>
               </>
             )}
             {fetchStatus === "failed" && (
               <Center>
-                <Text color="white">
+                <Text>
                   Failed :(
                   <br />
                   {fetchErrorMessage}
@@ -93,12 +93,12 @@ const AnswerPage = () => {
             )}
             {fetchStatus === "completed" && formData?.closed && (
               <Center>
-                <Text color="white">Survey closed</Text>
+                <Text>Survey closed</Text>
               </Center>
             )}
             {fetchStatus === "completed" && !formData?.closed && formData?.alreadyAnswered && (
               <Center>
-                <Text color="white">You cannot answer survey twice</Text>
+                <Text>You cannot answer survey twice</Text>
               </Center>
             )}
           </Box>

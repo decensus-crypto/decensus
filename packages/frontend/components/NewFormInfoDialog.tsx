@@ -104,9 +104,7 @@ const NftFormControl = (props: {
   return (
     <>
       <FormControl mt={4}>
-        <FormLabel size="sm" color="white">
-          NFT Contract Address
-        </FormLabel>
+        <FormLabel size="sm">NFT Contract Address</FormLabel>
         <Input
           required
           color="white"
@@ -129,53 +127,43 @@ const NftFormControl = (props: {
         <Card bg="gray.900" p={1} mt={2}>
           <CardBody p={1}>
             <Flex align="center">
-              {isLoadingNftName && (
-                <Text fontSize="sm" color="white">
-                  Loading...
-                </Text>
-              )}
+              {isLoadingNftName && <Text fontSize="sm">Loading...</Text>}
               {!isLoadingNftName && nftName && (
                 <>
-                  <CheckIcon color="white" />
-                  <Text ml={2} fontSize="sm" color="white">
+                  <Text fontSize="sm">
+                    <CheckIcon mr={2} />
                     Project Found: {nftName}
                   </Text>
                 </>
               )}
               {!isLoadingNftName && !nftName && (
                 <>
-                  <NotAllowedIcon color="white" />
-                  <Text ml={2} fontSize="sm" color="white">
-                    Project Not Found
-                  </Text>
+                  <NotAllowedIcon mr={2} />
+                  <Text fontSize="sm">Project Not Found</Text>
                 </>
               )}
             </Flex>
             <Flex align="center">
-              {isLoadingNftName && (
-                <Text fontSize="sm" color="white">
-                  Loading...
-                </Text>
-              )}
+              {isLoadingNftName && <Text fontSize="sm">Loading...</Text>}
               {!isLoadingNftName && tokenHolders && (
                 <>
-                  <CheckIcon color="white" />
-                  <Text ml={2} fontSize="sm" color="white">
+                  <Text fontSize="sm">
+                    <CheckIcon mr={2} />
                     Token Holders: {tokenHolders.length}
                   </Text>
                 </>
               )}
               {!isLoadingNftName && !tokenHolders && (
                 <>
-                  <NotAllowedIcon color="white" />
-                  <Text ml={2} fontSize="sm" color="white">
+                  <Text ml={2} fontSize="sm">
+                    <NotAllowedIcon mr={2} />
                     Token Holders Not Found
                   </Text>
                 </>
               )}
             </Flex>
             <Flex align="center">
-              <Text fontSize="sm" color="white">
+              <Text fontSize="sm">
                 {isLoadingNftName && "Loading..."}
                 {!isLoadingNftName && isHoldersIncludeWallet && "including you!"}
                 {!isLoadingNftName && !isHoldersIncludeWallet && "you have no tokens"}
@@ -227,9 +215,7 @@ const NewFormInfoDialog = (props: {
           <ModalCloseButton />
           <ModalBody>
             <FormControl>
-              <FormLabel fontSize="sm" color="white">
-                Form Title
-              </FormLabel>
+              <FormLabel fontSize="sm">Form Title</FormLabel>
               <Input
                 required
                 color="white"
@@ -240,9 +226,7 @@ const NewFormInfoDialog = (props: {
               />
             </FormControl>
             <FormControl mt={4}>
-              <FormLabel fontSize="sm" color="white">
-                Form Description
-              </FormLabel>
+              <FormLabel fontSize="sm">Form Description</FormLabel>
               <Textarea
                 required
                 color="white"

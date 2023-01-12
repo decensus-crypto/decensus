@@ -48,16 +48,13 @@ const NewFormCreatedDialog = (props: {
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Text fontSize="sm" color="white">
-              Completed!
-              <br />
-              Let&lsquo;s share the form to your community members.
-            </Text>
+            <Box>
+              <Text fontSize="sm">Completed!</Text>
+              <Text fontSize="sm">Let&lsquo;s share the form to your community members.</Text>
+            </Box>
             <Box mt={2}>
-              <Text fontSize="sm" color="white">
-                Link:
-              </Text>
-              <Text fontSize="sm" color="white">
+              <Text fontSize="sm">Link:</Text>
+              <Text fontSize="sm">
                 <Link isExternal href={props.formUrl}>
                   {props.formUrl}
                 </Link>
