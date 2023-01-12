@@ -4,6 +4,7 @@ import {
   Button,
   Card,
   Checkbox,
+  Divider,
   Flex,
   Grid,
   GridItem,
@@ -30,8 +31,8 @@ import Carousel from "nuka-carousel/lib/carousel";
 import { useMemo, useState } from "react";
 import { useAnswerSubmit } from "../hooks/useAnswerSubmit";
 import { Answer, Question, QuestionType } from "../types";
-import Logo from "./logo";
 import SelectRating from "./SelectRating";
+import Logo from "./logo";
 
 type AnswerInForm = {
   question_type: QuestionType;
@@ -65,13 +66,11 @@ const FormInput = (props: {
       px={{ base: 4, sm: 8, md: 16 }}
     >
       <Flex>
-        <Text fontSize="2xl" px={4} w={16} color="white">
+        <Text fontSize="2xl" px={4} w={16}>
           {props.index + 1}
         </Text>
         <Box flex="1">
-          <Text fontSize="2xl" color="white">
-            {props.question.question_body}
-          </Text>
+          <Text fontSize="2xl">{props.question.question_body}</Text>
           <Box mt={2}>
             {props.question.question_type === "single_choice" && (
               <RadioGroup
@@ -85,7 +84,7 @@ const FormInput = (props: {
                       key={`question_form_${props.index}_option_${i}`}
                       value={i.toString()}
                     >
-                      <Box color="white">{option.text}</Box>
+                      <Text>{option.text}</Text>
                     </Radio>
                   ))}
                 </Stack>
@@ -130,7 +129,7 @@ const FormInput = (props: {
                       }}
                       size="lg"
                     >
-                      <Box color="white">{option.text}</Box>
+                      <Text>{option.text}</Text>
                     </Checkbox>
                   );
                 })}
@@ -244,14 +243,14 @@ const NewAnswerDialog = (props: {
               </GridItem>
               <GridItem colSpan={{ base: 12, md: 6 }} h="64px">
                 <Flex align="center" justify="center" h="100%">
-                  <Heading as="h2" size="md" color="white">
+                  <Heading as="h2" size="md">
                     {props.title}
                   </Heading>
                 </Flex>
               </GridItem>
             </Grid>
           </Box>
-          <Box h="1px" w="100%" bg="gray.700" />
+          <Divider />
           <Box w="100%" bg="black">
             <Box h="64px" w="100%">
               <Flex align="center" justify="center" w="100%">
@@ -336,28 +335,16 @@ const NewAnswerDialog = (props: {
             Submitting answers...
           </ModalHeader>
           <ModalBody>
-            {submitAnswerStatus === "pending" && (
-              <Text fontSize="sm" color="white">
-                Nothing Happening
-              </Text>
-            )}
+            {submitAnswerStatus === "pending" && <Text fontSize="sm">Nothing Happening</Text>}
             {submitAnswerStatus === "encrypting" && (
-              <Text fontSize="sm" color="white">
-                Encrypting the answers...
-              </Text>
+              <Text fontSize="sm">Encrypting the answers...</Text>
             )}
-            {submitAnswerStatus === "uploading" && (
-              <Text fontSize="sm" color="white">
-                Uploading...
-              </Text>
-            )}
+            {submitAnswerStatus === "uploading" && <Text fontSize="sm">Uploading...</Text>}
             {submitAnswerStatus === "completed" && (
-              <Text fontSize="sm" color="white">
-                Answer successfully submitted!
-              </Text>
+              <Text fontSize="sm">Answer successfully submitted!</Text>
             )}
             {submitAnswerStatus === "failed" && (
-              <Text fontSize="sm" color="white">
+              <Text fontSize="sm">
                 Failed :(
                 <br />
                 {submitAnswerErrorMessage}

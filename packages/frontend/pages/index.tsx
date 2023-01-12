@@ -22,31 +22,24 @@ const Home = () => {
           <Grid templateColumns="repeat(12, 1fr)" gap={4}>
             <GridItem colSpan={{ base: 12, md: 6 }}>
               <Box mt={{ base: 16, md: 36 }}>
-                <Heading as="h1" color="white" size="3xl" fontWeight="light">
+                <Heading as="h1" size="3xl">
                   Decentralized
                   <br />
                   Forms
                 </Heading>
-                <Heading as="h3" color="white" size="md" fontWeight="light" mt={4}>
+                <Heading as="h3" size="md" mt={4}>
                   Token-gated forms to understand your community
                 </Heading>
               </Box>
               <Box mt={8}>
                 <Flex>
                   <NextLink href="/app">
-                    <Button width={160} size="lg" fontWeight="light" colorScheme="pink">
+                    <Button width={160} size="lg" colorScheme="pink">
                       Create Form
                     </Button>
                   </NextLink>
                   <NextLink href="/app">
-                    <Button
-                      ml={2}
-                      width={160}
-                      size="lg"
-                      variant="outline"
-                      fontWeight="light"
-                      colorScheme="pink"
-                    >
+                    <Button ml={2} width={160} size="lg" variant="outline" colorScheme="pink">
                       View Docs
                     </Button>
                   </NextLink>
@@ -63,12 +56,12 @@ const Home = () => {
         <Container maxWidth="6xl">
           <Grid templateColumns="repeat(12, 1fr)" gap={4} py={24}>
             <GridItem colSpan={{ base: 12, md: 6 }}>
-              <Heading as="h1" color="white" size="xl" fontWeight="light">
+              <Heading as="h1" size="xl">
                 What is Decensus?
               </Heading>
             </GridItem>
             <GridItem colSpan={{ base: 12, md: 6 }}>
-              <Text color="white" fontSize="lg" fontWeight="light">
+              <Text fontSize="lg">
                 Decensus is a free and <b>open-source</b> decentralized application for creating
                 token-gated forms, with privacy in mind. It is designed for communities,
                 decentralized or not, who are interested in gathering explicit information from
@@ -85,7 +78,7 @@ const Home = () => {
         <Container maxWidth="6xl">
           <Grid templateColumns="repeat(12, 1fr)" gap={4} py={24}>
             <GridItem colSpan={{ base: 12 }}>
-              <Heading as="h1" color="white" size="3xl" fontWeight="light">
+              <Heading as="h1" size="3xl">
                 Features
               </Heading>
             </GridItem>
@@ -96,10 +89,10 @@ const Home = () => {
                     <Text color="pink.600">
                       <TbShape size={64} />
                     </Text>
-                    <Heading as="h4" color="white" size="md" fontWeight="bold" py={4}>
+                    <Heading as="h4" size="md" fontWeight="bold" py={4}>
                       Decentralized
                     </Heading>
-                    <Text color="white" fontSize="lg" fontWeight="light">
+                    <Text fontSize="lg">
                       Decensus is built on the Polygon blockchain, benefiting from
                       censorship-resistance, allowing wallet log in and unstoppable servicing.
                     </Text>
@@ -110,10 +103,10 @@ const Home = () => {
                     <Text color="pink.600">
                       <TbLockAccess size={64} />
                     </Text>
-                    <Heading as="h4" color="white" size="md" fontWeight="bold" py={4}>
+                    <Heading as="h4" size="md" fontWeight="bold" py={4}>
                       Token-gated
                     </Heading>
-                    <Text color="white" fontSize="lg" fontWeight="light">
+                    <Text fontSize="lg">
                       Form creators can specify any NFT collection that form respondents must be
                       holders of in order to access the form.
                     </Text>
@@ -124,10 +117,10 @@ const Home = () => {
                     <Text color="pink.600">
                       <TbCheckbox size={64} />
                     </Text>
-                    <Heading as="h4" color="white" size="md" fontWeight="bold" py={4}>
+                    <Heading as="h4" size="md" fontWeight="bold" py={4}>
                       Collectible questions and answers
                     </Heading>
-                    <Text color="white" fontSize="lg" fontWeight="light">
+                    <Text fontSize="lg">
                       Forms and answer sets are represented as NFT collections and items,
                       respectively, making them collectible and valuable. In addition, all form
                       answers are encrypted and only visible to the form creator, ensuring privacy
@@ -140,10 +133,10 @@ const Home = () => {
                     <Text color="pink.600">
                       <TbLock size={64} />
                     </Text>
-                    <Heading as="h4" color="white" size="md" fontWeight="bold" py={4}>
+                    <Heading as="h4" size="md" fontWeight="bold" py={4}>
                       Privacy
                     </Heading>
-                    <Text color="white" fontSize="lg" fontWeight="light">
+                    <Text fontSize="lg">
                       Form answers are encrypted and only visible to the form creator, ensuring
                       privacy for respondents.
                     </Text>

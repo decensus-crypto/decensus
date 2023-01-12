@@ -30,16 +30,16 @@ import {
   Text,
   Textarea,
   Tooltip,
-  useDisclosure,
   VStack,
+  useDisclosure,
 } from "@chakra-ui/react";
 import Carousel from "nuka-carousel/lib/carousel";
 import { useEffect, useMemo, useState } from "react";
 import {
   DragDropContext,
   Draggable,
-  Droppable,
   DropResult,
+  Droppable,
   ResponderProvided,
 } from "react-beautiful-dnd";
 import { PRESET_QUESTIONS } from "../constants/constants";
@@ -51,8 +51,8 @@ import { useTokenHolders } from "../hooks/useTokenHolders";
 import { Question, QuestionType } from "../types";
 import { genQuestionId } from "../utils/questionId";
 import { fetchNftBaseInfo } from "../utils/zdk";
-import Logo from "./logo";
 import SelectRating from "./SelectRating";
+import Logo from "./logo";
 
 const QuestionForm = (props: {
   idx: number;
@@ -112,7 +112,7 @@ const QuestionForm = (props: {
   };
   return (
     <Flex key={`question_form_${props.question.id}`}>
-      <Text fontSize="2xl" px={4} w={16} color="white">
+      <Text fontSize="2xl" px={4} w={16}>
         {props.idx + 1}
       </Text>
       <Box flex="1">
@@ -127,7 +127,7 @@ const QuestionForm = (props: {
           />
         </FormControl>
         <FormControl mt={4}>
-          <FormLabel color="white">Answer Type</FormLabel>
+          <FormLabel>Answer Type</FormLabel>
           <Select
             w={240}
             color="white"
@@ -148,7 +148,7 @@ const QuestionForm = (props: {
           (opt) => opt === props.question.question_type,
         ) && (
           <FormControl mt={4}>
-            <FormLabel color="white">Choices</FormLabel>
+            <FormLabel>Choices</FormLabel>
             <VStack align="start">
               {props.question.options.map((option, iidx) => {
                 return (
@@ -181,7 +181,7 @@ const QuestionForm = (props: {
         )}
         {["rating"].some((opt) => opt === props.question.question_type) && (
           <FormControl mt={4}>
-            <FormLabel color="white">Max Rating</FormLabel>
+            <FormLabel>Max Rating</FormLabel>
             <Select
               w={240}
               color="white"
@@ -221,11 +221,11 @@ const QuestionRow = (props: {
     <Flex py="4px" px="2px" w="320px" bg={props.isActive ? "gray.800" : "inherit"}>
       <Center>
         <Box w="32px" h="32px">
-          <Text fontSize="md" textAlign="center" color="white" mt="4px" mr="4px">
+          <Text fontSize="md" textAlign="center" mt="4px" mr="4px">
             {props.idx + 1}
           </Text>
         </Box>
-        <Text fontSize="sm" w="192px" color="white" textOverflow="clip" px={1}>
+        <Text fontSize="sm" w="192px" textOverflow="clip" px={1}>
           {props.question.question_body}
         </Text>
         <Box w="32px" h="32px">
@@ -442,12 +442,12 @@ const NewFormQuestionsDialog = (props: {
             <Tooltip label={props.description}>
               <Box mt={3}>
                 <Center>
-                  <Heading as="h2" size="md" color="white">
+                  <Heading as="h2" size="md">
                     {props.title}
                   </Heading>
                 </Center>
                 <Center>
-                  <Heading as="h4" size="xs" fontWeight="light" color="white">
+                  <Heading as="h4" size="xs">
                     {props.contractAddress}
                   </Heading>
                 </Center>
@@ -480,7 +480,7 @@ const NewFormQuestionsDialog = (props: {
             <Flex>
               <Box h="calc(100vh - 64px - 1px)" w="320px">
                 <Box h="calc(100vh - 64px - 1px - 64px)" overflowY="scroll">
-                  <Heading as="h3" size="sm" fontWeight="light" color="white" p={2}>
+                  <Heading as="h3" size="sm" p={2}>
                     Questions
                   </Heading>
                   <DragDropContext onDragEnd={onDragEnd}>
@@ -596,23 +596,13 @@ const NewFormQuestionsDialog = (props: {
             Publish {props.title} in progress...
           </ModalHeader>
           <ModalBody>
-            {deployStatus === "pending" && (
-              <Text size="sm" color="white">
-                Nothing Happening
-              </Text>
-            )}
+            {deployStatus === "pending" && <Text size="sm">Nothing Happening</Text>}
             {deployStatus === "encrypting" && (
-              <Text size="sm" color="white">
-                Encrypting the form contents...
-              </Text>
+              <Text size="sm">Encrypting the form contents...</Text>
             )}
-            {deployStatus === "uploading" && (
-              <Text size="sm" color="white">
-                Decentralizing...
-              </Text>
-            )}
+            {deployStatus === "uploading" && <Text size="sm">Decentralizing...</Text>}
             {deployStatus === "failed" && (
-              <Text size="sm" color="white">
+              <Text size="sm">
                 Failed :(
                 <br />
                 {deployErrorMessage}

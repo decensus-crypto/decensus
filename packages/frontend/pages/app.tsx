@@ -41,9 +41,9 @@ const FormGrid = (props: {
   return (
     <>
       <CardHeader px={1} py={4}>
-        <Text color="white">{props.title}</Text>
+        <Text>{props.title}</Text>
       </CardHeader>
-      <Divider color="gray" />
+      <Divider />
       <CardBody mt={2} p={1}>
         <Grid templateColumns="repeat(12, 1fr)" gap={2}>
           <GridItem colSpan={6}>
@@ -115,7 +115,7 @@ const FormRow = (props: {
   return (
     <>
       <Flex align="center">
-        <Text color="white">{props.title}</Text>
+        <Text>{props.title}</Text>
         <Spacer />
         <Box>
           <Button
@@ -249,29 +249,27 @@ const FormList = (props: { onCreateFormClicked: () => void }) => {
     fetchFormList({});
   }, [fetchFormList]);
 
+  if (isLoadingFormList) {
+    return (
+      <Center>
+        <Spinner size="lg" />
+      </Center>
+    );
+  }
+  if (!formList || 0 >= formList.length) {
+    return (
+      <Center mt={24}>
+        <Button size="lg" colorScheme="pink" onClick={props.onCreateFormClicked}>
+          Create My First Form
+        </Button>
+      </Center>
+    );
+  }
   return (
     <>
-      {isLoadingFormList ? (
-        <Center>
-          <Spinner size="lg" color="white" />
-        </Center>
-      ) : (
-        <>
-          {formList && 0 < formList.length ? (
-            <>
-              {formList.flatMap((form, index) => {
-                return <FormItem key={`form_row_${index}`} {...form} />;
-              })}
-            </>
-          ) : (
-            <Center mt={24}>
-              <Button size="lg" colorScheme="pink" onClick={props.onCreateFormClicked}>
-                Create My First Form
-              </Button>
-            </Center>
-          )}
-        </>
-      )}
+      {formList.flatMap((form, index) => {
+        return <FormItem key={`form_row_${index}`} {...form} />;
+      })}
     </>
   );
 };
@@ -294,7 +292,7 @@ const App = () => {
         <Box w="full" mb={32}>
           <Grid mt={8} templateColumns="repeat(12, 1fr)" gap={4}>
             <GridItem colSpan={{ base: 12 }}>
-              <Heading as="h2" size="md" fontWeight="light" color="white">
+              <Heading as="h2" size="md">
                 Form Management
               </Heading>
             </GridItem>
@@ -302,7 +300,6 @@ const App = () => {
               <Button
                 leftIcon={<AddIcon />}
                 size="sm"
-                color="white"
                 colorScheme="whiteAlpha"
                 onClick={newFormInfoModal.onOpen}
                 disabled={!account}
@@ -311,10 +308,10 @@ const App = () => {
               </Button>
             </GridItem>
             <GridItem colSpan={{ base: 12 }}>
-              <Divider color="gray" />
+              <Divider />
             </GridItem>
             <GridItem colSpan={{ base: 12 }}>
-              <Heading as="h3" size="sm" fontWeight="bold" color="white" mt={2}>
+              <Heading as="h3" size="sm" mt={2}>
                 Forms
               </Heading>
             </GridItem>
@@ -323,9 +320,7 @@ const App = () => {
                 <FormList onCreateFormClicked={newFormInfoModal.onOpen} />
               ) : (
                 <Center mt={24}>
-                  <Text size="sm" color="white">
-                    Connect wallet to start
-                  </Text>
+                  <Text size="sm">Connect wallet to start</Text>
                 </Center>
               )}
             </GridItem>
