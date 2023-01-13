@@ -7,7 +7,7 @@ import { theme } from "../theme";
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
   useEffect(() => {
-    TagManager.initialize({ gtmId: "GTM-WXTXD5B" });
+    TagManager.initialize({ gtmId: "GTM-WQPNLB5" });
   }, []);
 
   useEffect(() => {
