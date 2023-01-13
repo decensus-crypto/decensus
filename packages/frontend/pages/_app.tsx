@@ -1,9 +1,19 @@
 import { ChakraProvider } from "@chakra-ui/react";
 import type { AppProps } from "next/app";
+import { useEffect } from "react";
+import TagManager from "react-gtm-module";
 import "../styles/globals.css";
 import { theme } from "../theme";
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
+  useEffect(() => {
+    TagManager.initialize({ gtmId: "GTM-WXTXD5B" });
+  }, []);
+
+  useEffect(() => {
+    document.body.classList?.remove("loading");
+  }, []);
+
   return (
     <ChakraProvider theme={theme}>
       <Component {...pageProps} />
