@@ -2,13 +2,13 @@
 pragma solidity ^0.8.9;
 import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
-import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import {Base64} from "./Base64.sol";
+import {NFTMetadata} from "./NFTMetadata.sol";
 
 contract FormCollection is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     bytes32 public merkleRoot;
     string public description;
+    string public collectionImageURI;
     string public formDataURI;
     string public answerEncryptionKey;
     string public answerDecryptionKeyURI;
@@ -24,6 +24,7 @@ contract FormCollection is Initializable, ERC721Upgradeable, OwnableUpgradeable 
     function initialize(
         string memory _name,
         string memory _description,
+        string memory _collectionImageURI,
         bytes32 _merkleRoot,
         string memory _formDataURI,
         string memory _answerEncryptionKey,
@@ -33,6 +34,7 @@ contract FormCollection is Initializable, ERC721Upgradeable, OwnableUpgradeable 
         __ERC721_init(_name, "DCS");
         _transferOwnership(_owner);
         description = _description;
+        collectionImageURI = _collectionImageURI;
         merkleRoot = _merkleRoot;
         formDataURI = _formDataURI;
         answerEncryptionKey = _answerEncryptionKey;
@@ -69,65 +71,20 @@ contract FormCollection is Initializable, ERC721Upgradeable, OwnableUpgradeable 
     }
 
     function contractURI() external view returns (string memory) {
-        string memory json = Base64.encode(
-            bytes(
-                string(
-                    abi.encodePacked(
-                        '{"name": "',
-                        name(),
-                        '", "description": "',
-                        description,
-                        '", "external_link": "https://decensus.centiv.xyz"}'
-                    )
-                )
-            )
-        );
-
-        string memory finalContractUri = string(
-            abi.encodePacked("data:application/json;base64,", json)
-        );
-
-        return finalContractUri;
+        return NFTMetadata.generateContractURI(name(), description);
     }
 
     function tokenURI(uint256 tokenId) public view override returns (string memory) {
         require(_exists(tokenId), "Token does not exist.");
 
-        string memory newSvg = string(
-            abi.encodePacked(
-                // solhint-disable-next-line
-                '<svg viewBox="0 0 180 180" style="font-family:monospace" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%"/><path d="M20 0v180M0 20h180" style="stroke:gray"/><text x="23" y="15" style="font-size:6px" fill="#fff">',
+        return
+            NFTMetadata.generateTokenURI(
+                collectionImageURI,
                 name(),
-                '</text><text text-anchor="middle" x="50%" y="40%" fill="#fff" style="font-size:10px">Answer #',
-                Strings.toString(tokenId),
-                // solhint-disable-next-line
-                '</text><text text-anchor="middle" x="50%" y="60%" fill="#fff" style="font-size:16px"><tspan fill="#FC8CC9">de</tspan>census</text></svg>'
-            )
-        );
-
-        string memory json = Base64.encode(
-            bytes(
-                string(
-                    abi.encodePacked(
-                        '{"name": "',
-                        name(),
-                        ": Answer #",
-                        Strings.toString(tokenId),
-                        '", "description": "',
-                        description,
-                        '", "image": "data:image/svg+xml;base64,',
-                        Base64.encode(bytes(newSvg)),
-                        '"}'
-                    )
-                )
-            )
-        );
-
-        string memory finalTokenUri = string(
-            abi.encodePacked("data:application/json;base64,", json)
-        );
-
-        return finalTokenUri;
+                description,
+                tokenId,
+                ownerOf(tokenId)
+            );
     }
 
     /// @notice ERC721 _transfer() Disabled

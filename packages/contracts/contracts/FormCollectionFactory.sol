@@ -22,6 +22,7 @@ contract FormCollectionFactory is Ownable {
     function createFormCollection(
         string memory _name,
         string memory _description,
+        string memory _collectionImageURI,
         bytes32 _merkleRoot,
         string memory _formDataURI,
         string memory _answerEncryptionKey,
@@ -31,6 +32,7 @@ contract FormCollectionFactory is Ownable {
         FormCollection(clone).initialize(
             _name,
             _description,
+            _collectionImageURI,
             _merkleRoot,
             _formDataURI,
             _answerEncryptionKey,

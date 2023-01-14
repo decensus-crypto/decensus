@@ -21,6 +21,7 @@ let merkleTree: MerkleTree;
 let proof: string[];
 const name = "form name";
 const description = "this is a test form";
+const collectionImageURI = "https://example.com/collection";
 const formDataURI = "f-uri";
 const answerEncryptionKey = "key";
 const answerDecryptionKeyURI = "key-uri";
@@ -41,6 +42,7 @@ describe("form collection", function () {
       .createFormCollection(
         name,
         description,
+        collectionImageURI,
         merkleRoot,
         formDataURI,
         answerEncryptionKey,
