@@ -12,9 +12,7 @@ import { useLit } from "./litCeramic/useLit";
 import { useAccount } from "./useAccount";
 import { useContracts } from "./useContracts";
 
-const deployStatusAtom = atom<"pending" | "encrypting" | "uploading" | "completed" | "failed">(
-  "pending",
-);
+const deployStatusAtom = atom<"pending" | "uploading" | "completed" | "failed">("pending");
 const deployErrorMessageAtom = atom<string | null>(null);
 
 export const useDeploy = () => {
@@ -52,7 +50,7 @@ export const useDeploy = () => {
         console.log(formViewerAddresses);
         console.log(nftAddress);
 
-        setDeployStatus("encrypting");
+        setDeployStatus("uploading");
         const formCollectionFactoryContract = getFormCollectionFactoryContract();
 
         if (
@@ -81,13 +79,6 @@ export const useDeploy = () => {
           // explicitly get the sig and pass it to the encryption functions
           const authSig = await getLitAuthSig();
 
-          const encryptedFormData = await encryptWithLit({
-            strToEncrypt: JSON.stringify(formParams),
-            nftAddressToAllowRead: nftAddress,
-            chain: CHAIN_NAME,
-            authSig,
-          });
-
           const encryptedKey = await encryptWithLit({
             strToEncrypt: keyPair.privateKey,
             addressesToAllowRead: resultViewerAddresses,
@@ -100,9 +91,8 @@ export const useDeploy = () => {
           const formDataStreamId = await createDocument(
             compressToBase64(
               JSON.stringify({
-                encryptedFormData: encryptedFormData,
-                addressesToAllowRead: formViewerAddresses,
-                nftAddress,
+                formParams,
+                formViewerAddresses,
               }),
             ),
           );
@@ -123,7 +113,6 @@ export const useDeploy = () => {
           throw new Error("Upload form to Ceramic failed");
         }
 
-        setDeployStatus("uploading");
         let formCollectionAddress: string;
         try {
           const tx = await formCollectionFactoryContract.createFormCollection(

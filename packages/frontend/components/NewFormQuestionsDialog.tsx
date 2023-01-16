@@ -30,16 +30,16 @@ import {
   Text,
   Textarea,
   Tooltip,
-  VStack,
   useDisclosure,
+  VStack,
 } from "@chakra-ui/react";
 import Carousel from "nuka-carousel/lib/carousel";
 import { useEffect, useMemo, useState } from "react";
 import {
   DragDropContext,
   Draggable,
-  DropResult,
   Droppable,
+  DropResult,
   ResponderProvided,
 } from "react-beautiful-dnd";
 import { PRESET_QUESTIONS } from "../constants/constants";
@@ -51,8 +51,8 @@ import { useTokenHolders } from "../hooks/useTokenHolders";
 import { Question, QuestionType } from "../types";
 import { genQuestionId } from "../utils/questionId";
 import { fetchNftBaseInfo } from "../utils/zdk";
-import SelectRating from "./SelectRating";
 import Logo from "./logo";
+import SelectRating from "./SelectRating";
 
 const QuestionForm = (props: {
   idx: number;
@@ -597,10 +597,7 @@ const NewFormQuestionsDialog = (props: {
           </ModalHeader>
           <ModalBody>
             {deployStatus === "pending" && <Text size="sm">Nothing Happening</Text>}
-            {deployStatus === "encrypting" && (
-              <Text size="sm">Encrypting the form contents...</Text>
-            )}
-            {deployStatus === "uploading" && <Text size="sm">Decentralizing...</Text>}
+            {deployStatus === "uploading" && <Text size="sm">Deploying form...</Text>}
             {deployStatus === "failed" && (
               <Text size="sm">
                 Failed :(
