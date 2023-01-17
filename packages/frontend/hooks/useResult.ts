@@ -1,14 +1,15 @@
 import { atom, useAtom } from "jotai";
 import { useCallback } from "react";
 import { CHAIN_NAME, SUBGRAPH_URL } from "../constants/constants";
-import { Answer } from "../types";
+import { Answer } from "../types/core";
+import { AnswerDecryptionKeyInStorage } from "../types/storage";
 import { createToast } from "../utils/createToast";
 import { decrypt } from "../utils/crypto";
+import { loadJsonFromIpfs } from "../utils/ipfs";
 import { decompressFromBase64 } from "../utils/stringCompression";
-import { useCeramic } from "./litCeramic/useCeramic";
-import { useLit } from "./litCeramic/useLit";
 import { useAccount } from "./useAccount";
 import { useContracts } from "./useContracts";
+import { useLit } from "./useLit";
 
 const answersListAtom = atom<{ answers: Answer[]; address: string }[] | null>(null);
 const isLoadingAnswersListAtom = atom<boolean>(true);
@@ -36,7 +37,6 @@ const areAnswersValid = (data: any) => {
 export const useResult = () => {
   const { account } = useAccount();
   const [answersList, setAnswersList] = useAtom(answersListAtom);
-  const { loadDocument, isCeramicReady } = useCeramic();
   const { decryptWithLit, isLitClientReady, litAuthSig } = useLit();
   const { getFormCollectionContract } = useContracts();
 
@@ -46,7 +46,6 @@ export const useResult = () => {
     async (formCollectionAddress: string) => {
       if (!isLitClientReady) return;
       if (!litAuthSig) return;
-      if (!isCeramicReady) return;
       if (!account) return;
 
       const formCollectionContract = getFormCollectionContract(formCollectionAddress);
@@ -56,24 +55,15 @@ export const useResult = () => {
         setIsLoadingAnswersList(true);
 
         const keyUri = await formCollectionContract.answerDecryptionKeyURI();
-
-        if (keyUri.slice(0, 10) !== "ceramic://")
-          throw new Error("answer decryption key storage other than Ceramic is not supported");
-
-        const keyStreamId = keyUri.split("//").slice(-1)[0];
-
-        const keyDataInCeramic = await loadDocument(keyStreamId);
+        const { encryptedKey, resultViewerAddresses } =
+          await loadJsonFromIpfs<AnswerDecryptionKeyInStorage>(keyUri);
 
         let rawAnswersList: any[];
         try {
-          const { encryptedKey, addressesToAllowRead } = JSON.parse(
-            decompressFromBase64(keyDataInCeramic),
-          );
-
           const keyStr = await decryptWithLit({
             encryptedZipBase64: encryptedKey.encryptedZipBase64,
             encryptedSymmKeyBase64: encryptedKey.encryptedSymmKeyBase64,
-            addressesToAllowRead,
+            addressesToAllowRead: resultViewerAddresses,
             chain: CHAIN_NAME,
           });
 
@@ -112,7 +102,7 @@ export const useResult = () => {
                 });
                 const data = JSON.parse(str);
                 return { address: row.respondentAddress, data };
-              } catch (error: any) {
+              } catch (error) {
                 console.error(error);
                 return null;
               }
@@ -141,11 +131,9 @@ export const useResult = () => {
     [
       isLitClientReady,
       litAuthSig,
-      isCeramicReady,
       account,
       getFormCollectionContract,
       setIsLoadingAnswersList,
-      loadDocument,
       setAnswersList,
       decryptWithLit,
     ],

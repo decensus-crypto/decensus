@@ -2,21 +2,18 @@ import { ContractReceipt } from "ethers";
 import { atom, useAtom } from "jotai";
 import { useCallback } from "react";
 import { CHAIN_NAME } from "../constants/constants";
-import { Form } from "../types";
+import { Form } from "../types/core";
 import { genKeyPair } from "../utils/crypto";
 import { getMerkleTree, getMerkleTreeRootHash } from "../utils/merkleTree";
-import { compressToBase64 } from "../utils/stringCompression";
 import { getFormUrl } from "../utils/urls";
-import { useCeramic } from "./litCeramic/useCeramic";
-import { useLit } from "./litCeramic/useLit";
 import { useAccount } from "./useAccount";
 import { useContracts } from "./useContracts";
+import { useLit } from "./useLit";
 
 const deployStatusAtom = atom<"pending" | "uploading" | "completed" | "failed">("pending");
 const deployErrorMessageAtom = atom<string | null>(null);
 
 export const useDeploy = () => {
-  const { authenticateCeramic, createDocument, isCeramicReady } = useCeramic();
   const { getLitAuthSig, encryptWithLit, isLitClientReady } = useLit();
   const { account } = useAccount();
   const { getFormCollectionFactoryContract } = useContracts();
@@ -26,13 +23,11 @@ export const useDeploy = () => {
 
   const deploy = useCallback(
     async ({
-      formParams,
-      formViewerAddresses,
-      nftAddress,
+      form,
+      respondentAddresses,
     }: {
-      formParams: Form;
-      formViewerAddresses: string[];
-      nftAddress: string;
+      form: Form;
+      respondentAddresses: string[];
     }): Promise<{
       formCollectionAddress: string;
       formUrl: string;
@@ -46,18 +41,16 @@ export const useDeploy = () => {
         }
 
         console.log("Start Deployment");
-        console.log(formParams);
-        console.log(formViewerAddresses);
-        console.log(nftAddress);
+        console.log(form);
+        console.log(respondentAddresses);
 
         setDeployStatus("uploading");
         const formCollectionFactoryContract = getFormCollectionFactoryContract();
 
         if (
-          !isCeramicReady ||
           !isLitClientReady ||
           !formCollectionFactoryContract ||
-          formViewerAddresses.length === 0
+          respondentAddresses.length === 0
         ) {
           throw new Error("Cannot deploy form.");
         }
@@ -68,7 +61,7 @@ export const useDeploy = () => {
         const keyPair = await genKeyPair();
 
         // generate Merkle tree
-        const merkleTree = getMerkleTree(formViewerAddresses);
+        const merkleTree = getMerkleTree(respondentAddresses);
         const merkleRoot = getMerkleTreeRootHash(merkleTree);
 
         // deploy form, private key, merkle tree to Ceramic.
@@ -86,38 +79,42 @@ export const useDeploy = () => {
             authSig,
           });
 
-          await authenticateCeramic();
-
-          const formDataStreamId = await createDocument(
-            compressToBase64(
-              JSON.stringify({
-                formParams,
-                formViewerAddresses,
+          const [dataResult, keyResult] = await Promise.all([
+            fetch("/api/form", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                form,
+                respondentAddresses,
               }),
-            ),
-          );
-          formDataUri = formDataStreamId.toUrl();
-
-          const keyStreamId = await createDocument(
-            compressToBase64(
-              JSON.stringify({
+            }).then((r) => r.json()),
+            fetch("/api/answerDecryptionKey", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                formTitle: form.title,
                 encryptedKey,
-                addressesToAllowRead: resultViewerAddresses,
-                nftAddress,
+                resultViewerAddresses,
               }),
-            ),
-          );
-          answerDecryptionKeyUri = keyStreamId.toUrl();
+            }).then((r) => r.json()),
+          ]);
+
+          formDataUri = `ipfs://${dataResult.cid}`;
+          answerDecryptionKeyUri = `ipfs://${keyResult.cid}`;
         } catch (error) {
           console.error(error);
-          throw new Error("Upload form to Ceramic failed");
+          throw new Error("Upload form to IPFS failed");
         }
 
         let formCollectionAddress: string;
         try {
           const tx = await formCollectionFactoryContract.createFormCollection(
-            formParams.title,
-            formParams.description,
+            form.title,
+            form.description,
             merkleRoot,
             formDataUri,
             btoa(keyPair.publicKey),
@@ -149,13 +146,10 @@ export const useDeploy = () => {
     },
     [
       account,
-      authenticateCeramic,
-      createDocument,
       deployStatus,
       encryptWithLit,
       getFormCollectionFactoryContract,
       getLitAuthSig,
-      isCeramicReady,
       isLitClientReady,
       setDeployErrorMessage,
       setDeployStatus,

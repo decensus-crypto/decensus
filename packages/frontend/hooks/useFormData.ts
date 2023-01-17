@@ -1,30 +1,28 @@
 import { atom, useAtom } from "jotai";
 import { useCallback } from "react";
-import { Form } from "../types";
-import { decompressFromBase64 } from "../utils/stringCompression";
-import { useCeramic } from "./litCeramic/useCeramic";
+import { Form } from "../types/core";
+import { FormInStorage } from "../types/storage";
+import { loadJsonFromIpfs } from "../utils/ipfs";
 import { useAccount } from "./useAccount";
 import { useContracts } from "./useContracts";
 
 const formDataAtom = atom<(Form & { closed: boolean; alreadyAnswered: boolean }) | null>(null);
-const formViewerAddressesAtom = atom<string[] | null>(null);
+const respondentAddressesAtom = atom<string[] | null>(null);
 const fetchStatusAtom = atom<"pending" | "retrieving" | "completed" | "failed">("pending");
 const fetchErrorMessageAtom = atom<string | null>(null);
 
 export const useFormData = () => {
-  const { loadDocument, isCeramicReady } = useCeramic();
   const { account } = useAccount();
   const { getFormCollectionContract } = useContracts();
 
   const [formData, setFormData] = useAtom(formDataAtom);
-  const [formViewerAddresses, setFormViewerAddresses] = useAtom(formViewerAddressesAtom);
+  const [respondentAddresses, setFormViewerAddresses] = useAtom(respondentAddressesAtom);
   const [fetchStatus, setFetchStatus] = useAtom(fetchStatusAtom);
   const [fetchErrorMessage, setFetchErrorMessage] = useAtom(fetchErrorMessageAtom);
 
   const fetchFormData = useCallback(
     async (formCollectionAddress: string) => {
       if (!formCollectionAddress) return;
-      if (!isCeramicReady) return;
       if (!account) return;
       if (!(fetchStatus === "pending" || fetchStatus === "failed")) return;
 
@@ -40,26 +38,18 @@ export const useFormData = () => {
           formCollectionContract.balanceOf(account),
         ]);
 
-        if (formDataUri.slice(0, 10) !== "ceramic://")
-          throw new Error("Form data storage other than Ceramic is not supported");
+        const { form, respondentAddresses } = await loadJsonFromIpfs<FormInStorage>(formDataUri);
 
-        const formDataStreamId = formDataUri.split("//").slice(-1)[0];
-
-        const formDataInCeramic = await loadDocument(formDataStreamId);
         try {
-          const { formParams, formViewerAddresses } = JSON.parse(
-            decompressFromBase64(formDataInCeramic),
-          );
-
           const formData = {
-            ...formParams,
+            ...form,
             closed,
             alreadyAnswered: answeredNum > 0,
           };
 
           setFetchStatus("completed");
           setFormData(formData);
-          setFormViewerAddresses(formViewerAddresses);
+          setFormViewerAddresses(respondentAddresses);
         } catch (error) {
           console.error(error);
           throw new Error("invalid form data");
@@ -74,8 +64,6 @@ export const useFormData = () => {
       account,
       fetchStatus,
       getFormCollectionContract,
-      isCeramicReady,
-      loadDocument,
       setFetchErrorMessage,
       setFetchStatus,
       setFormData,
@@ -87,7 +75,7 @@ export const useFormData = () => {
     formData,
     fetchStatus,
     fetchErrorMessage,
-    formViewerAddresses,
+    respondentAddresses,
     fetchFormData,
   };
 };

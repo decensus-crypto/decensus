@@ -79,7 +79,7 @@ const NftFormControl = (props: {
         }
 
         setNftName(baseInfo.name);
-      } catch (error: any) {
+      } catch (error) {
         console.error(error);
         setNftName("");
       } finally {

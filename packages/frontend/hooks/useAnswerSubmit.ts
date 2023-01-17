@@ -14,7 +14,7 @@ const submitAnswerErrorMessageAtom = atom<string | null>(null);
 
 export const useAnswerSubmit = () => {
   const { account } = useAccount();
-  const { formViewerAddresses } = useFormData();
+  const { respondentAddresses } = useFormData();
   const { getFormCollectionContract } = useContracts();
 
   const [submitAnswerStatus, setSubmitAnswerStatus] = useAtom(submitAnswerStatusAtom);
@@ -32,7 +32,7 @@ export const useAnswerSubmit = () => {
       if (!account) {
         throw new Error("Cannot submit answer");
       }
-      if (!formViewerAddresses) {
+      if (!respondentAddresses) {
         throw new Error("Cannot submit answer");
       }
       if (!(submitAnswerStatus === "pending" || submitAnswerStatus === "failed")) return;
@@ -48,7 +48,7 @@ export const useAnswerSubmit = () => {
 
       try {
         // get Merkle proof
-        const merkleTree = getMerkleTree(formViewerAddresses);
+        const merkleTree = getMerkleTree(respondentAddresses);
         const merkleProof = getProofForAddress(account, merkleTree);
 
         // get encryption key
@@ -72,7 +72,7 @@ export const useAnswerSubmit = () => {
             },
           );
           await tx.wait();
-        } catch (error: any) {
+        } catch (error) {
           console.error(error);
           throw new Error("Error occurred during transaction");
         }
@@ -85,7 +85,7 @@ export const useAnswerSubmit = () => {
     },
     [
       account,
-      formViewerAddresses,
+      respondentAddresses,
       getFormCollectionContract,
       setSubmitAnswerErrorMessage,
       setSubmitAnswerStatus,

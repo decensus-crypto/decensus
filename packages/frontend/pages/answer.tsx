@@ -2,14 +2,12 @@ import { Box, Center, Spinner, Text, useDisclosure } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import NewAnswerDialog from "../components/NewAnswerDialog";
-import { useCeramic } from "../hooks/litCeramic/useCeramic";
 import { useFormData } from "../hooks/useFormData";
 import Layout from "../layouts/account";
 
 const AnswerPage = () => {
   const formCollectionAddress = useRouter().query?.id?.toString() || null;
   const { formData, fetchStatus, fetchErrorMessage, fetchFormData } = useFormData();
-  const { initCeramic } = useCeramic();
   const newAnswerModal = useDisclosure();
 
   useEffect(() => {
@@ -18,10 +16,6 @@ const AnswerPage = () => {
     }
     fetchFormData(formCollectionAddress);
   }, [fetchFormData, formCollectionAddress]);
-
-  useEffect(() => {
-    initCeramic();
-  }, [initCeramic]);
 
   useEffect(() => {
     if (!formData) return;

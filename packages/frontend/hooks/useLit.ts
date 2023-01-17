@@ -2,9 +2,9 @@ import { atom, useAtom } from "jotai";
 // @ts-expect-error
 import LitJsSdk from "lit-js-sdk";
 import { useCallback } from "react";
-import { CHAIN_NAME, LIT_CHAIN } from "../../constants/constants";
-import { blobToBase64, decodeb64, encodeb64, uint8ArrayToString } from "../../utils/dataConverters";
-import { useAccount } from "../useAccount";
+import { CHAIN_NAME, LIT_CHAIN } from "../constants/constants";
+import { blobToBase64, decodeb64, encodeb64, uint8ArrayToString } from "../utils/dataConverters";
+import { useAccount } from "./useAccount";
 
 const litClientAtom = atom<any | null>(null);
 const litAuthSigAtom = atom<any | null>(null);

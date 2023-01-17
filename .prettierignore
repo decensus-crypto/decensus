@@ -3,3 +3,4 @@ typechain-types
 artifacts
 cache
 build
+api-types.validator.ts

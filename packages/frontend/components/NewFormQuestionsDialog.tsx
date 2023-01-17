@@ -43,12 +43,11 @@ import {
   ResponderProvided,
 } from "react-beautiful-dnd";
 import { PRESET_QUESTIONS } from "../constants/constants";
-import { useCeramic } from "../hooks/litCeramic/useCeramic";
-import { useLit } from "../hooks/litCeramic/useLit";
 import { useDeploy } from "../hooks/useDeploy";
 import { useFormList } from "../hooks/useFormList";
+import { useLit } from "../hooks/useLit";
 import { useTokenHolders } from "../hooks/useTokenHolders";
-import { Question, QuestionType } from "../types";
+import { Question, QuestionType } from "../types/core";
 import { genQuestionId } from "../utils/questionId";
 import { fetchNftBaseInfo } from "../utils/zdk";
 import Logo from "./logo";
@@ -283,7 +282,6 @@ const NewFormQuestionsDialog = (props: {
 }) => {
   const { deploy, deployStatus, deployErrorMessage } = useDeploy();
   const { initLitClient, isLitClientReady } = useLit();
-  const { initCeramic, isCeramicReady } = useCeramic();
   const { tokenHolders, fetchHolders } = useTokenHolders();
   const { fetchFormList } = useFormList();
 
@@ -310,10 +308,6 @@ const NewFormQuestionsDialog = (props: {
   }, [initLitClient]);
 
   useEffect(() => {
-    initCeramic();
-  }, [initCeramic]);
-
-  useEffect(() => {
     (async () => {
       if (isLoadingNftName || loadedNftName) return;
       if (props.contractAddress.length === 0) return;
@@ -327,7 +321,7 @@ const NewFormQuestionsDialog = (props: {
         if (!baseInfo || !baseInfo.name) {
           return;
         }
-      } catch (error: any) {
+      } catch (error) {
         console.error(error);
       } finally {
         setIsLoadingNftName(false);
@@ -395,7 +389,6 @@ const NewFormQuestionsDialog = (props: {
 
   const onClickDeploy = () => {
     if (!(deployStatus === "pending" || deployStatus === "failed")) return;
-    if (!isCeramicReady) return;
     if (!isLitClientReady) return;
     if (!isSecondStepValid) return;
     onDeploy();
@@ -404,13 +397,12 @@ const NewFormQuestionsDialog = (props: {
   const onDeploy = async () => {
     deployModal.onOpen();
     const res = await deploy({
-      formParams: {
+      form: {
         title: props.title,
         description: props.description,
         questions: questions,
       },
-      formViewerAddresses: tokenHolders,
-      nftAddress: props.contractAddress,
+      respondentAddresses: tokenHolders,
     });
     if (!res) {
       //

@@ -30,9 +30,9 @@ import {
 import Carousel from "nuka-carousel/lib/carousel";
 import { useMemo, useState } from "react";
 import { useAnswerSubmit } from "../hooks/useAnswerSubmit";
-import { Answer, Question, QuestionType } from "../types";
-import SelectRating from "./SelectRating";
+import { Answer, Question, QuestionType } from "../types/core";
 import Logo from "./logo";
+import SelectRating from "./SelectRating";
 
 type AnswerInForm = {
   question_type: QuestionType;

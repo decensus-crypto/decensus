@@ -14,12 +14,11 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useMemo } from "react";
 import { CSVLink } from "react-csv";
-import { useCeramic } from "../hooks/litCeramic/useCeramic";
-import { useLit } from "../hooks/litCeramic/useLit";
 import { useAccount } from "../hooks/useAccount";
 import { useFormData } from "../hooks/useFormData";
+import { useLit } from "../hooks/useLit";
 import { useResult } from "../hooks/useResult";
-import { Question } from "../types";
+import { Question } from "../types/core";
 
 const convertAnswerVal = (val: string | string[], question: Question) => {
   if (["single_choice", "single_choice_dropdown"].includes(question.question_type)) {
@@ -40,7 +39,6 @@ const ExportAnswersDialog = (props: {
   onClose: () => void;
 }) => {
   const { initLitClient, getLitAuthSig } = useLit();
-  const { initCeramic } = useCeramic();
   const { formData, fetchStatus, fetchFormData } = useFormData();
   const { isLoadingAnswersList, answersList, fetchResults } = useResult();
   const { account } = useAccount();
@@ -54,11 +52,6 @@ const ExportAnswersDialog = (props: {
     if (!props.isOpen) return;
     getLitAuthSig();
   }, [props.isOpen, getLitAuthSig]);
-
-  useEffect(() => {
-    if (!props.isOpen) return;
-    initCeramic();
-  }, [props.isOpen, initCeramic]);
 
   useEffect(() => {
     if (!props.isOpen) return;

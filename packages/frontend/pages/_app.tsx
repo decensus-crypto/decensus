@@ -5,7 +5,7 @@ import TagManager from "react-gtm-module";
 import "../styles/globals.css";
 import { theme } from "../theme";
 
-const MyApp = ({ Component, pageProps }: AppProps) => {
+const App = ({ Component, pageProps }: AppProps) => {
   useEffect(() => {
     TagManager.initialize({ gtmId: "GTM-WQPNLB5" });
   }, []);
@@ -21,4 +21,4 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
   );
 };
 
-export default MyApp;
+export default App;
