@@ -12,8 +12,9 @@
     "lint": "next lint",
     "analyze": "ANALYZE=true next build",
     "generate-validator": "create-validator-ts --cache 'types/api-types.ts'",
+    "check-validator": "create-validator-ts --check 'types/api-types.ts'",
     "type-check": "tsc --noEmit",
-    "test:ci": "yarn type-check && yarn build && yarn lint"
+    "test:ci": "yarn type-check && yarn build && yarn lint && yarn check-validator"
   },
   "dependencies": {
     "@3id/connect": "^0.4.1",
