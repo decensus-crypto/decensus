@@ -10,7 +10,6 @@ import {
   MenuList,
   Modal,
   ModalBody,
-  ModalCloseButton,
   ModalContent,
   ModalFooter,
   ModalHeader,
@@ -39,11 +38,10 @@ const IncorrectChainDialog = (props: {
       onClose={props.onClose}
     >
       <ModalOverlay />
-      <ModalContent>
-        <ModalHeader as="h2" fontWeight="light" color="gray">
+      <ModalContent bg="gray.700">
+        <ModalHeader as="h2" fontWeight="light" color="white">
           Unsupported Network
         </ModalHeader>
-        <ModalCloseButton />
         <ModalBody>
           <Text>Please switch to</Text>
           <Text>{CHAIN_NAME.slice(0, 1).toUpperCase() + CHAIN_NAME.slice(1).toLowerCase()}</Text>

@@ -212,7 +212,7 @@ const NewFormInfoDialog = (props: {
           <ModalHeader as="h2" fontWeight="light" color="white">
             Create New Form
           </ModalHeader>
-          <ModalCloseButton />
+          <ModalCloseButton color="white" />
           <ModalBody>
             <FormControl>
               <FormLabel fontSize="sm">Form Title</FormLabel>
