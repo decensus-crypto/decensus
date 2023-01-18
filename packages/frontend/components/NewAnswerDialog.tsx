@@ -31,8 +31,8 @@ import Carousel from "nuka-carousel/lib/carousel";
 import { useMemo, useState } from "react";
 import { useAnswerSubmit } from "../hooks/useAnswerSubmit";
 import { Answer, Question, QuestionType } from "../types/core";
-import Logo from "./logo";
 import SelectRating from "./SelectRating";
+import Logo from "./logo";
 
 type AnswerInForm = {
   question_type: QuestionType;
@@ -233,8 +233,8 @@ const NewAnswerDialog = (props: {
     <>
       <Modal size="full" isOpen={props.isOpen} onClose={props.onClose}>
         <ModalOverlay />
-        <ModalContent>
-          <Box h={{ base: "128px", md: "64px" }} w="100%" overflowY="hidden" bg="black">
+        <ModalContent bg="black">
+          <Box h={{ base: "128px", md: "64px" }} w="100%" overflowY="hidden">
             <Grid templateColumns="repeat(12, 1fr)" gap={0} w="100%">
               <GridItem colSpan={{ base: 12, md: 3 }} h="64px">
                 <Flex align="center" justify="center" h="100%">
@@ -251,7 +251,7 @@ const NewAnswerDialog = (props: {
             </Grid>
           </Box>
           <Divider />
-          <Box w="100%" bg="black">
+          <Box w="100%">
             <Box h="64px" w="100%">
               <Flex align="center" justify="center" w="100%">
                 <Box w="100%" maxW="4xl">
@@ -281,7 +281,7 @@ const NewAnswerDialog = (props: {
                 </Box>
               </Flex>
             </Box>
-            <Box h="calc(100vh - 64px - 1px - 64px)" w="100%" bg="black">
+            <Box h="calc(100vh - 64px - 1px - 64px)" w="100%">
               <Carousel
                 slidesToShow={1}
                 withoutControls={true}

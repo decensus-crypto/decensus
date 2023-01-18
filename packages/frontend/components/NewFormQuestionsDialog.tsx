@@ -30,16 +30,16 @@ import {
   Text,
   Textarea,
   Tooltip,
-  useDisclosure,
   VStack,
+  useDisclosure,
 } from "@chakra-ui/react";
 import Carousel from "nuka-carousel/lib/carousel";
 import { useEffect, useMemo, useState } from "react";
 import {
   DragDropContext,
   Draggable,
-  Droppable,
   DropResult,
+  Droppable,
   ResponderProvided,
 } from "react-beautiful-dnd";
 import { PRESET_QUESTIONS } from "../constants/constants";
@@ -50,8 +50,8 @@ import { useTokenHolders } from "../hooks/useTokenHolders";
 import { Question, QuestionType } from "../types/core";
 import { genQuestionId } from "../utils/questionId";
 import { fetchNftBaseInfo } from "../utils/zdk";
-import Logo from "./logo";
 import SelectRating from "./SelectRating";
+import Logo from "./logo";
 
 const QuestionForm = (props: {
   idx: number;
@@ -429,8 +429,8 @@ const NewFormQuestionsDialog = (props: {
     <>
       <Modal size="full" isOpen={props.isOpen} onClose={props.onClose}>
         <ModalOverlay />
-        <ModalContent>
-          <Box h="64px" w="100%" overflowY="hidden" bg="black">
+        <ModalContent bg="black">
+          <Box h="64px" w="100%" overflowY="hidden">
             <Tooltip label={props.description}>
               <Box mt={3}>
                 <Center>
@@ -458,6 +458,7 @@ const NewFormQuestionsDialog = (props: {
                 </Button>
                 <IconButton
                   ml={4}
+                  color="white"
                   variant="ghost"
                   size="sm"
                   aria-label="Close"
@@ -468,7 +469,7 @@ const NewFormQuestionsDialog = (props: {
             </Flex>
           </Box>
           <Box h="1px" w="100%" bg="gray.700" />
-          <Box h="calc(100vh - 64px - 1px)" w="100%" bg="black">
+          <Box h="calc(100vh - 64px - 1px)" w="100%">
             <Flex>
               <Box h="calc(100vh - 64px - 1px)" w="320px">
                 <Box h="calc(100vh - 64px - 1px - 64px)" overflowY="scroll">

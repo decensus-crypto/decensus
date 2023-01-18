@@ -119,9 +119,9 @@ const ExportAnswersDialog = (props: {
       key={`export_answers_dialog_${props.useFormCollectionAddress}`}
     >
       <ModalOverlay />
-      <ModalContent>
-        <ModalHeader as="h2" fontWeight="light" color="gray">
-          Exporting answers...
+      <ModalContent bg="gray.700">
+        <ModalHeader as="h2" fontWeight="light" color="white">
+          Exporting Answers...
         </ModalHeader>
         <ModalBody>
           {status === "pending" && (

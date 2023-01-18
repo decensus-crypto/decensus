@@ -37,9 +37,11 @@ const CloseFormDialog = (props: { onClose: () => void; isOpen: boolean; formData
   return (
     <Modal onClose={props.onClose} isOpen={props.isOpen}>
       <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Close survey</ModalHeader>
-        <ModalCloseButton />
+      <ModalContent bg="gray.700">
+        <ModalHeader as="h2" fontWeight="light" color="white">
+          Close Survey
+        </ModalHeader>
+        <ModalCloseButton color="white" />
         <ModalBody>
           <Text>After you close the survey, no answers will be able to be submitted.</Text>
         </ModalBody>
