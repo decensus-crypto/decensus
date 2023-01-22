@@ -29,6 +29,25 @@ export const SCHEMA = {
             ],
             "additionalProperties": false
         },
+        "PostMerkleTreeResponse": {
+            "$ref": "#/definitions/FileLocationInStorage"
+        },
+        "FileLocationInStorage": {
+            "type": "object",
+            "properties": {
+                "cid": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "cid",
+                "path"
+            ],
+            "additionalProperties": false
+        },
         "PostEncryptedAnswerDecryptionKeyRequestBody": {
             "$ref": "#/definitions/EncryptedAnswerDecryptionKeyInStorage"
         },
@@ -67,6 +86,9 @@ export const SCHEMA = {
                 "resultViewerAddresses"
             ],
             "additionalProperties": false
+        },
+        "PostEncryptedAnswerDecryptionKeyResponse": {
+            "$ref": "#/definitions/FileLocationInStorage"
         }
     }
 };
@@ -92,6 +114,27 @@ export function isPostMerkleTreeRequestBody(payload: unknown): payload is apiTyp
   }
 }
 
+export function validatePostMerkleTreeResponse(payload: unknown): apiTypes.PostMerkleTreeResponse {
+  /** Schema is defined in {@link SCHEMA.definitions.PostMerkleTreeResponse } **/
+  const validator = ajv.getSchema("SCHEMA#/definitions/PostMerkleTreeResponse");
+  const valid = validator(payload);
+  if (!valid) {
+    const error = new Error('Invalid PostMerkleTreeResponse: ' + ajv.errorsText(validator.errors, {dataVar: "PostMerkleTreeResponse"}));
+    error.name = "ValidationError";
+    throw error;
+  }
+  return payload;
+}
+
+export function isPostMerkleTreeResponse(payload: unknown): payload is apiTypes.PostMerkleTreeResponse {
+  try {
+    validatePostMerkleTreeResponse(payload);
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
 export function validatePostEncryptedAnswerDecryptionKeyRequestBody(payload: unknown): apiTypes.PostEncryptedAnswerDecryptionKeyRequestBody {
   /** Schema is defined in {@link SCHEMA.definitions.PostEncryptedAnswerDecryptionKeyRequestBody } **/
   const validator = ajv.getSchema("SCHEMA#/definitions/PostEncryptedAnswerDecryptionKeyRequestBody");
@@ -107,6 +150,27 @@ export function validatePostEncryptedAnswerDecryptionKeyRequestBody(payload: unk
 export function isPostEncryptedAnswerDecryptionKeyRequestBody(payload: unknown): payload is apiTypes.PostEncryptedAnswerDecryptionKeyRequestBody {
   try {
     validatePostEncryptedAnswerDecryptionKeyRequestBody(payload);
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+export function validatePostEncryptedAnswerDecryptionKeyResponse(payload: unknown): apiTypes.PostEncryptedAnswerDecryptionKeyResponse {
+  /** Schema is defined in {@link SCHEMA.definitions.PostEncryptedAnswerDecryptionKeyResponse } **/
+  const validator = ajv.getSchema("SCHEMA#/definitions/PostEncryptedAnswerDecryptionKeyResponse");
+  const valid = validator(payload);
+  if (!valid) {
+    const error = new Error('Invalid PostEncryptedAnswerDecryptionKeyResponse: ' + ajv.errorsText(validator.errors, {dataVar: "PostEncryptedAnswerDecryptionKeyResponse"}));
+    error.name = "ValidationError";
+    throw error;
+  }
+  return payload;
+}
+
+export function isPostEncryptedAnswerDecryptionKeyResponse(payload: unknown): payload is apiTypes.PostEncryptedAnswerDecryptionKeyResponse {
+  try {
+    validatePostEncryptedAnswerDecryptionKeyResponse(payload);
     return true;
   } catch (error) {
     return false;
