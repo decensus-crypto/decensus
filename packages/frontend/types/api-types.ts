@@ -1,5 +1,5 @@
-import { AnswerDecryptionKeyInStorage, FormInStorage } from "./storage";
+import { EncryptedAnswerDecryptionKeyInStorage, MerkleTreeInStorage } from "./storage";
 
-export type PostFormRequestBody = FormInStorage;
+export type PostMerkleTreeRequestBody = MerkleTreeInStorage;
 
-export type PostAnswerDecryptionKeyRequestBody = AnswerDecryptionKeyInStorage;
+export type PostEncryptedAnswerDecryptionKeyRequestBody = EncryptedAnswerDecryptionKeyInStorage;

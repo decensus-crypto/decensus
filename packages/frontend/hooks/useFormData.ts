@@ -1,7 +1,7 @@
 import { atom, useAtom } from "jotai";
 import { useCallback } from "react";
 import { Form } from "../types/core";
-import { FormInStorage } from "../types/storage";
+import { MerkleTreeInStorage } from "../types/storage";
 import { loadJsonFromIpfs } from "../utils/ipfs";
 import { useAccount } from "./useAccount";
 import { useContracts } from "./useContracts";
@@ -32,17 +32,23 @@ export const useFormData = () => {
       try {
         setFetchStatus("retrieving");
 
-        const [formDataUri, closed, answeredNum] = await Promise.all([
-          formCollectionContract.formDataURI(),
-          formCollectionContract.closed(),
-          formCollectionContract.balanceOf(account),
-        ]);
+        const [title, description, questionsStr, merkleTreeUri, closed, answeredNum] =
+          await Promise.all([
+            formCollectionContract.name(),
+            formCollectionContract.description(),
+            formCollectionContract.questions(),
+            formCollectionContract.merkleTreeURI(),
+            formCollectionContract.closed(),
+            formCollectionContract.balanceOf(account),
+          ]);
 
-        const { form, respondentAddresses } = await loadJsonFromIpfs<FormInStorage>(formDataUri);
+        const { respondentAddresses } = await loadJsonFromIpfs<MerkleTreeInStorage>(merkleTreeUri);
 
         try {
           const formData = {
-            ...form,
+            title,
+            description,
+            questions: JSON.parse(questionsStr),
             closed,
             alreadyAnswered: answeredNum > 0,
           };

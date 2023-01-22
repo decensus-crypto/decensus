@@ -1,13 +1,13 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { PostAnswerDecryptionKeyRequestBody } from "../../types/api-types";
-import { validatePostAnswerDecryptionKeyRequestBody } from "../../types/api-types.validator";
+import { PostEncryptedAnswerDecryptionKeyRequestBody } from "../../types/api-types";
+import { validatePostEncryptedAnswerDecryptionKeyRequestBody } from "../../types/api-types.validator";
 import { pin } from "../../utils/pinata";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "POST") {
-    let validBody: PostAnswerDecryptionKeyRequestBody;
+    let validBody: PostEncryptedAnswerDecryptionKeyRequestBody;
     try {
-      validBody = validatePostAnswerDecryptionKeyRequestBody(req.body);
+      validBody = validatePostEncryptedAnswerDecryptionKeyRequestBody(req.body);
     } catch (e: any) {
       res.status(400).json({ message: e.message });
       return;

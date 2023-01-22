@@ -7,14 +7,14 @@ import type * as apiTypes from './api-types';
 export const SCHEMA = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "definitions": {
-        "PostFormRequestBody": {
-            "$ref": "#/definitions/FormInStorage"
+        "PostMerkleTreeRequestBody": {
+            "$ref": "#/definitions/MerkleTreeInStorage"
         },
-        "FormInStorage": {
+        "MerkleTreeInStorage": {
             "type": "object",
             "properties": {
-                "form": {
-                    "$ref": "#/definitions/Form"
+                "formTitle": {
+                    "type": "string"
                 },
                 "respondentAddresses": {
                     "type": "array",
@@ -24,96 +24,15 @@ export const SCHEMA = {
                 }
             },
             "required": [
-                "form",
+                "formTitle",
                 "respondentAddresses"
             ],
             "additionalProperties": false
         },
-        "Form": {
-            "type": "object",
-            "properties": {
-                "title": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "questions": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/Question"
-                    }
-                }
-            },
-            "required": [
-                "title",
-                "description",
-                "questions"
-            ],
-            "additionalProperties": false
+        "PostEncryptedAnswerDecryptionKeyRequestBody": {
+            "$ref": "#/definitions/EncryptedAnswerDecryptionKeyInStorage"
         },
-        "Question": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "question_body": {
-                    "type": "string"
-                },
-                "question_type": {
-                    "$ref": "#/definitions/QuestionType"
-                },
-                "question_max_rating": {
-                    "type": "number"
-                },
-                "options": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/Option"
-                    }
-                }
-            },
-            "required": [
-                "id",
-                "question_body",
-                "question_type",
-                "question_max_rating",
-                "options"
-            ],
-            "additionalProperties": false
-        },
-        "QuestionType": {
-            "type": "string",
-            "enum": [
-                "single_choice",
-                "single_choice_dropdown",
-                "multi_choice",
-                "text",
-                "date",
-                "rating"
-            ]
-        },
-        "Option": {
-            "type": "object",
-            "properties": {
-                "index": {
-                    "type": "number"
-                },
-                "text": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "index",
-                "text"
-            ],
-            "additionalProperties": false
-        },
-        "PostAnswerDecryptionKeyRequestBody": {
-            "$ref": "#/definitions/AnswerDecryptionKeyInStorage"
-        },
-        "AnswerDecryptionKeyInStorage": {
+        "EncryptedAnswerDecryptionKeyInStorage": {
             "type": "object",
             "properties": {
                 "formTitle": {
@@ -152,42 +71,42 @@ export const SCHEMA = {
     }
 };
 const ajv = new Ajv({ removeAdditional: true }).addSchema(SCHEMA, "SCHEMA");
-export function validatePostFormRequestBody(payload: unknown): apiTypes.PostFormRequestBody {
-  /** Schema is defined in {@link SCHEMA.definitions.PostFormRequestBody } **/
-  const validator = ajv.getSchema("SCHEMA#/definitions/PostFormRequestBody");
+export function validatePostMerkleTreeRequestBody(payload: unknown): apiTypes.PostMerkleTreeRequestBody {
+  /** Schema is defined in {@link SCHEMA.definitions.PostMerkleTreeRequestBody } **/
+  const validator = ajv.getSchema("SCHEMA#/definitions/PostMerkleTreeRequestBody");
   const valid = validator(payload);
   if (!valid) {
-    const error = new Error('Invalid PostFormRequestBody: ' + ajv.errorsText(validator.errors, {dataVar: "PostFormRequestBody"}));
+    const error = new Error('Invalid PostMerkleTreeRequestBody: ' + ajv.errorsText(validator.errors, {dataVar: "PostMerkleTreeRequestBody"}));
     error.name = "ValidationError";
     throw error;
   }
   return payload;
 }
 
-export function isPostFormRequestBody(payload: unknown): payload is apiTypes.PostFormRequestBody {
+export function isPostMerkleTreeRequestBody(payload: unknown): payload is apiTypes.PostMerkleTreeRequestBody {
   try {
-    validatePostFormRequestBody(payload);
+    validatePostMerkleTreeRequestBody(payload);
     return true;
   } catch (error) {
     return false;
   }
 }
 
-export function validatePostAnswerDecryptionKeyRequestBody(payload: unknown): apiTypes.PostAnswerDecryptionKeyRequestBody {
-  /** Schema is defined in {@link SCHEMA.definitions.PostAnswerDecryptionKeyRequestBody } **/
-  const validator = ajv.getSchema("SCHEMA#/definitions/PostAnswerDecryptionKeyRequestBody");
+export function validatePostEncryptedAnswerDecryptionKeyRequestBody(payload: unknown): apiTypes.PostEncryptedAnswerDecryptionKeyRequestBody {
+  /** Schema is defined in {@link SCHEMA.definitions.PostEncryptedAnswerDecryptionKeyRequestBody } **/
+  const validator = ajv.getSchema("SCHEMA#/definitions/PostEncryptedAnswerDecryptionKeyRequestBody");
   const valid = validator(payload);
   if (!valid) {
-    const error = new Error('Invalid PostAnswerDecryptionKeyRequestBody: ' + ajv.errorsText(validator.errors, {dataVar: "PostAnswerDecryptionKeyRequestBody"}));
+    const error = new Error('Invalid PostEncryptedAnswerDecryptionKeyRequestBody: ' + ajv.errorsText(validator.errors, {dataVar: "PostEncryptedAnswerDecryptionKeyRequestBody"}));
     error.name = "ValidationError";
     throw error;
   }
   return payload;
 }
 
-export function isPostAnswerDecryptionKeyRequestBody(payload: unknown): payload is apiTypes.PostAnswerDecryptionKeyRequestBody {
+export function isPostEncryptedAnswerDecryptionKeyRequestBody(payload: unknown): payload is apiTypes.PostEncryptedAnswerDecryptionKeyRequestBody {
   try {
-    validatePostAnswerDecryptionKeyRequestBody(payload);
+    validatePostEncryptedAnswerDecryptionKeyRequestBody(payload);
     return true;
   } catch (error) {
     return false;

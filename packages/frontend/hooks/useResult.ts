@@ -2,7 +2,7 @@ import { atom, useAtom } from "jotai";
 import { useCallback } from "react";
 import { CHAIN_NAME, SUBGRAPH_URL } from "../constants/constants";
 import { Answer } from "../types/core";
-import { AnswerDecryptionKeyInStorage } from "../types/storage";
+import { EncryptedAnswerDecryptionKeyInStorage } from "../types/storage";
 import { createToast } from "../utils/createToast";
 import { decrypt } from "../utils/crypto";
 import { loadJsonFromIpfs } from "../utils/ipfs";
@@ -54,9 +54,9 @@ export const useResult = () => {
       try {
         setIsLoadingAnswersList(true);
 
-        const keyUri = await formCollectionContract.answerDecryptionKeyURI();
+        const keyUri = await formCollectionContract.encryptedAnswerDecryptionKeyURI();
         const { encryptedKey, resultViewerAddresses } =
-          await loadJsonFromIpfs<AnswerDecryptionKeyInStorage>(keyUri);
+          await loadJsonFromIpfs<EncryptedAnswerDecryptionKeyInStorage>(keyUri);
 
         let rawAnswersList: any[];
         try {

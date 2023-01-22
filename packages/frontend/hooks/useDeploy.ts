@@ -65,8 +65,8 @@ export const useDeploy = () => {
         const merkleRoot = getMerkleTreeRootHash(merkleTree);
 
         // deploy form, private key, merkle tree to Ceramic.
-        let formDataUri: string;
-        let answerDecryptionKeyUri: string;
+        let merkleTreeUri: string;
+        let encryptedAnswerDecryptionKeyUri: string;
         try {
           // because the auth sig got here is not reflected when executing the following processes,
           // explicitly get the sig and pass it to the encryption functions
@@ -79,18 +79,18 @@ export const useDeploy = () => {
             authSig,
           });
 
-          const [dataResult, keyResult] = await Promise.all([
-            fetch("/api/form", {
+          const [merkleTreeResult, keyResult] = await Promise.all([
+            fetch("/api/merkleTree", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                form,
+                formTitle: form.title,
                 respondentAddresses,
               }),
             }).then((r) => r.json()),
-            fetch("/api/answerDecryptionKey", {
+            fetch("/api/encryptedAnswerDecryptionKey", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -103,8 +103,8 @@ export const useDeploy = () => {
             }).then((r) => r.json()),
           ]);
 
-          formDataUri = `ipfs://${dataResult.cid}`;
-          answerDecryptionKeyUri = `ipfs://${keyResult.cid}`;
+          merkleTreeUri = `ipfs://${merkleTreeResult.cid}`;
+          encryptedAnswerDecryptionKeyUri = `ipfs://${keyResult.cid}`;
         } catch (error) {
           console.error(error);
           throw new Error("Upload form to IPFS failed");
@@ -115,12 +115,13 @@ export const useDeploy = () => {
           const tx = await formCollectionFactoryContract.createFormCollection(
             form.title,
             form.description,
+            JSON.stringify(form.questions),
             merkleRoot,
-            formDataUri,
+            merkleTreeUri,
             btoa(keyPair.publicKey),
-            answerDecryptionKeyUri,
+            encryptedAnswerDecryptionKeyUri,
             {
-              gasLimit: 8000000,
+              gasLimit: 15000000,
             },
           );
 

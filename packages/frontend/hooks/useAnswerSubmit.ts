@@ -68,7 +68,7 @@ export const useAnswerSubmit = () => {
             merkleProof,
             compressToBase64(encryptedAnswer),
             {
-              gasLimit: 8000000,
+              gasLimit: 3000000,
             },
           );
           await tx.wait();

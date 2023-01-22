@@ -1,11 +1,9 @@
-import { Form } from "./core";
-
-export type FormInStorage = {
-  form: Form;
+export type MerkleTreeInStorage = {
+  formTitle: string;
   respondentAddresses: string[];
 };
 
-export type AnswerDecryptionKeyInStorage = {
+export type EncryptedAnswerDecryptionKeyInStorage = {
   formTitle: string;
   encryptedKey: {
     encryptedZipBase64: string;
