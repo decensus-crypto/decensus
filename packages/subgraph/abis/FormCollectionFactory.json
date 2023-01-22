@@ -74,13 +74,18 @@
         "type": "string"
       },
       {
+        "internalType": "string",
+        "name": "_questions",
+        "type": "string"
+      },
+      {
         "internalType": "bytes32",
         "name": "_merkleRoot",
         "type": "bytes32"
       },
       {
         "internalType": "string",
-        "name": "_formDataURI",
+        "name": "_merkleTreeURI",
         "type": "string"
       },
       {
@@ -90,7 +95,7 @@
       },
       {
         "internalType": "string",
-        "name": "_answerDecryptionKeyURI",
+        "name": "_encryptedAnswerDecryptionKeyURI",
         "type": "string"
       }
     ],

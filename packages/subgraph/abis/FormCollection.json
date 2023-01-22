@@ -139,19 +139,6 @@
   },
   {
     "inputs": [],
-    "name": "answerDecryptionKeyURI",
-    "outputs": [
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "answerEncryptionKey",
     "outputs": [
       {
@@ -247,14 +234,8 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "name": "encryptedAnswers",
+    "inputs": [],
+    "name": "encryptedAnswerDecryptionKeyURI",
     "outputs": [
       {
         "internalType": "string",
@@ -266,8 +247,14 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "formDataURI",
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "encryptedAnswers",
     "outputs": [
       {
         "internalType": "string",
@@ -310,13 +297,18 @@
         "type": "string"
       },
       {
+        "internalType": "string",
+        "name": "_questions",
+        "type": "string"
+      },
+      {
         "internalType": "bytes32",
         "name": "_merkleRoot",
         "type": "bytes32"
       },
       {
         "internalType": "string",
-        "name": "_formDataURI",
+        "name": "_merkleTreeURI",
         "type": "string"
       },
       {
@@ -326,7 +318,7 @@
       },
       {
         "internalType": "string",
-        "name": "_answerDecryptionKeyURI",
+        "name": "_encryptedAnswerDecryptionKeyURI",
         "type": "string"
       },
       {
@@ -372,6 +364,19 @@
         "internalType": "bytes32",
         "name": "",
         "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "merkleTreeURI",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
       }
     ],
     "stateMutability": "view",
@@ -430,6 +435,19 @@
         "internalType": "address",
         "name": "",
         "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "questions",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
       }
     ],
     "stateMutability": "view",

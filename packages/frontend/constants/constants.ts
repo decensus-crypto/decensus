@@ -2,7 +2,7 @@ import { Question } from "../types/core";
 import { genQuestionId } from "../utils/questionId";
 
 export const FORM_COLLECTION_FACTORY_CONTRACT_ADDRESS =
-  "0x9D6Ed668911245785088B1B2dBe560D8137f7015";
+  "0x1b6CBC210A21f7A902776d0B66B559763D3Aa730";
 
 export const TEST_NFT_CONTRACT_ADDRESS = "0xe5b4d6b5f37cae9dc4c7384cd97038cd0573d7d2"; // Strxngers
 

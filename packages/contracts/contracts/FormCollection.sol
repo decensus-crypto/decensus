@@ -12,7 +12,7 @@ contract FormCollection is Initializable, ERC721Upgradeable, OwnableUpgradeable 
     bytes32 public merkleRoot;
     string public merkleTreeURI;
     string public answerEncryptionKey;
-    string public encryptedAnswerDecryptionKey;
+    string public encryptedAnswerDecryptionKeyURI;
     bool public closed;
 
     mapping(address => string) public encryptedAnswers;
@@ -29,7 +29,7 @@ contract FormCollection is Initializable, ERC721Upgradeable, OwnableUpgradeable 
         bytes32 _merkleRoot,
         string memory _merkleTreeURI,
         string memory _answerEncryptionKey,
-        string memory _encryptedAnswerDecryptionKey,
+        string memory _encryptedAnswerDecryptionKeyURI,
         address _owner
     ) external initializer {
         __ERC721_init(_name, "DCS");
@@ -39,7 +39,7 @@ contract FormCollection is Initializable, ERC721Upgradeable, OwnableUpgradeable 
         merkleRoot = _merkleRoot;
         merkleTreeURI = _merkleTreeURI;
         answerEncryptionKey = _answerEncryptionKey;
-        encryptedAnswerDecryptionKey = _encryptedAnswerDecryptionKey;
+        encryptedAnswerDecryptionKeyURI = _encryptedAnswerDecryptionKeyURI;
     }
 
     function submitAnswers(

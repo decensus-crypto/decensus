@@ -24,7 +24,7 @@ const description = "this is a test form";
 const questions = "questions";
 const merkleTreeURI = "m-uri";
 const answerEncryptionKey = "key";
-const encryptedAnswerDecryptionKey = "d-key";
+const encryptedAnswerDecryptionKeyURI = "k-uri";
 const encryptedAnswer = "encrypted!!";
 
 describe("form collection", function () {
@@ -46,7 +46,7 @@ describe("form collection", function () {
         merkleRoot,
         merkleTreeURI,
         answerEncryptionKey,
-        encryptedAnswerDecryptionKey,
+        encryptedAnswerDecryptionKeyURI,
       )
       .then((tx) => tx.wait());
 
@@ -64,7 +64,9 @@ describe("form collection", function () {
     expect(await formContract.questions()).to.eql(questions);
     expect(await formContract.merkleTreeURI()).to.eql(merkleTreeURI);
     expect(await formContract.answerEncryptionKey()).to.eql(answerEncryptionKey);
-    expect(await formContract.encryptedAnswerDecryptionKey()).to.eql(encryptedAnswerDecryptionKey);
+    expect(await formContract.encryptedAnswerDecryptionKeyURI()).to.eql(
+      encryptedAnswerDecryptionKeyURI,
+    );
   });
 
   it("Should succeed in submitting answer", async () => {
