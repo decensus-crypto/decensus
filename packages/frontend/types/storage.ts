@@ -11,3 +11,8 @@ export type EncryptedAnswerDecryptionKeyInStorage = {
   };
   resultViewerAddresses: string[];
 };
+
+export type FileLocationInStorage = {
+  cid: string;
+  path: string;
+};

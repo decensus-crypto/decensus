@@ -1,7 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { PostMerkleTreeRequestBody } from "../../types/api-types";
 import { validatePostMerkleTreeRequestBody } from "../../types/api-types.validator";
-import { pin } from "../../utils/pinata";
+import { pin } from "../../utils/web3Storage";
+
+const PATH = "data.json";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "POST") {
@@ -14,12 +16,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
     const { formTitle, respondentAddresses } = validBody;
 
-    const result = await pin({
-      title: `${formTitle} - Merkle tree`,
-      data: { respondentAddresses },
-    });
+    const result = await pin({ path: PATH, data: { formTitle, respondentAddresses } });
 
-    res.status(200).json(result);
+    res.status(200).json({ cid: result.cid, path: PATH });
   } else {
     res.status(404).end();
   }

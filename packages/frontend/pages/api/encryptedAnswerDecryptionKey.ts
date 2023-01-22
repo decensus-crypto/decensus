@@ -1,7 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { PostEncryptedAnswerDecryptionKeyRequestBody } from "../../types/api-types";
 import { validatePostEncryptedAnswerDecryptionKeyRequestBody } from "../../types/api-types.validator";
-import { pin } from "../../utils/pinata";
+import { pin } from "../../utils/web3Storage";
+
+const PATH = "data.json";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "POST") {
@@ -15,11 +17,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const { formTitle, encryptedKey, resultViewerAddresses } = validBody;
 
     const result = await pin({
-      title: `${formTitle} - Answer decryption key`,
-      data: { encryptedKey, resultViewerAddresses },
+      path: PATH,
+      data: { formTitle, encryptedKey, resultViewerAddresses },
     });
 
-    res.status(200).json(result);
+    res.status(200).json({ cid: result.cid, path: PATH });
   } else {
     res.status(404).end();
   }

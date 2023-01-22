@@ -4,6 +4,7 @@ import { useCallback } from "react";
 import { CHAIN_NAME } from "../constants/constants";
 import { Form } from "../types/core";
 import { genKeyPair } from "../utils/crypto";
+import { buildIpfsUri } from "../utils/ipfs";
 import { getMerkleTree, getMerkleTreeRootHash } from "../utils/merkleTree";
 import { getFormUrl } from "../utils/urls";
 import { useAccount } from "./useAccount";
@@ -103,8 +104,8 @@ export const useDeploy = () => {
             }).then((r) => r.json()),
           ]);
 
-          merkleTreeUri = `ipfs://${merkleTreeResult.cid}`;
-          encryptedAnswerDecryptionKeyUri = `ipfs://${keyResult.cid}`;
+          merkleTreeUri = buildIpfsUri(merkleTreeResult);
+          encryptedAnswerDecryptionKeyUri = buildIpfsUri(keyResult);
         } catch (error) {
           console.error(error);
           throw new Error("Upload form to IPFS failed");

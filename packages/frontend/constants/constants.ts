@@ -12,8 +12,6 @@ export const CHAIN_ID = 80001;
 
 export const LIT_CHAIN = "ethereum";
 
-export const IPFS_GATEWAY_BASE_PATH = "https://gateway.pinata.cloud/ipfs/";
-
 // TODO: use API Key
 export const SUBGRAPH_URL =
   "https://api.thegraph.com/subgraphs/name/nakaakist/form-collection-mumbai";
