@@ -21,9 +21,10 @@ let merkleTree: MerkleTree;
 let proof: string[];
 const name = "form name";
 const description = "this is a test form";
-const formDataURI = "f-uri";
+const questions = "questions";
+const merkleTreeURI = "m-uri";
 const answerEncryptionKey = "key";
-const answerDecryptionKeyURI = "key-uri";
+const encryptedAnswerDecryptionKey = "d-key";
 const encryptedAnswer = "encrypted!!";
 
 describe("form collection", function () {
@@ -41,10 +42,11 @@ describe("form collection", function () {
       .createFormCollection(
         name,
         description,
+        questions,
         merkleRoot,
-        formDataURI,
+        merkleTreeURI,
         answerEncryptionKey,
-        answerDecryptionKeyURI,
+        encryptedAnswerDecryptionKey,
       )
       .then((tx) => tx.wait());
 
@@ -56,10 +58,13 @@ describe("form collection", function () {
   });
 
   it("Should have correct form metadata", async () => {
+    expect(await formContract.owner()).to.eql(owner.address);
+    expect(await formContract.name()).to.eql(name);
     expect(await formContract.description()).to.eql(description);
-    expect(await formContract.formDataURI()).to.eql(formDataURI);
+    expect(await formContract.questions()).to.eql(questions);
+    expect(await formContract.merkleTreeURI()).to.eql(merkleTreeURI);
     expect(await formContract.answerEncryptionKey()).to.eql(answerEncryptionKey);
-    expect(await formContract.answerDecryptionKeyURI()).to.eql(answerDecryptionKeyURI);
+    expect(await formContract.encryptedAnswerDecryptionKey()).to.eql(encryptedAnswerDecryptionKey);
   });
 
   it("Should succeed in submitting answer", async () => {

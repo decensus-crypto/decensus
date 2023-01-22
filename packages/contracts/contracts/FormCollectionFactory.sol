@@ -22,19 +22,21 @@ contract FormCollectionFactory is Ownable {
     function createFormCollection(
         string memory _name,
         string memory _description,
+        string memory _questions,
         bytes32 _merkleRoot,
-        string memory _formDataURI,
+        string memory _merkleTreeURI,
         string memory _answerEncryptionKey,
-        string memory _answerDecryptionKeyURI
+        string memory _encryptedAnswerDecryptionKey
     ) public {
         address clone = Clones.clone(baseFormCollection);
         FormCollection(clone).initialize(
             _name,
             _description,
+            _questions,
             _merkleRoot,
-            _formDataURI,
+            _merkleTreeURI,
             _answerEncryptionKey,
-            _answerDecryptionKeyURI,
+            _encryptedAnswerDecryptionKey,
             msg.sender
         );
 

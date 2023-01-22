@@ -7,11 +7,12 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import {Base64} from "./Base64.sol";
 
 contract FormCollection is Initializable, ERC721Upgradeable, OwnableUpgradeable {
-    bytes32 public merkleRoot;
     string public description;
-    string public formDataURI;
+    string public questions;
+    bytes32 public merkleRoot;
+    string public merkleTreeURI;
     string public answerEncryptionKey;
-    string public answerDecryptionKeyURI;
+    string public encryptedAnswerDecryptionKey;
     bool public closed;
 
     mapping(address => string) public encryptedAnswers;
@@ -24,19 +25,21 @@ contract FormCollection is Initializable, ERC721Upgradeable, OwnableUpgradeable 
     function initialize(
         string memory _name,
         string memory _description,
+        string memory _questions,
         bytes32 _merkleRoot,
-        string memory _formDataURI,
+        string memory _merkleTreeURI,
         string memory _answerEncryptionKey,
-        string memory _answerDecryptionKeyURI,
+        string memory _encryptedAnswerDecryptionKey,
         address _owner
     ) external initializer {
         __ERC721_init(_name, "DCS");
         _transferOwnership(_owner);
         description = _description;
+        questions = _questions;
         merkleRoot = _merkleRoot;
-        formDataURI = _formDataURI;
+        merkleTreeURI = _merkleTreeURI;
         answerEncryptionKey = _answerEncryptionKey;
-        answerDecryptionKeyURI = _answerDecryptionKeyURI;
+        encryptedAnswerDecryptionKey = _encryptedAnswerDecryptionKey;
     }
 
     function submitAnswers(
